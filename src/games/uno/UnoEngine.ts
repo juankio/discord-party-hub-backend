@@ -92,9 +92,16 @@ export class UnoEngine {
 
   public yellUno(userId: string) {
     const player = this.players.find(p => p.userId === userId);
-    if (player && player.hand.length <= 2) {
+    if (!player || player.hasYelledUno) return;
+
+    if (player.hand.length === 1) {
       player.hasYelledUno = true;
       this.broadcastMessage(`¡${player.nickname} gritó UNO!`);
+    } else if (player.hand.length > 1) {
+      player.hand.push(...this.deckManager.drawCards(2));
+      this.broadcastMessage(`¡${player.nickname} cantó UNO en falso y roba 2 cartas!`);
+      this.broadcastAction("rival_drew", player.userId, 2);
+      this.broadcastState();
     }
   }
 

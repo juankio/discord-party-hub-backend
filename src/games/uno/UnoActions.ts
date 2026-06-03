@@ -40,6 +40,26 @@ export class UnoActions {
       engine.playDirection *= -1; // Simplemente invierte la dirección siempre
     }
 
+    if (engine.pendingDraws > 0 && !engine.rules.stackDrawCards) {
+      // Determinamos quién es la víctima basándonos en la dirección
+      let nextIndex = engine.currentTurnIndex + engine.playDirection;
+      if (nextIndex >= engine.players.length) nextIndex = 0;
+      if (nextIndex < 0) nextIndex = engine.players.length - 1;
+      
+      const victim = engine.players[nextIndex];
+      if (victim) {
+        // Le embutimos las cartas
+        const drawn = engine.deckManager.drawCards(engine.pendingDraws);
+        victim.hand.push(...drawn);
+        engine.broadcastAction("rival_drew", victim.userId, engine.pendingDraws);
+        victim.hasYelledUno = false;
+        
+        // Reseteamos draws y nos saltamos su turno automáticamente
+        engine.pendingDraws = 0;
+        totalSkips += 1;
+      }
+    }
+
     if (player.hand.length === 0) {
       engine.state = 'FINISHED'; engine.winner = player.userId;
       engine.broadcastMessage(`¡${player.nickname} HA GANADO! 🎉`);

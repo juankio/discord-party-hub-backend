@@ -44,10 +44,11 @@ En Party Hub, **el Frontend es ciego e ignorante**. Nunca calcula reglas, nunca 
 
 ## 🛠️ Subsistemas Principales
 
-### 1. API REST (Express.js)
+### 1. API REST (Express.js) & MongoDB
 El servidor ahora asume todo el peso de la base de datos y peticiones HTTP.
-- **Autenticación (OAuth2):** Se procesa enteramente en el servidor a través de las rutas `/api/auth/google/login` y `/api/auth/google/callback`, redirigiendo al cliente con su sesión iniciada.
-- **Seguridad CORS y JWT:** Todas las rutas, como el Leaderboard o la edición de perfiles, están bloqueadas bajo validación de tokens JWT extraídos del encabezado `Authorization: Bearer <token>`.
+- **Autenticación (OAuth2):** Se procesa enteramente en el servidor a través de las rutas `/api/auth/google/login` y `/api/auth/google/callback`, redirigiendo al cliente con su sesión iniciada y sus stats actualizados (`gamesPlayed`, `lastPlayed`).
+- **Seguridad CORS y JWT:** Todas las rutas, como la edición de perfiles, están bloqueadas bajo validación de tokens JWT extraídos del encabezado `Authorization: Bearer <token>`.
+- **Top Global:** El `leaderboard.controller` extrae a los mejores jugadores según su `totalWins` para ser exhibidos en el frontend.
 
 ### 2. Gestión de Salas (`RoomManager` - WebSockets)
 El sistema utiliza una estructura `Map<string, RoomData>` en memoria RAM para un rendimiento instantáneo (0ms latency database reads para el juego en vivo).

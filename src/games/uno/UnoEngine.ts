@@ -45,7 +45,7 @@ export class UnoEngine {
         this.state = 'FINISHED';
         if (this.players.length === 1) {
           this.winner = this.players[0].userId;
-          this.registerWin(this.winner);
+          
         }
         this.broadcastState();
       } else {
@@ -125,15 +125,7 @@ export class UnoEngine {
     UnoActions.surrender(this, userId);
   }
 
-  public async registerWin(userId: string) {
-    try {
-      await fetch('http://localhost:3000/api/leaderboard/win', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, game: 'unoWins' })
-      });
-    } catch (e) { console.error('Error registrando victoria en DB:', e); }
-  }
-
+  
   public applyZeroRule() {
     const hands = this.players.map(p => p.hand);
     if (this.playDirection === 1) hands.unshift(hands.pop()!);

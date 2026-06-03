@@ -21,35 +21,38 @@ En Party Hub, **el Frontend es ciego e ignorante**. Nunca calcula reglas, nunca 
 
 ---
 
-## 🏛️ Arquitectura
+## 🏛️ Arquitectura Híbrida (API + WebSockets)
 
 ```text
 /backend
 ├── src/
+│   ├── config/
+│   │   └── db.ts                # Conexión persistente a MongoDB Atlas.
+│   ├── controllers/
+│   │   ├── auth.controller.ts   # Autenticación Google OAuth2 y perfiles (JWT).
+│   │   └── leaderboard.ts       # API Segura para el Top Global de Victorias.
 │   ├── core/
 │   │   ├── RoomManager.ts       # Orquestador de salas en memoria (Garbage Collection + Manejo de Host).
-│   │   ├── db.ts                # Conexión persistente a MongoDB Atlas.
-│   │   └── models/              # Modelos de Mongoose (Ej. User.ts).
 │   ├── games/
 │   │   ├── uno/
-│   │   │   └── UnoEngine.ts     # Máquina de estados para partidas de UNO.
+│   │   │   └── UnoEngine.ts     # Máquina de estados Zero-Trust para partidas de UNO.
 │   │   └── [...]                # Otros motores (Parchís, Pinturillo, etc).
-│   └── server.ts                # Entry point de WebSockets y API endpoints ligeros.
+│   └── server.ts                # Entry point que fusiona Express.js y Socket.io en el mismo puerto (3001).
 ```
 
 ---
 
 ## 🛠️ Subsistemas Principales
 
-### 1. Gestión de Salas (`RoomManager`)
-El sistema utiliza una estructura `Map<string, RoomState>` en memoria RAM para un rendimiento instantáneo (0ms latency database reads para el juego en vivo).
-- **Persistencia en Memoria:** Sobrevive a desconexiones accidentales (F5 o caída de red de Discord). Los jugadores pueden reconectarse usando su `userId` si la sala sigue activa.
-- **Garbage Collection (GC):** Para evitar fugas de memoria, cualquier sala inactiva por más de 1 hora es automáticamente barrida y destruida por el Garbage Collector.
+### 1. API REST (Express.js)
+El servidor ahora asume todo el peso de la base de datos y peticiones HTTP.
+- **Autenticación (OAuth2):** Se procesa enteramente en el servidor a través de las rutas `/api/auth/google/login` y `/api/auth/google/callback`, redirigiendo al cliente con su sesión iniciada.
+- **Seguridad CORS y JWT:** Todas las rutas, como el Leaderboard o la edición de perfiles, están bloqueadas bajo validación de tokens JWT extraídos del encabezado `Authorization: Bearer <token>`.
 
-### 2. Capa de Base de Datos (MongoDB)
-Toda la gestión de identidad, estadísticas (Leaderboard) y personalización visual (Avatar, Color) vive en **MongoDB**.
-- La conexión está optimizada usando `mongoose`.
-- El modelo `User` registra el `totalWins` que se actualiza desde los motores de juego cuando una partida finaliza.
+### 2. Gestión de Salas (`RoomManager` - WebSockets)
+El sistema utiliza una estructura `Map<string, RoomData>` en memoria RAM para un rendimiento instantáneo (0ms latency database reads para el juego en vivo).
+- **Persistencia en Memoria:** Sobrevive a desconexiones accidentales (F5 o caída de red de Discord). Los jugadores pasan a estado `isOffline: true` por un período de gracia de 30 segundos.
+- **Garbage Collection (GC):** Para evitar fugas de memoria, cualquier sala inactiva por más de 1 hora o abandonada por todos sus miembros es automáticamente barrida y destruida por el Garbage Collector.
 
 ### 3. El Motor de UNO (`UnoEngine`)
 Soporta una inmensa variedad de reglas de la casa populares implementadas de forma nativa:

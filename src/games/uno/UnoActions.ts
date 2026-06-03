@@ -63,7 +63,7 @@ export class UnoActions {
     if (player.hand.length === 0) {
       engine.state = 'FINISHED'; engine.winner = player.userId;
       engine.broadcastMessage(`¡${player.nickname} HA GANADO! 🎉`);
-      engine.registerWin(player.userId);
+      
       engine.broadcastCallback('player_won', player.userId);
       return engine.broadcastState();
     }
@@ -143,7 +143,7 @@ export class UnoActions {
     if (engine.players.length === 2) {
       const winner = engine.players.find(p => p.userId !== userId);
       engine.state = 'FINISHED'; engine.winner = winner?.userId || null;
-      if (winner) { engine.broadcastMessage(`¡${winner.nickname} GANÓ!`); engine.registerWin(winner.userId); }
+      if (winner) { engine.broadcastMessage(`¡${winner.nickname} GANÓ!`);  }
     } else {
       return engine.removePlayer(userId);
     }

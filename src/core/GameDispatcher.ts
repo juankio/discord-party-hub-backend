@@ -163,18 +163,29 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
             if (user) {
               user.totalWins += 1;
               io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId });
-              
-              // Intentar actualizar MongoDB si es un usuario registrado (con ObjectId válido o coincidente en DB)
-              try {
-                // Buscamos si el userId mapea a _id (formato hex de 24 chars)
-                if (/^[0-9a-fA-F]{24}$/.test(user.userId)) {
-                  await User.findByIdAndUpdate(user.userId, { 
-                    $inc: { 'stats.totalWins': 1, 'stats.uno': 1 } 
-                  });
-                }
-              } catch (dbErr) {
-                logger.error(`Error guardando victoria en DB: ${dbErr}`);
+            }
+            
+            try {
+              // Actualizar gamesPlayed para todos en la sala que sean usuarios de MongoDB
+              const registeredUserIds = room.users
+                .filter((u: any) => /^[0-9a-fA-F]{24}$/.test(u.userId))
+                .map((u: any) => u.userId);
+                
+              if (registeredUserIds.length > 0) {
+                await User.updateMany(
+                  { _id: { $in: registeredUserIds } },
+                  { $inc: { gamesPlayed: 1 }, $set: { lastPlayed: new Date() } }
+                );
               }
+              
+              // Actualizar victoria para el ganador si está registrado
+              if (user && /^[0-9a-fA-F]{24}$/.test(user.userId)) {
+                await User.findByIdAndUpdate(user.userId, { 
+                  $inc: { 'stats.totalWins': 1, 'stats.unoWins': 1 } 
+                });
+              }
+            } catch (dbErr) {
+              logger.error(`Error guardando victoria/stats en DB: ${dbErr}`);
             }
             return;
           }

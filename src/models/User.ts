@@ -7,10 +7,12 @@ const UserSchema = new mongoose.Schema({
   avatarId: { type: Number, default: 1 },
   color: { type: String, default: '#f97316' },
   picture: { type: String }, // Fallback para la foto de Google si prefieren usarla
+  lastPlayed: { type: Date },
   stats: {
     unoWins: { type: Number, default: 0 },
     pinturilloWins: { type: Number, default: 0 },
-    totalWins: { type: Number, default: 0 }
+    totalWins: { type: Number, default: 0 },
+    gamesPlayed: { type: Number, default: 0 }
   }
 }, { timestamps: true })
 

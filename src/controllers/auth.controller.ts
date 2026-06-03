@@ -62,36 +62,15 @@ export const googleCallback = async (req: Request, res: Response) => {
       isLoggedIn: true,
       token: token,
       totalWins: (user as any).stats?.totalWins || 0,
+      gamesPlayed: (user as any).gamesPlayed || 0,
+      lastPlayed: (user as any).lastPlayed || null,
       picture: (user as any).picture
     };
 
-    const htmlResponse = `
-      <html>
-        <head><title>Autenticando...</title></head>
-        <body style="background-color: #0A0A0A; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
-          <h2>Iniciando sesión...</h2>
-          <script>
-            try {
-              const oldDataRaw = window.localStorage.getItem('party-hub-user');
-              let roomId = '';
-              if (oldDataRaw) {
-                const oldData = JSON.parse(oldDataRaw);
-                roomId = oldData.roomId || '';
-              }
-              const newData = ${JSON.stringify(userData)};
-              if (roomId) newData.roomId = roomId;
-              window.localStorage.setItem('party-hub-user', JSON.stringify(newData));
-              window.location.href = '` + FRONTEND_URL + `/';
-            } catch(e) {
-              console.error(e);
-              window.location.href = '` + FRONTEND_URL + `/?error=storage';
-            }
-          </script>
-        </body>
-      </html>
-    `;
-    res.setHeader('Content-Type', 'text/html');
-    res.send(htmlResponse);
+    
+    const base64Data = Buffer.from(JSON.stringify(userData)).toString('base64');
+    res.redirect(`${FRONTEND_URL}/?auth_data=${base64Data}`);
+
   } catch (error) {
     console.error('OAuth Callback Error:', error);
     res.redirect(`${FRONTEND_URL}/?error=oauth_failed`);

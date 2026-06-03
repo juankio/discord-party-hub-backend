@@ -55,6 +55,14 @@ export class UnoEngine {
     }
   }
 
+  public setPlayerOffline(userId: string, isOffline: boolean) {
+    const player = this.players.find(p => p.userId === userId);
+    if (player) {
+      player.isOffline = isOffline;
+      this.broadcastState();
+    }
+  }
+
   public startGame(rules: UnoRules) {
     if (this.players.length < 2) return;
     this.rules = rules;
@@ -153,7 +161,7 @@ export class UnoEngine {
           actionRequiredFrom: this.actionRequiredFrom, winner: this.winner, myHand: p.hand,
           rivals: this.players.filter(r => r.userId !== p.userId).map(r => ({
             userId: r.userId, nickname: r.nickname, avatarId: r.avatarId, color: r.color,
-            cardCount: r.hand.length, hasYelledUno: r.hasYelledUno
+            cardCount: r.hand.length, hasYelledUno: r.hasYelledUno, isOffline: r.isOffline
           }))
         }
       });

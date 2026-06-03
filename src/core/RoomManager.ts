@@ -20,6 +20,7 @@ export interface RoomData {
     avatarId: number;
     color: string;
     totalWins: number;
+    isOffline?: boolean;
   }>;
   hostUserId: string;
   gameEngine?: UnoEngine;
@@ -77,9 +78,9 @@ export class RoomManager {
 
     const existingIndex = room.users.findIndex(u => u.userId === userId);
     if (existingIndex === -1) {
-      room.users.push({ socketId: socket.id, userId, nickname: finalNickname, avatarId, color, totalWins });
+      room.users.push({ socketId: socket.id, userId, nickname: finalNickname, avatarId, color, totalWins, isOffline: false });
     } else {
-      room.users[existingIndex] = { socketId: socket.id, userId, nickname: finalNickname, avatarId, color, totalWins };
+      room.users[existingIndex] = { socketId: socket.id, userId, nickname: finalNickname, avatarId, color, totalWins, isOffline: false };
     }
 
     const hostStillExists = room.users.some(u => u.userId === room.hostUserId);
@@ -95,6 +96,7 @@ export class RoomManager {
     });
 
     if (room.gameEngine && room.gameType === 'uno') {
+      room.gameEngine.setPlayerOffline(userId, false);
       room.gameEngine.addPlayer(userId, socket.id, finalNickname, avatarId, color);
       this.io.to(socket.id).emit("game_started", { gameType: 'uno' });
       room.gameEngine.broadcastState();
@@ -108,6 +110,18 @@ export class RoomManager {
     const userId = socket.data?.userId;
 
     if (!roomId || !this.rooms.has(roomId)) return;
+
+    const room = this.rooms.get(roomId);
+    if (room) {
+      const currentUser = room.users.find(u => u.userId === userId);
+      if (currentUser) {
+        currentUser.isOffline = true;
+        this.io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId, roomRules: room.roomRules });
+        if (room.gameEngine && room.gameType === 'uno') {
+          room.gameEngine.setPlayerOffline(userId, true);
+        }
+      }
+    }
 
     // Grace period
     setTimeout(() => {

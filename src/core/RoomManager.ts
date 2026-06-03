@@ -136,7 +136,7 @@ export class RoomManager {
           });
         }
       }
-    }, 3000);
+    }, 30000);
   }
 
   private startGarbageCollector() {

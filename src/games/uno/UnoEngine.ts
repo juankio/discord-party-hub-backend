@@ -43,6 +43,10 @@ export class UnoEngine {
     if (this.state !== 'WAITING' && this.state !== 'FINISHED') {
       if (this.players.length < 2) {
         this.state = 'FINISHED';
+        if (this.players.length === 1) {
+          this.winner = this.players[0].userId;
+          this.registerWin(this.winner);
+        }
         this.broadcastState();
       } else {
         this.currentTurnIndex = this.currentTurnIndex % this.players.length;

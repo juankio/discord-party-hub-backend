@@ -52,6 +52,8 @@ io.on("connection", (socket) => {
 
   socket.on("join_room", (data: any) => roomManager.handleJoin(socket, data));
   socket.on("disconnect", () => roomManager.handleDisconnect(socket));
+  socket.on("leave_room", () => roomManager.handleExplicitLeave(socket));
+
 
   startGameDispatcher(socket, roomManager);
   handleUnoEvents(socket, roomManager);

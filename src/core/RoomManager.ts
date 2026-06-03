@@ -105,6 +105,38 @@ export class RoomManager {
     }
   }
 
+  public handleExplicitLeave(socket: Socket) {
+    const roomId = socket.data?.roomId;
+    const userId = socket.data?.userId;
+
+    if (!roomId || !this.rooms.has(roomId)) return;
+
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+
+    room.users = room.users.filter(u => u.userId !== userId);
+    
+    if (room.gameEngine) room.gameEngine.removePlayer(userId);
+
+    if (room.users.length === 0) {
+      this.rooms.delete(roomId);
+      logger.info(`Room ${roomId} destroyed explicitly.`);
+    } else {
+      if (room.hostUserId === userId) {
+        room.hostUserId = room.users[0]!.userId;
+        logger.info(`Host left explicitly, migrated to ${room.hostUserId}`);
+      }
+      this.io.to(roomId).emit("room_update", { 
+        users: room.users,
+        hostUserId: room.hostUserId,
+        roomRules: room.roomRules
+      });
+    }
+    
+    socket.leave(roomId);
+    socket.data = {};
+  }
+
   public handleDisconnect(socket: Socket) {
     const roomId = socket.data?.roomId;
     const userId = socket.data?.userId;

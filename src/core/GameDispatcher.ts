@@ -101,6 +101,17 @@ export function handleUnoEvents(socket: Socket, roomManager: RoomManager) {
     const room = rooms.get(socket.data.roomId);
     if (room?.gameEngine) room.gameEngine.surrender(socket.data.userId);
   }));
+
+  socket.on("return_to_lobby", () => wrapHandler(() => {
+    const room = rooms.get(socket.data.roomId);
+    if (!room) return;
+    // Solo el host puede devolver a todos al lobby
+    if (room.hostUserId === socket.data.userId) {
+      room.gameEngine = undefined; // Destruye el motor
+      room.gameType = undefined;
+      io.to(socket.data.roomId).emit("return_to_lobby");
+    }
+  }));
 }
 
 export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {

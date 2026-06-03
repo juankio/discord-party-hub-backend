@@ -37,8 +37,7 @@ export class UnoActions {
     
     let totalSkips = skips;
     if (cardsToPlay.some(c => c.value === 'reverse')) {
-      if (engine.players.length === 2) totalSkips += cardsToPlay.filter(c => c.value === 'reverse').length;
-      else engine.playDirection *= -1;
+      engine.playDirection *= -1; // Simplemente invierte la dirección siempre
     }
 
     if (player.hand.length === 0) {

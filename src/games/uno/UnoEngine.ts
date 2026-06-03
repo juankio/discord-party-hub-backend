@@ -21,7 +21,7 @@ export class UnoEngine {
     playMultipleSame: false, interceptExact: false, zeroAndSevenRules: false
   };
 
-  private broadcastCallback: (event: string, data?: any) => void;
+  public broadcastCallback: (event: string, data?: any) => void;
 
   constructor(roomId: string, broadcastCallback: (event: string, data?: any) => void) {
     this.roomId = roomId;

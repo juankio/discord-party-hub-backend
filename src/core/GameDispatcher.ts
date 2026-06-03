@@ -143,6 +143,14 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       room.gameType = 'uno';
       room.gameEngine = new UnoEngine(roomId, (event: string, eventPayload?: any) => {
         try {
+          if (event === 'player_won') {
+            const user = room.users.find((u: any) => u.userId === eventPayload);
+            if (user) {
+              user.totalWins += 1;
+              io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId });
+            }
+            return;
+          }
           if (event === 'game_state_update') {
             const targetSocketId = room.users.find((u:any) => u.userId === eventPayload.targetUserId)?.socketId;
    logger.info("Emitting game_state_update to " + targetSocketId + " for " + eventPayload.targetUserId);

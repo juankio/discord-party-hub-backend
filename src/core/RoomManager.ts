@@ -8,7 +8,8 @@ const JoinRoomSchema = z.object({
   userId: z.string().min(1).max(50),
   nickname: z.string().max(30).default('Anon'),
   avatarId: z.number().int().default(1),
-  color: z.string().max(20).default('#ffffff')
+  color: z.string().max(20).default('#ffffff'),
+  totalWins: z.number().default(0)
 });
 
 export interface RoomData {
@@ -18,6 +19,7 @@ export interface RoomData {
     nickname: string;
     avatarId: number;
     color: string;
+    totalWins: number;
   }>;
   hostUserId: string;
   gameEngine?: UnoEngine;
@@ -49,10 +51,10 @@ export class RoomManager {
       return;
     }
 
-    const { roomId, userId, nickname, avatarId, color } = result.data;
+    const { roomId, userId, nickname, avatarId, color, totalWins } = result.data;
 
     socket.join(roomId);
-    socket.data = { userId, nickname, avatarId, color, roomId };
+    socket.data = { userId, nickname, avatarId, color, roomId, totalWins };
 
     if (!this.rooms.has(roomId)) {
       this.rooms.set(roomId, { users: [], hostUserId: userId, lastActive: Date.now() });
@@ -71,9 +73,9 @@ export class RoomManager {
 
     const existingIndex = room.users.findIndex(u => u.userId === userId);
     if (existingIndex === -1) {
-      room.users.push({ socketId: socket.id, userId, nickname: finalNickname, avatarId, color });
+      room.users.push({ socketId: socket.id, userId, nickname: finalNickname, avatarId, color, totalWins });
     } else {
-      room.users[existingIndex] = { socketId: socket.id, userId, nickname: finalNickname, avatarId, color };
+      room.users[existingIndex] = { socketId: socket.id, userId, nickname: finalNickname, avatarId, color, totalWins };
     }
 
     const hostStillExists = room.users.some(u => u.userId === room.hostUserId);

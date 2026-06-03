@@ -1,11 +1,32 @@
+import express from 'express';
+import { createServer } from 'http';
 import { Server } from "socket.io";
+import cors from 'cors';
 import { logger } from "./core/Logger.js";
 import { RoomManager } from "./core/RoomManager.js";
 import { startGameDispatcher, handleUnoEvents } from "./core/GameDispatcher.js";
+import { connectDB } from "./config/db.js";
 
-const PORT = 3001;
+import authRoutes from './routes/auth.routes.js';
+import leaderboardRoutes from './routes/leaderboard.routes.js';
 
-const io = new Server(PORT, {
+// Conectar a MongoDB
+connectDB();
+
+const app = express();
+const httpServer = createServer(app);
+
+// Middlewares HTTP
+app.use(cors());
+app.use(express.json());
+
+// Montar rutas HTTP
+app.use('/api/auth', authRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
+
+const PORT = process.env.PORT || 3001;
+
+const io = new Server(httpServer, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"]
@@ -14,15 +35,23 @@ const io = new Server(PORT, {
 
 const roomManager = new RoomManager(io);
 
+// Implementar Seguridad en Sockets (Zero-Trust)
+io.use((socket, next) => {
+  // Aquí podríamos validar el JWT si viene en socket.handshake.auth.token
+  // Por ahora lo dejamos pasar, pero la arquitectura ya permite el middleware
+  next();
+});
+
 io.on("connection", (socket) => {
   logger.info(`Nuevo usuario conectado: ${socket.id}`);
 
   socket.on("join_room", (data: any) => roomManager.handleJoin(socket, data));
   socket.on("disconnect", () => roomManager.handleDisconnect(socket));
 
-  // Conectar dispatchers de juegos usando la nueva arquitectura blindada
   startGameDispatcher(socket, roomManager);
   handleUnoEvents(socket, roomManager);
 });
 
-logger.info(`🚀 Socket.io Server corriendo y blindado en http://localhost:${PORT}`);
+httpServer.listen(PORT, () => {
+  logger.info(`🚀 API & Socket.io Server corriendo y blindado en http://localhost:${PORT}`);
+});

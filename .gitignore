@@ -4,3 +4,14 @@ bun.lockb
 .env
 .env*
 *.pid
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# AI & Local Debug
+.claude/
+.opencode/
+debug-*.png

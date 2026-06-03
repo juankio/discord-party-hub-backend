@@ -17,7 +17,11 @@ const app = express();
 const httpServer = createServer(app);
 
 // Middlewares HTTP
-app.use(cors());
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+app.use(cors({
+  origin: FRONTEND_URL,
+  credentials: true,
+}));
 app.use(express.json());
 
 // Montar rutas HTTP
@@ -28,8 +32,9 @@ const PORT = process.env.PORT || 3001;
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: FRONTEND_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
   }
 });
 

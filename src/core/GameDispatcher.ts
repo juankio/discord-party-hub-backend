@@ -5,6 +5,7 @@ import { logger } from "./Logger.js";
 import type { RoomManager } from "./RoomManager.js";
 import { UnoEngine } from "../games/uno/UnoEngine.js";
 import type { UnoRules } from "../games/uno/UnoTypes.js";
+import { User } from "../models/User.js";
 
 // -- Esquemas de validación ZOD --
 const UnoPlayCardsSchema = z.array(z.string().max(50)).min(1).max(20);
@@ -155,13 +156,25 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       const rules = data.rules as UnoRules;
 
       room.gameType = 'uno';
-      room.gameEngine = new UnoEngine(roomId, (event: string, eventPayload?: any) => {
+      room.gameEngine = new UnoEngine(roomId, async (event: string, eventPayload?: any) => {
         try {
           if (event === 'player_won') {
             const user = room.users.find((u: any) => u.userId === eventPayload);
             if (user) {
               user.totalWins += 1;
               io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId });
+              
+              // Intentar actualizar MongoDB si es un usuario registrado (con ObjectId válido o coincidente en DB)
+              try {
+                // Buscamos si el userId mapea a _id (formato hex de 24 chars)
+                if (/^[0-9a-fA-F]{24}$/.test(user.userId)) {
+                  await User.findByIdAndUpdate(user.userId, { 
+                    $inc: { 'stats.totalWins': 1, 'stats.uno': 1 } 
+                  });
+                }
+              } catch (dbErr) {
+                logger.error(`Error guardando victoria en DB: ${dbErr}`);
+              }
             }
             return;
           }

@@ -3,10 +3,13 @@ import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
 
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
+
 const getClient = () => new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  'http://localhost:3001/api/auth/google/callback'
+  `${BACKEND_URL}/api/auth/google/callback`
 );
 
 export const googleLogin = (req: Request, res: Response) => {
@@ -21,7 +24,7 @@ export const googleLogin = (req: Request, res: Response) => {
 
 export const googleCallback = async (req: Request, res: Response) => {
   const code = req.query.code as string;
-  if (!code) return res.redirect('http://localhost:3000/?error=missing_code');
+  if (!code) return res.redirect(`${FRONTEND_URL}/?error=missing_code`);
 
   try {
     const client = getClient();
@@ -78,10 +81,10 @@ export const googleCallback = async (req: Request, res: Response) => {
               const newData = ${JSON.stringify(userData)};
               if (roomId) newData.roomId = roomId;
               window.localStorage.setItem('party-hub-user', JSON.stringify(newData));
-              window.location.href = 'http://localhost:3000/';
+              window.location.href = '` + FRONTEND_URL + `/';
             } catch(e) {
               console.error(e);
-              window.location.href = 'http://localhost:3000/?error=storage';
+              window.location.href = '` + FRONTEND_URL + `/?error=storage';
             }
           </script>
         </body>
@@ -91,27 +94,34 @@ export const googleCallback = async (req: Request, res: Response) => {
     res.send(htmlResponse);
   } catch (error) {
     console.error('OAuth Callback Error:', error);
-    res.redirect('http://localhost:3000/?error=oauth_failed');
+    res.redirect(`${FRONTEND_URL}/?error=oauth_failed`);
   }
 };
 
 export const updateProfile = async (req: Request, res: Response) => {
-  const { token, updates } = req.body;
-  if (!token || !updates) return res.status(400).json({ success: false, message: 'Faltan datos' });
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : req.body.token;
+  const { updates } = req.body;
+  
+  if (!token || !updates) {
+    return res.status(400).json({ success: false, data: null, message: 'Faltan datos', error: 'MISSING_DATA' });
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as { id: string };
     const updateData: any = {};
-    if (updates.username) updateData.username = updates.username;
-    if (updates.avatarId) updateData.avatarId = updates.avatarId;
-    if (updates.color) updateData.color = updates.color;
+    if (updates.username && typeof updates.username === 'string') updateData.username = updates.username.substring(0, 30);
+    if (updates.avatarId && typeof updates.avatarId === 'number' && updates.avatarId >= 1 && updates.avatarId <= 24) updateData.avatarId = updates.avatarId;
+    if (updates.color && typeof updates.color === 'string') updateData.color = updates.color.substring(0, 10);
     if (updates.useGooglePicture === false) updateData.picture = '';
 
     const user = await User.findByIdAndUpdate(decoded.id, updateData, { new: true } as any);
-    if (!user) return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    if (!user) {
+      return res.status(404).json({ success: false, data: null, message: 'Usuario no encontrado', error: 'USER_NOT_FOUND' });
+    }
 
-    res.json({ success: true, user });
-  } catch (error) {
-    res.status(401).json({ success: false, message: 'Token inválido o expirado' });
+    res.json({ success: true, data: { user }, message: 'Perfil actualizado', error: null });
+  } catch (error: any) {
+    res.status(401).json({ success: false, data: null, message: 'Token inválido o expirado', error: error.message });
   }
 };

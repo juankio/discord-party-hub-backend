@@ -118,6 +118,20 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
   const io = (roomManager as any).io;
   const rooms = roomManager.getRoomsMap();
 
+  socket.on("update_room_rules", (payload: any) => {
+    if (!validateSocketContext(socket)) return;
+    const room = rooms.get(socket.data.roomId);
+    if (!room || room.hostUserId !== socket.data.userId) return; // Solo el host manda
+
+    room.roomRules = payload;
+    // Hacemos broadcast a todos en la sala para que sus checkboxes se muevan también si los están mirando
+    io.to(socket.data.roomId).emit("room_update", {
+      users: room.users,
+      hostUserId: room.hostUserId,
+      roomRules: room.roomRules
+    });
+  });
+
   socket.on("start_game", (payload: any) => {
     if (!validateSocketContext(socket)) return;
 

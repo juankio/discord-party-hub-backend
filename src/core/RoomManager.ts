@@ -24,6 +24,7 @@ export interface RoomData {
   hostUserId: string;
   gameEngine?: UnoEngine;
   gameType?: string;
+  roomRules?: Record<string, boolean>;
   lastActive: number;
 }
 
@@ -57,7 +58,10 @@ export class RoomManager {
     socket.data = { userId, nickname, avatarId, color, roomId, totalWins };
 
     if (!this.rooms.has(roomId)) {
-      this.rooms.set(roomId, { users: [], hostUserId: userId, lastActive: Date.now() });
+      this.rooms.set(roomId, { 
+        users: [], hostUserId: userId, lastActive: Date.now(), 
+        roomRules: { stackDrawCards: true, playMultipleSame: true, zeroAndSevenRules: true, drawUntilPlayable: false, interceptExact: false }
+      });
       logger.info(`Room ${roomId} created by ${nickname}`);
     }
 
@@ -86,7 +90,8 @@ export class RoomManager {
 
     this.io.to(roomId).emit("room_update", { 
       users: room.users,
-      hostUserId: room.hostUserId
+      hostUserId: room.hostUserId,
+      roomRules: room.roomRules
     });
 
     if (room.gameEngine && room.gameType === 'uno') {
@@ -126,7 +131,8 @@ export class RoomManager {
           }
           this.io.to(roomId).emit("room_update", { 
             users: room.users,
-            hostUserId: room.hostUserId
+            hostUserId: room.hostUserId,
+            roomRules: room.roomRules
           });
         }
       }

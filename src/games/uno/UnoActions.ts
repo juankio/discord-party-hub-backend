@@ -28,7 +28,7 @@ export class UnoActions {
     player.hand = player.hand.filter(h => !cardsToPlay.some(c => c.id === h.id));
     engine.deckManager.discard(cardsToPlay);
     
-    engine.broadcastAction("rival_played", player.userId, cardsToPlay.length);
+    engine.broadcastAction("rival_played", player.userId, { cardsCount: cardsToPlay.length });
 
     if (firstCard.color !== 'wild') engine.currentColor = firstCard.color;
 
@@ -36,8 +36,20 @@ export class UnoActions {
     engine.pendingDraws += draws;
     
     let totalSkips = skips;
+
+    if (skips > 0) {
+      for (let i = 1; i <= skips; i++) {
+        let victimIndex = (engine.currentTurnIndex + (i * engine.playDirection)) % engine.players.length;
+        if (victimIndex < 0) victimIndex += engine.players.length;
+        if (engine.players[victimIndex]) {
+          engine.broadcastAction("action_skip", engine.players[victimIndex].userId);
+        }
+      }
+    }
+
     if (cardsToPlay.some(c => c.value === 'reverse')) {
       engine.playDirection *= -1; // Simplemente invierte la dirección siempre
+      engine.broadcastAction("action_reverse", player.userId);
     }
 
     if (engine.pendingDraws > 0 && !engine.rules.stackDrawCards) {
@@ -51,7 +63,7 @@ export class UnoActions {
         // Le embutimos las cartas
         const drawn = engine.deckManager.drawCards(engine.pendingDraws);
         victim.hand.push(...drawn);
-        engine.broadcastAction("rival_drew", victim.userId, engine.pendingDraws);
+        engine.broadcastAction("rival_drew", victim.userId, { cardsCount: engine.pendingDraws });
         victim.hasYelledUno = false;
         
         // Reseteamos draws y nos saltamos su turno automáticamente
@@ -89,7 +101,7 @@ export class UnoActions {
     if (engine.pendingDraws > 0) {
       const cards = engine.deckManager.drawCards(engine.pendingDraws);
       player.hand.push(...cards);
-      engine.broadcastAction("rival_drew", player.userId, engine.pendingDraws);
+      engine.broadcastAction("rival_drew", player.userId, { cardsCount: engine.pendingDraws });
       engine.pendingDraws = 0;
       engine.advanceTurn(1);
     } else {
@@ -100,7 +112,7 @@ export class UnoActions {
         if (drawnCard) { player.hand.push(drawnCard); drew++; }
       } while (engine.rules.drawUntilPlayable && drawnCard && !UnoRulesManager.canPlayCard(drawnCard, engine.deckManager.getTopDiscard(), engine.currentColor, 0, true, engine.rules, 1).valid);
       
-      engine.broadcastAction("rival_drew", player.userId, drew);
+      engine.broadcastAction("rival_drew", player.userId, { cardsCount: drew });
       engine.advanceTurn(1);
     }
     player.hasYelledUno = false;
@@ -121,6 +133,7 @@ export class UnoActions {
     if (p1 && p2) {
       const temp = p1.hand; p1.hand = p2.hand; p2.hand = temp;
       engine.broadcastMessage(`${p1.nickname} intercambió mano con ${p2.nickname}!`);
+      engine.broadcastAction("action_swap", userId, { targetId: targetUserId });
     }
     engine.state = 'PLAYING'; engine.advanceTurn(1); engine.broadcastState();
   }
@@ -131,6 +144,7 @@ export class UnoActions {
       target.hand.push(...engine.deckManager.drawCards(2));
       const challenger = engine.players.find(p => p.userId === challengerId);
       engine.broadcastMessage(`${challenger?.nickname} denunció a ${target.nickname}. ¡Roba 2 cartas!`);
+      engine.broadcastAction("action_challenge", challengerId, { targetId: targetId, success: true });
       engine.broadcastState();
     }
   }

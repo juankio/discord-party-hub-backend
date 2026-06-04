@@ -72,6 +72,7 @@ jobs:
               PORT=${{ vars.PORT }} \
               GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }} \
               FRONTEND_URL=${{ vars.FRONTEND_URL }} \
+              BACKEND_URL=${{ vars.BACKEND_URL }} \
               MONGODB_URI=secretref:mongodb-uri \
               GOOGLE_CLIENT_SECRET=secretref:google-client-secret \
               JWT_SECRET=secretref:jwt-secret

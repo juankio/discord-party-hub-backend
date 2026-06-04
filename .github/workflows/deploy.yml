@@ -68,6 +68,7 @@ jobs:
             --name ${{ vars.AZURE_CONTAINER_APP_NAME }} \
             --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
             --image ${{ vars.AZURE_REGISTRY_NAME }}.azurecr.io/backend:${{ github.sha }} \
+            --target-port 3001 \
             --set-env-vars \
               PORT=${{ vars.PORT }} \
               GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }} \

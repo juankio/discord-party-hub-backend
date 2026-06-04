@@ -4,16 +4,31 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
 
 const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/$/, '');
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 
-const getClient = () => new OAuth2Client(
+// Determinar el BACKEND_URL dinámicamente según los headers de Azure (x-forwarded-host)
+// o usar la variable de entorno, fallando a localhost de forma segura.
+const getBackendUrl = (req: Request) => {
+  if (process.env.BACKEND_URL) return process.env.BACKEND_URL.replace(/\/$/, '');
+  
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+  
+  if (host) {
+    return `${protocol}://${host}`;
+  }
+  return 'http://localhost:3001';
+};
+
+const getClient = (backendUrl: string) => new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  `${BACKEND_URL}/api/auth/google/callback`
+  `${backendUrl}/api/auth/google/callback`
 );
 
 export const googleLogin = (req: Request, res: Response) => {
-  const client = getClient();
+  const backendUrl = getBackendUrl(req);
+  const client = getClient(backendUrl);
+  
   const authUrl = client.generateAuthUrl({
     access_type: 'offline',
     scope: ['email', 'profile'],
@@ -27,7 +42,8 @@ export const googleCallback = async (req: Request, res: Response) => {
   if (!code) return res.redirect(`${FRONTEND_URL}/?error=missing_code`);
 
   try {
-    const client = getClient();
+    const backendUrl = getBackendUrl(req);
+    const client = getClient(backendUrl);
     const { tokens } = await client.getToken(code);
     if (!tokens.id_token) throw new Error('No id_token received');
     

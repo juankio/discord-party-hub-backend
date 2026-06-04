@@ -45,7 +45,7 @@ export class UnoEngine {
         this.state = 'FINISHED';
         if (this.players.length === 1) {
           this.winner = this.players[0].userId;
-          
+          this.broadcastCallback('player_won', this.players[0].userId);
         }
         this.broadcastState();
       } else {

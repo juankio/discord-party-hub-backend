@@ -44,7 +44,6 @@ export class UnoRulesManager {
     let draws = 0;
     for (const c of cards) {
       if (c.value === 'skip') skips++;
-      if (c.value === 'reverse') skips++; // Depending on player count handled in engine
       if (c.value === 'draw2') draws += 2;
       if (c.value === 'wild_draw4') draws += 4;
     }

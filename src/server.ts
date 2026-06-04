@@ -40,6 +40,16 @@ const io = new Server(httpServer, {
 
 const roomManager = new RoomManager(io);
 
+// Ruta para crear sala
+app.post('/api/rooms/create', (req, res) => {
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ success: false, error: 'userId is required' });
+  }
+  const roomId = roomManager.createRoom(userId);
+  res.json({ success: true, data: { roomId } });
+});
+
 // Implementar Seguridad en Sockets (Zero-Trust)
 io.use((socket, next) => {
   // Aquí podríamos validar el JWT si viene en socket.handshake.auth.token

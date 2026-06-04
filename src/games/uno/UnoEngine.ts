@@ -15,6 +15,7 @@ export class UnoEngine {
   public pendingDraws: number = 0; 
   public actionRequiredFrom: string = ''; 
   public winner: string | null = null;
+  public pendingSkips: number = 0;
   
   public rules: UnoRules = {
     stackDrawCards: false, drawUntilPlayable: false,
@@ -49,6 +50,12 @@ export class UnoEngine {
         }
         this.broadcastState();
       } else {
+        if (this.actionRequiredFrom === userId) {
+          this.actionRequiredFrom = '';
+          this.state = 'PLAYING';
+          this.advanceTurn(1 + (this.pendingSkips || 0));
+          this.pendingSkips = 0;
+        }
         this.currentTurnIndex = this.currentTurnIndex % this.players.length;
         this.broadcastState();
       }

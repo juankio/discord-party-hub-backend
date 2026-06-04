@@ -37,6 +37,10 @@ export class UnoActions {
     
     let totalSkips = skips;
 
+    if (skips > 0 && engine.players.length === 2) {
+      totalSkips = 1; // En 1v1, cualquier cantidad de skips te devuelve el turno (1 skip = juegas de nuevo).
+    }
+
     if (skips > 0) {
       for (let i = 1; i <= skips; i++) {
         let victimIndex = (engine.currentTurnIndex + (i * engine.playDirection)) % engine.players.length;
@@ -88,8 +92,10 @@ export class UnoActions {
 
     if (firstCard.color === 'wild') {
       engine.state = 'CHOOSING_COLOR'; engine.actionRequiredFrom = userId;
+      engine.pendingSkips = totalSkips;
     } else if (engine.rules.zeroAndSevenRules && firstCard.value === '7' && cardsToPlay.length === 1) {
       engine.state = 'CHOOSING_PLAYER'; engine.actionRequiredFrom = userId;
+      engine.pendingSkips = totalSkips;
     } else {
       if (engine.rules.zeroAndSevenRules && firstCard.value === '0') engine.applyZeroRule();
       engine.advanceTurn(1 + totalSkips);
@@ -126,7 +132,8 @@ export class UnoActions {
   static declareColor(engine: UnoEngine, userId: string, color: CardColor) {
     if (engine.state !== 'CHOOSING_COLOR' || engine.actionRequiredFrom !== userId) return;
     engine.currentColor = color; engine.state = 'PLAYING';
-    engine.advanceTurn(1);
+    engine.advanceTurn(1 + (engine.pendingSkips || 0));
+    engine.pendingSkips = 0;
     engine.broadcastState();
   }
 
@@ -139,7 +146,7 @@ export class UnoActions {
       engine.broadcastMessage(`${p1.nickname} intercambió mano con ${p2.nickname}!`);
       engine.broadcastAction("action_swap", userId, { targetId: targetUserId });
     }
-    engine.state = 'PLAYING'; engine.advanceTurn(1); engine.broadcastState();
+    engine.state = 'PLAYING'; engine.advanceTurn(1 + (engine.pendingSkips || 0)); engine.pendingSkips = 0; engine.broadcastState();
   }
 
   static challengeUno(engine: UnoEngine, challengerId: string, targetId: string) {

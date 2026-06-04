@@ -3,7 +3,7 @@ name: CI/CD Backend Deployment
 on:
   push:
     branches:
-      - main  # Cambiar a 'master' si es tu caso
+      - prod  # Cambiar a 'master' si es tu caso
 
 permissions:
   id-token: write # REQUISITO OBLIGATORIO para autenticación OIDC de Azure

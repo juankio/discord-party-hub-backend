@@ -48,7 +48,11 @@ export class UnoActions {
     }
 
     if (cardsToPlay.some(c => c.value === 'reverse')) {
-      engine.playDirection *= -1; // Simplemente invierte la dirección siempre
+      if (engine.players.length === 2) {
+        totalSkips += 1;
+      } else {
+        engine.playDirection *= -1;
+      }
       engine.broadcastAction("action_reverse", player.userId);
     }
 

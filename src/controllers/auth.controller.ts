@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { OAuth2Client } from 'google-auth-library';
+import { google } from 'googleapis';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
 
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/$/, '');
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 
 const getClient = () => new OAuth2Client(

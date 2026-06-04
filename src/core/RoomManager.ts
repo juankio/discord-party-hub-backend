@@ -38,6 +38,20 @@ export class RoomManager {
     this.startGarbageCollector();
   }
 
+  public createRoom(hostUserId: string): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let roomId = '';
+    for(let i=0;i<5;i++) roomId+=chars.charAt(Math.floor(Math.random()*chars.length));
+    this.rooms.set(roomId, {
+      users: [],
+      hostUserId,
+      lastActive: Date.now(),
+      roomRules: { stackDrawCards: true, playMultipleSame: true, zeroAndSevenRules: true, drawUntilPlayable: false, interceptExact: false }
+    });
+    logger.info("Sala oficial creada vía API: " + roomId);
+    return roomId;
+  }
+
   public getRoom(roomId: string): RoomData | undefined {
     return this.rooms.get(roomId);
   }
@@ -59,11 +73,8 @@ export class RoomManager {
     socket.data = { userId, nickname, avatarId, color, roomId, totalWins };
 
     if (!this.rooms.has(roomId)) {
-      this.rooms.set(roomId, { 
-        users: [], hostUserId: userId, lastActive: Date.now(), 
-        roomRules: { stackDrawCards: true, playMultipleSame: true, zeroAndSevenRules: true, drawUntilPlayable: false, interceptExact: false }
-      });
-      logger.info(`Room ${roomId} created by ${nickname}`);
+      this.io.to(socket.id).emit("room_not_found");
+      return;
     }
 
     const room = this.rooms.get(roomId)!;

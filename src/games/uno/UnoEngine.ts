@@ -112,7 +112,7 @@ export class UnoEngine {
     } else if (player.hand.length > 1) {
       player.hand.push(...this.deckManager.drawCards(2));
       this.broadcastMessage(`¡${player.nickname} cantó UNO en falso y roba 2 cartas!`);
-      this.broadcastAction("rival_drew", player.userId, 2);
+      this.broadcastAction("rival_drew", player.userId, { cardsCount: 2 });
       this.broadcastState();
     }
   }
@@ -131,6 +131,7 @@ export class UnoEngine {
     if (this.playDirection === 1) hands.unshift(hands.pop()!);
     else hands.push(hands.shift()!);
     this.players.forEach((p, i) => p.hand = hands[i] || []);
+    this.broadcastAction("action_zero", this.players[this.currentTurnIndex]?.userId || '');
   }
 
   public advanceTurn(steps: number) {
@@ -140,7 +141,9 @@ export class UnoEngine {
   }
 
   public broadcastMessage(msg: string) { this.broadcastCallback("game_message", { message: msg }); }
-  public broadcastAction(action: string, userId: string, cardsCount: number) { this.broadcastCallback("game_action", { action, userId, cardsCount }); }
+  public broadcastAction(action: string, userId: string, payload: any = {}) { 
+    this.broadcastCallback("game_action", { action, userId, ...payload }); 
+  }
 
   public broadcastState() {
     for (const p of this.players) {

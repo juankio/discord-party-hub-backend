@@ -1,7 +1,7 @@
 # ==========================================
 # Etapa 1: Base de ejecución
 # ==========================================
-FROM oven/bun:1.1-alpine AS base
+FROM oven/bun:1-alpine AS base
 WORKDIR /app
 
 # ==========================================

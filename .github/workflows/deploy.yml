@@ -75,3 +75,9 @@ jobs:
               MONGODB_URI=secretref:mongodb-uri \
               GOOGLE_CLIENT_SECRET=secretref:google-client-secret \
               JWT_SECRET=secretref:jwt-secret
+
+          # Paso C: Forzar y asegurar el Target Port en el Ingress de forma aislada
+          az containerapp ingress update \
+            --name ${{ vars.AZURE_CONTAINER_APP_NAME }} \
+            --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
+            --target-port 3001

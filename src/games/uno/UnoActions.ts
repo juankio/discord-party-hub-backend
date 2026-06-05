@@ -165,13 +165,8 @@ export class UnoActions {
     const player = engine.players.find(p => p.userId === userId);
     if (!player) return;
     engine.broadcastMessage(`${player.nickname} se ha rendido.`);
-    if (engine.players.length === 2) {
-      const winner = engine.players.find(p => p.userId !== userId);
-      engine.state = 'FINISHED'; engine.winner = winner?.userId || null;
-      if (winner) { engine.broadcastMessage(`¡${winner.nickname} GANÓ!`);  }
-    } else {
-      return engine.removePlayer(userId);
-    }
-    engine.broadcastState();
+    
+    // removePlayer maneja automáticamente los estados de victoria si quedan < 2 jugadores
+    engine.removePlayer(userId);
   }
 }

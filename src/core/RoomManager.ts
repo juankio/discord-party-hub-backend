@@ -33,6 +33,7 @@ export interface RoomData {
   gameEngine?: UnoEngine;
   gameType?: string;
   roomRules?: Record<string, boolean>;
+  lastWinnerUserId?: string;
   lastActive: number;
 }
 

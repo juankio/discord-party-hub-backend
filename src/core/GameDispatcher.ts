@@ -160,10 +160,11 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       room.gameEngine = new UnoEngine(roomId, async (event: string, eventPayload?: any) => {
         try {
           if (event === 'player_won') {
+            room.lastWinnerUserId = eventPayload;
             const user = room.users.find((u: any) => u.userId === eventPayload);
             if (user) {
               user.totalWins += 1;
-              io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId });
+              io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId, roomRules: room.roomRules });
             }
             
             try {
@@ -207,7 +208,7 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       });
 
       io.to(roomId).emit("game_started", { gameType: 'uno' });
-      room.gameEngine.startGame(rules);
+      room.gameEngine.startGame(rules, room.lastWinnerUserId);
       logger.info(`🎮 Partida de UNO iniciada en la sala ${roomId}`);
     }
   });

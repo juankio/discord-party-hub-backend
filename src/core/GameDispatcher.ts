@@ -20,7 +20,8 @@ const StartGameSchema = z.object({
     drawUntilPlayable: z.boolean().default(false),
     playMultipleSame: z.boolean().default(false),
     interceptExact: z.boolean().default(false),
-    zeroAndSevenRules: z.boolean().default(false)
+    zeroAndSevenRules: z.boolean().default(false),
+    extendedLobby: z.boolean().default(false)
   }).optional()
 });
 

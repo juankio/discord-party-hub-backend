@@ -46,7 +46,7 @@ export class RoomManager {
       users: [],
       hostUserId,
       lastActive: Date.now(),
-      roomRules: { stackDrawCards: true, playMultipleSame: true, zeroAndSevenRules: true, drawUntilPlayable: false, interceptExact: false }
+      roomRules: { stackDrawCards: true, playMultipleSame: true, zeroAndSevenRules: true, drawUntilPlayable: false, interceptExact: false, extendedLobby: false }
     });
     logger.info("Sala oficial creada vía API: " + roomId);
     return roomId;
@@ -80,6 +80,16 @@ export class RoomManager {
     const room = this.rooms.get(roomId)!;
     room.lastActive = Date.now();
 
+    const existingIndex = room.users.findIndex(u => u.userId === userId);
+
+    if (existingIndex === -1) {
+      const maxPlayers = room.roomRules?.extendedLobby ? 8 : 6;
+      if (room.users.length >= maxPlayers) {
+        this.io.to(socket.id).emit("room_full");
+        return;
+      }
+    }
+
     let finalNickname = nickname;
     let counter = 1;
     while (room.users.some(u => u.nickname === finalNickname && u.userId !== userId)) {
@@ -87,7 +97,6 @@ export class RoomManager {
       counter++;
     }
 
-    const existingIndex = room.users.findIndex(u => u.userId === userId);
     if (existingIndex === -1) {
       room.users.push({ socketId: socket.id, userId, nickname: finalNickname, avatarId, color, totalWins, isOffline: false });
     } else {

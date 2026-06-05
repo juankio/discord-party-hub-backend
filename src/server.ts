@@ -61,6 +61,7 @@ io.on("connection", (socket) => {
   logger.info(`Nuevo usuario conectado: ${socket.id}`);
 
   socket.on("join_room", (data: any) => roomManager.handleJoin(socket, data));
+  socket.on("update_profile", (data: any) => roomManager.handleUpdateProfile(socket, data));
   socket.on("disconnect", () => roomManager.handleDisconnect(socket));
   socket.on("leave_room", () => roomManager.handleExplicitLeave(socket));
 

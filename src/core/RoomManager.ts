@@ -12,11 +12,18 @@ const JoinRoomSchema = z.object({
   totalWins: z.number().default(0)
 });
 
+const UpdateProfileSchema = z.object({
+  nickname: z.string().max(30).default('Anon'),
+  avatarId: z.number().int().default(1),
+  color: z.string().max(20).default('#ffffff')
+});
+
 export interface RoomData {
   users: Array<{
     socketId: string;
     userId: string;
     nickname: string;
+    originalNickname: string;
     avatarId: number;
     color: string;
     totalWins: number;
@@ -60,6 +67,55 @@ export class RoomManager {
     return this.rooms; // Temp escape hatch for dispatchers
   }
 
+  private recomputeNicknames(room: RoomData, roomId: string) {
+    const nameCounts = new Map<string, number>();
+    const colorCounts = new Map<string, number>();
+
+    for (const user of room.users) {
+      colorCounts.set(user.color, (colorCounts.get(user.color) || 0) + 1);
+    }
+
+    for (const user of room.users) {
+      const originalName = user.originalNickname;
+      let count = nameCounts.get(originalName) || 0;
+      
+      let newName = originalName;
+      if (count > 0) {
+        newName = `${originalName} (copión ${count})`;
+      }
+      nameCounts.set(originalName, count + 1);
+
+      if ((colorCounts.get(user.color) || 0) > 1) {
+        newName += " (novios hp)";
+      }
+
+      user.nickname = newName;
+
+      // Update socket data
+      const socket = this.io.sockets.sockets.get(user.socketId);
+      if (socket) {
+        socket.data.nickname = newName;
+      }
+
+      if (room.gameEngine) {
+        const p = room.gameEngine.players.find(player => player.userId === user.userId);
+        if (p) {
+          p.nickname = newName;
+        }
+      }
+    }
+
+    this.io.to(roomId).emit("room_update", {
+      users: room.users,
+      hostUserId: room.hostUserId,
+      roomRules: room.roomRules
+    });
+
+    if (room.gameEngine) {
+      room.gameEngine.broadcastState();
+    }
+  }
+
   public handleJoin(socket: Socket, data: any) {
     const result = JoinRoomSchema.safeParse(data);
     if (!result.success) {
@@ -90,17 +146,10 @@ export class RoomManager {
       }
     }
 
-    let finalNickname = nickname;
-    let counter = 1;
-    while (room.users.some(u => u.nickname === finalNickname && u.userId !== userId)) {
-      finalNickname = `${nickname} (copión ${counter})`;
-      counter++;
-    }
-
     if (existingIndex === -1) {
-      room.users.push({ socketId: socket.id, userId, nickname: finalNickname, avatarId, color, totalWins, isOffline: false });
+      room.users.push({ socketId: socket.id, userId, originalNickname: nickname, nickname, avatarId, color, totalWins, isOffline: false });
     } else {
-      room.users[existingIndex] = { socketId: socket.id, userId, nickname: finalNickname, avatarId, color, totalWins, isOffline: false };
+      room.users[existingIndex] = { socketId: socket.id, userId, originalNickname: nickname, nickname, avatarId, color, totalWins, isOffline: false };
     }
 
     const hostStillExists = room.users.some(u => u.userId === room.hostUserId);
@@ -109,20 +158,52 @@ export class RoomManager {
       logger.info(`Host migrated to ${room.hostUserId} in room ${roomId}`);
     }
 
-    this.io.to(roomId).emit("room_update", { 
-      users: room.users,
-      hostUserId: room.hostUserId,
-      roomRules: room.roomRules
-    });
-
     if (room.gameEngine && room.gameType === 'uno') {
       room.gameEngine.setPlayerOffline(userId, false);
-      room.gameEngine.addPlayer(userId, socket.id, finalNickname, avatarId, color);
+      room.gameEngine.addPlayer(userId, socket.id, nickname, avatarId, color);
       this.io.to(socket.id).emit("game_started", { gameType: 'uno' });
-      room.gameEngine.broadcastState();
     } else {
       this.io.to(socket.id).emit("return_to_lobby");
     }
+
+    this.recomputeNicknames(room, roomId);
+  }
+
+  public handleUpdateProfile(socket: Socket, data: any) {
+    const result = UpdateProfileSchema.safeParse(data);
+    if (!result.success) {
+      logger.warn(`[SECURITY] Invalid update_profile payload from socket: ${socket.id} - ${result.error.issues[0]?.message}`);
+      return;
+    }
+
+    const { nickname, avatarId, color } = result.data;
+    const roomId = socket.data?.roomId;
+    const userId = socket.data?.userId;
+
+    if (!roomId || !userId || !this.rooms.has(roomId)) return;
+
+    const room = this.rooms.get(roomId)!;
+    room.lastActive = Date.now();
+
+    const currentUser = room.users.find(u => u.userId === userId);
+    if (!currentUser) return;
+
+    currentUser.originalNickname = nickname;
+    currentUser.avatarId = avatarId;
+    currentUser.color = color;
+
+    socket.data.avatarId = avatarId;
+    socket.data.color = color;
+
+    if (room.gameEngine && room.gameType === 'uno') {
+      const p = room.gameEngine.players.find(player => player.userId === userId);
+      if (p) {
+        p.avatarId = avatarId;
+        p.color = color;
+      }
+    }
+
+    this.recomputeNicknames(room, roomId);
   }
 
   public handleExplicitLeave(socket: Socket) {
@@ -146,11 +227,7 @@ export class RoomManager {
         room.hostUserId = room.users[0]!.userId;
         logger.info(`Host left explicitly, migrated to ${room.hostUserId}`);
       }
-      this.io.to(roomId).emit("room_update", { 
-        users: room.users,
-        hostUserId: room.hostUserId,
-        roomRules: room.roomRules
-      });
+      this.recomputeNicknames(room, roomId);
     }
     
     socket.leave(roomId);
@@ -168,10 +245,10 @@ export class RoomManager {
       const currentUser = room.users.find(u => u.userId === userId);
       if (currentUser) {
         currentUser.isOffline = true;
-        this.io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId, roomRules: room.roomRules });
         if (room.gameEngine && room.gameType === 'uno') {
           room.gameEngine.setPlayerOffline(userId, true);
         }
+        this.recomputeNicknames(room, roomId);
       }
     }
 
@@ -195,11 +272,7 @@ export class RoomManager {
             room.hostUserId = room.users[0]!.userId;
             logger.info(`Host left, migrated to ${room.hostUserId} in room ${roomId}`);
           }
-          this.io.to(roomId).emit("room_update", { 
-            users: room.users,
-            hostUserId: room.hostUserId,
-            roomRules: room.roomRules
-          });
+          this.recomputeNicknames(room, roomId);
         }
       }
     }, 30000);

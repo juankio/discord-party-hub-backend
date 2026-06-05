@@ -106,9 +106,9 @@ export function handleUnoEvents(socket: Socket, roomManager: RoomManager) {
   socket.on("return_to_lobby", () => wrapHandler(() => {
     const room = rooms.get(socket.data.roomId);
     if (!room) return;
-    // Solo el host puede devolver a todos al lobby
-    if (room.hostUserId === socket.data.userId) {
-      room.gameEngine = undefined; // Destruye el motor
+    const isFinished = room.gameEngine?.state === 'FINISHED';
+    if (isFinished || room.hostUserId === socket.data.userId) {
+      room.gameEngine = undefined;
       room.gameType = undefined;
       io.to(socket.data.roomId).emit("return_to_lobby");
     }

@@ -24,6 +24,7 @@ export interface UnoRules {
   playMultipleSame: boolean;
   interceptExact: boolean;
   zeroAndSevenRules: boolean;
+  extendedLobby?: boolean;
 }
 
 export type GameState = 'WAITING' | 'PLAYING' | 'CHOOSING_COLOR' | 'CHOOSING_PLAYER' | 'FINISHED';

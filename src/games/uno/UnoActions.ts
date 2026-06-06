@@ -131,7 +131,7 @@ export class UnoActions {
 
   static declareColor(engine: UnoEngine, userId: string, color: CardColor) {
     if (engine.state !== 'CHOOSING_COLOR' || engine.actionRequiredFrom !== userId) return;
-    engine.currentColor = color; engine.state = 'PLAYING';
+    engine.currentColor = color; engine.state = 'PLAYING'; engine.actionRequiredFrom = '';
     engine.advanceTurn(1 + (engine.pendingSkips || 0));
     engine.pendingSkips = 0;
     engine.broadcastState();
@@ -146,7 +146,7 @@ export class UnoActions {
       engine.broadcastMessage(`${p1.nickname} intercambió mano con ${p2.nickname}!`);
       engine.broadcastAction("action_swap", userId, { targetId: targetUserId });
     }
-    engine.state = 'PLAYING'; engine.advanceTurn(1 + (engine.pendingSkips || 0)); engine.pendingSkips = 0; engine.broadcastState();
+    engine.state = 'PLAYING'; engine.actionRequiredFrom = ''; engine.advanceTurn(1 + (engine.pendingSkips || 0)); engine.pendingSkips = 0; engine.broadcastState();
   }
 
   static challengeUno(engine: UnoEngine, challengerId: string, targetId: string) {

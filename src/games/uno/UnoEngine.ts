@@ -70,11 +70,29 @@ export class UnoEngine {
     }
   }
 
-  public startGame(rules: UnoRules) {
+  public startGame(rules: UnoRules, lastWinnerUserId?: string) {
     if (this.players.length < 2) return;
     this.rules = rules;
     this.deckManager.reset();
-    this.pendingDraws = 0; this.playDirection = 1; this.currentTurnIndex = 0;
+    this.pendingDraws = 0; this.playDirection = 1;
+
+    // Barajar los jugadores para asientos dinámicos
+    for (let i = this.players.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.players[i], this.players[j]] = [this.players[j], this.players[i]];
+    }
+
+    // Ventaja del ganador o aleatorio
+    let startIndex = -1;
+    if (lastWinnerUserId) {
+      startIndex = this.players.findIndex(p => p.userId === lastWinnerUserId);
+    }
+    
+    if (startIndex !== -1) {
+      this.currentTurnIndex = startIndex;
+    } else {
+      this.currentTurnIndex = Math.floor(Math.random() * this.players.length);
+    }
     
     for (const p of this.players) { p.hand = this.deckManager.drawCards(7); p.hasYelledUno = false; }
 

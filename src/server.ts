@@ -24,6 +24,9 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Health Check (Azure keep-alive)
+app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok', time: Date.now() }));
+
 // Montar rutas HTTP
 app.use('/api/auth', authRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);

@@ -15,3 +15,4 @@ Thumbs.db
 .claude/
 .opencode/
 debug-*.png
+.gstack/

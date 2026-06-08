@@ -119,6 +119,10 @@ export class UnoEngine {
     UnoActions.drawFromDeck(this, userId);
   }
 
+  public passTurn(userId: string) {
+    UnoActions.passTurn(this, userId);
+  }
+
   public declareColor(userId: string, color: CardColor) {
     UnoActions.declareColor(this, userId, color);
   }
@@ -163,6 +167,9 @@ export class UnoEngine {
     let rawIndex = this.currentTurnIndex + (steps * this.playDirection);
     while (rawIndex < 0) rawIndex += this.players.length;
     this.currentTurnIndex = rawIndex % this.players.length;
+    if (this.players[this.currentTurnIndex]) {
+      this.players[this.currentTurnIndex].hasDrawnThisTurn = false;
+    }
   }
 
   public broadcastMessage(msg: string) { this.broadcastCallback("game_message", { message: msg }); }
@@ -179,6 +186,7 @@ export class UnoEngine {
           playDirection: this.playDirection, currentColor: this.currentColor,
           pendingDraws: this.pendingDraws, topCard: this.deckManager.getTopDiscard(),
           actionRequiredFrom: this.actionRequiredFrom, winner: this.winner, myHand: p.hand,
+          hasDrawnThisTurn: !!p.hasDrawnThisTurn,
           rivals: this.players.filter(r => r.userId !== p.userId).map(r => ({
             userId: r.userId, nickname: r.nickname, avatarId: r.avatarId, color: r.color,
             cardCount: r.hand.length, hasYelledUno: r.hasYelledUno, isOffline: r.isOffline

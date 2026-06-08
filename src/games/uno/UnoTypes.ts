@@ -15,6 +15,7 @@ export interface Player {
   color: string;
   hand: Card[];
   hasYelledUno: boolean;
+  hasDrawnThisTurn?: boolean;
   isOffline?: boolean;
 }
 

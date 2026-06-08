@@ -3,6 +3,7 @@ import { logger } from './Logger.js';
 import type { UnoEngine } from '../games/uno/UnoEngine.js';
 import type { ImpostorEngine } from '../games/impostor/ImpostorEngine.js';
 import { z } from 'zod';
+import { RoomGarbageCollector } from './RoomGarbageCollector.js';
 
 const JoinRoomSchema = z.object({
   roomId: z.string().min(1).max(50),
@@ -41,10 +42,12 @@ export interface RoomData {
 export class RoomManager {
   private rooms = new Map<string, RoomData>();
   private io: Server;
+  private gc: RoomGarbageCollector;
 
   constructor(io: Server) {
     this.io = io;
-    this.startGarbageCollector();
+    this.gc = new RoomGarbageCollector(this.rooms, this.io);
+    this.gc.start();
   }
 
   public createRoom(hostUserId: string): string {
@@ -281,20 +284,5 @@ export class RoomManager {
         }
       }
     }, 30000);
-  }
-
-  private startGarbageCollector() {
-    setInterval(() => {
-      const now = Date.now();
-      for (const [roomId, room] of this.rooms.entries()) {
-        const isStale = (now - room.lastActive) > 1000 * 60 * 60; // 1 hour completely stale
-        const isEmpty = room.users.length === 0;
-
-        if (isEmpty || isStale) {
-          this.rooms.delete(roomId);
-          logger.info(`🧹 Garbage Collector removed room ${roomId}`);
-        }
-      }
-    }, 1000 * 60 * 5); // Run every 5 minutes
   }
 }

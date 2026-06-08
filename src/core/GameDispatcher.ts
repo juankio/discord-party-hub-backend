@@ -1,5 +1,4 @@
 import type { Socket } from "socket.io";
-import { Server } from "socket.io";
 import { z } from "zod";
 import { logger } from "./Logger.js";
 import type { RoomManager } from "./RoomManager.js";
@@ -7,13 +6,9 @@ import { UnoEngine } from "../games/uno/UnoEngine.js";
 import type { UnoRules } from "../games/uno/UnoTypes.js";
 import { ImpostorEngine } from "../games/impostor/ImpostorEngine.js";
 import { User } from "../models/User.js";
+import { registerUnoRoutes } from "../games/uno/UnoSocketRouter.js";
 
 // -- Esquemas de validación ZOD --
-const UnoPlayCardsSchema = z.array(z.string().max(50)).min(1).max(20);
-const StringIdSchema = z.string().max(50);
-const ColorSchema = z.enum(["red", "blue", "green", "yellow", "wild"]);
-const HoverSchema = z.number().min(0).max(108).nullable();
-
 const StartGameSchema = z.object({
   gameType: z.enum(["uno", "parchis", "stop", "pinturillo", "liars", "impostor"]).default("uno"),
   rules: z.object({
@@ -38,6 +33,8 @@ function validateSocketContext(socket: Socket): boolean {
 export function handleUnoEvents(socket: Socket, roomManager: RoomManager) {
   const io = (roomManager as any).io; // Accessing internal io instance
   const rooms = roomManager.getRoomsMap();
+
+  registerUnoRoutes(socket, roomManager, validateSocketContext);
 
   const wrapHandler = (handler: () => void) => {
     try {

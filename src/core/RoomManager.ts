@@ -1,6 +1,7 @@
 import type { Server, Socket } from 'socket.io';
 import { logger } from './Logger.js';
 import type { UnoEngine } from '../games/uno/UnoEngine.js';
+import type { ImpostorEngine } from '../games/impostor/ImpostorEngine.js';
 import { z } from 'zod';
 
 const JoinRoomSchema = z.object({
@@ -30,7 +31,7 @@ export interface RoomData {
     isOffline?: boolean;
   }>;
   hostUserId: string;
-  gameEngine?: UnoEngine;
+  gameEngine?: UnoEngine | ImpostorEngine;
   gameType?: string;
   roomRules?: Record<string, boolean>;
   lastWinnerUserId?: string;
@@ -161,8 +162,9 @@ export class RoomManager {
 
     if (room.gameEngine && room.gameType === 'uno') {
       room.gameEngine.setPlayerOffline(userId, false);
-      room.gameEngine.addPlayer(userId, socket.id, nickname, avatarId, color);
+      (room.gameEngine as UnoEngine).addPlayer(userId, socket.id, nickname, avatarId, color);
       this.io.to(socket.id).emit("game_started", { gameType: 'uno' });
+      room.gameEngine.broadcastState();
     } else {
       this.io.to(socket.id).emit("return_to_lobby");
     }
@@ -247,6 +249,8 @@ export class RoomManager {
       if (currentUser) {
         currentUser.isOffline = true;
         if (room.gameEngine && room.gameType === 'uno') {
+          room.gameEngine.setPlayerOffline(userId, true);
+        } else if (room.gameEngine && room.gameType === 'impostor') {
           room.gameEngine.setPlayerOffline(userId, true);
         }
         this.recomputeNicknames(room, roomId);

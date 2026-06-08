@@ -5,6 +5,7 @@ import { logger } from "./Logger.js";
 import type { RoomManager } from "./RoomManager.js";
 import { UnoEngine } from "../games/uno/UnoEngine.js";
 import type { UnoRules } from "../games/uno/UnoTypes.js";
+import { ImpostorEngine } from "../games/impostor/ImpostorEngine.js";
 import { User } from "../models/User.js";
 
 // -- Esquemas de validación ZOD --
@@ -14,7 +15,7 @@ const ColorSchema = z.enum(["red", "blue", "green", "yellow", "wild"]);
 const HoverSchema = z.number().min(0).max(108).nullable();
 
 const StartGameSchema = z.object({
-  gameType: z.enum(["uno", "parchis", "stop", "pinturillo", "liars"]).default("uno"),
+  gameType: z.enum(["uno", "parchis", "stop", "pinturillo", "liars", "impostor"]).default("uno"),
   rules: z.object({
     stackDrawCards: z.boolean().default(false),
     drawUntilPlayable: z.boolean().default(false),
@@ -52,12 +53,12 @@ export function handleUnoEvents(socket: Socket, roomManager: RoomManager) {
     if (!result.success) return logger.warn(`[ZOD] Invalid play_cards from ${socket.data.userId}`);
     
     const room = rooms.get(socket.data.roomId);
-    if (room?.gameEngine) room.gameEngine.playCards(socket.data.userId, result.data);
+    if (room?.gameEngine && room.gameType === 'uno') (room.gameEngine as UnoEngine).playCards(socket.data.userId, result.data);
   }));
 
   socket.on("uno:draw_card", () => wrapHandler(() => {
     const room = rooms.get(socket.data.roomId);
-    if (room?.gameEngine) room.gameEngine.drawFromDeck(socket.data.userId);
+    if (room?.gameEngine && room.gameType === 'uno') (room.gameEngine as UnoEngine).drawFromDeck(socket.data.userId);
   }));
 
   socket.on("uno:declare_color", (payload: any) => wrapHandler(() => {
@@ -65,7 +66,7 @@ export function handleUnoEvents(socket: Socket, roomManager: RoomManager) {
     if (!result.success) return logger.warn(`[ZOD] Invalid declare_color`);
     
     const room = rooms.get(socket.data.roomId);
-    if (room?.gameEngine) room.gameEngine.declareColor(socket.data.userId, result.data as any);
+    if (room?.gameEngine && room.gameType === 'uno') (room.gameEngine as UnoEngine).declareColor(socket.data.userId, result.data as any);
   }));
 
   socket.on("uno:swap_hands", (payload: any) => wrapHandler(() => {
@@ -73,12 +74,12 @@ export function handleUnoEvents(socket: Socket, roomManager: RoomManager) {
     if (!result.success) return logger.warn(`[ZOD] Invalid target ID`);
 
     const room = rooms.get(socket.data.roomId);
-    if (room?.gameEngine) room.gameEngine.swapHands(socket.data.userId, result.data);
+    if (room?.gameEngine && room.gameType === 'uno') (room.gameEngine as UnoEngine).swapHands(socket.data.userId, result.data);
   }));
 
   socket.on("uno:yell_uno", () => wrapHandler(() => {
     const room = rooms.get(socket.data.roomId);
-    if (room?.gameEngine) room.gameEngine.yellUno(socket.data.userId);
+    if (room?.gameEngine && room.gameType === 'uno') (room.gameEngine as UnoEngine).yellUno(socket.data.userId);
   }));
 
   socket.on("uno:challenge_uno", (payload: any) => wrapHandler(() => {
@@ -86,7 +87,7 @@ export function handleUnoEvents(socket: Socket, roomManager: RoomManager) {
     if (!result.success) return logger.warn(`[ZOD] Invalid challenge target`);
 
     const room = rooms.get(socket.data.roomId);
-    if (room?.gameEngine) room.gameEngine.challengeUno(socket.data.userId, result.data);
+    if (room?.gameEngine && room.gameType === 'uno') (room.gameEngine as UnoEngine).challengeUno(socket.data.userId, result.data);
   }));
 
   socket.on("uno:hover_card", (payload: any) => wrapHandler(() => {
@@ -101,7 +102,7 @@ export function handleUnoEvents(socket: Socket, roomManager: RoomManager) {
 
   socket.on("uno:surrender", () => wrapHandler(() => {
     const room = rooms.get(socket.data.roomId);
-    if (room?.gameEngine) room.gameEngine.surrender(socket.data.userId);
+    if (room?.gameEngine && room.gameType === 'uno') (room.gameEngine as UnoEngine).surrender(socket.data.userId);
   }));
 
   socket.on("return_to_lobby", () => wrapHandler(() => {
@@ -112,6 +113,42 @@ export function handleUnoEvents(socket: Socket, roomManager: RoomManager) {
       room.gameEngine = undefined;
       room.gameType = undefined;
       io.to(socket.data.roomId).emit("return_to_lobby");
+    }
+  }));
+}
+
+export function handleImpostorEvents(socket: Socket, roomManager: RoomManager) {
+  const io = (roomManager as any).io;
+  const rooms = roomManager.getRoomsMap();
+
+  const wrapHandler = (handler: () => void) => {
+    try {
+      if (!validateSocketContext(socket)) return;
+      handler();
+    } catch (e) {
+      logger.error(`[ERROR] Unhandled error in Impostor Engine for socket ${socket.id}: ${e}`);
+    }
+  };
+
+  socket.on("impostor:vote", (payload: any) => wrapHandler(() => {
+    const result = z.object({
+      targetId: z.string().min(1).max(50),
+    }).safeParse(payload);
+    if (!result.success) return logger.warn(`[ZOD] Invalid impostor:vote from ${socket.data.userId}`);
+
+    const room = rooms.get(socket.data.roomId);
+    if (room?.gameEngine && room.gameType === 'impostor') {
+      (room.gameEngine as ImpostorEngine).vote(socket.data.userId, result.data.targetId);
+    }
+  }));
+
+  socket.on("impostor:return_to_lobby", () => wrapHandler(() => {
+    const room = rooms.get(socket.data.roomId);
+    if (!room || room.gameType !== 'impostor') return;
+    if (room.hostUserId === socket.data.userId) {
+      (room.gameEngine as ImpostorEngine).returnToLobby();
+      room.gameEngine = undefined;
+      room.gameType = undefined;
     }
   }));
 }
@@ -153,7 +190,61 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       return; 
     }
 
-    if (data.gameType === 'uno') {
+    if (data.gameType === 'impostor') {
+      room.gameType = 'impostor';
+      room.gameEngine = new ImpostorEngine(roomId, async (event: string, eventPayload?: any) => {
+        try {
+          if (event === 'player_won') {
+            // eventPayload puede ser userId del ganador o null
+            if (eventPayload) {
+              const user = room.users.find((u: any) => u.userId === eventPayload);
+              if (user) {
+                user.totalWins += 1;
+                io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId });
+              }
+
+              try {
+                const registeredUserIds = room.users
+                  .filter((u: any) => /^[0-9a-fA-F]{24}$/.test(u.userId))
+                  .map((u: any) => u.userId);
+
+                if (registeredUserIds.length > 0) {
+                  await User.updateMany(
+                    { _id: { $in: registeredUserIds } },
+                    { $inc: { gamesPlayed: 1 }, $set: { lastPlayed: new Date() } }
+                  );
+                }
+
+                if (user && /^[0-9a-fA-F]{24}$/.test(user.userId)) {
+                  await User.findByIdAndUpdate(user.userId, {
+                    $inc: { 'stats.totalWins': 1 }
+                  });
+                }
+              } catch (dbErr) {
+                logger.error(`Error guardando victoria/stats en DB: ${dbErr}`);
+              }
+            }
+            return;
+          }
+          if (event === 'game_state_update') {
+            const targetSocketId = room.users.find((u: any) => u.userId === eventPayload.targetUserId)?.socketId;
+            if (targetSocketId) io.to(targetSocketId).emit(event, eventPayload.state);
+          } else {
+            io.to(roomId).emit(event, eventPayload);
+          }
+        } catch (e) {
+          logger.error(`Error emitiendo evento de juego: ${e}`);
+        }
+      });
+
+      room.users.forEach((u: any) => {
+        (room.gameEngine as ImpostorEngine).addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
+      });
+
+      io.to(roomId).emit("game_started", { gameType: 'impostor' });
+      (room.gameEngine as ImpostorEngine).startGame();
+      logger.info(`🕵️ Partida de IMPOSTOR iniciada en la sala ${roomId}`);
+    } else if (data.gameType === 'uno') {
       const rules = data.rules as UnoRules;
 
       room.gameType = 'uno';

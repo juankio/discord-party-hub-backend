@@ -1,0 +1,2250 @@
+[
+    {
+        "palabra": "Obelisco",
+        "categoría": "Construcción",
+        "pista": "Es un elemento de la categoría Construcción que se caracteriza por ser un monumento pétreo vertical de sección cuadrangular rematado en punta."
+    },
+    {
+        "palabra": "Reloj",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por registrar el avance de las unidades cronométricas mediante indicadores mecánicos o digitales."
+    },
+    {
+        "palabra": "Espejo",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por poseer una superficie tratada para devolver la radiación lumínica y mostrar duplicados visuales."
+    },
+    {
+        "palabra": "Paraguas",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por una estructura cóncava desplegable destinada a interceptar la precipitación pluvial."
+    },
+    {
+        "palabra": "Fuego",
+        "categoría": "Fenómeno",
+        "pista": "Es un elemento de la categoría Fenómeno que se caracteriza por la emisión de energía térmica y lumínica resultante de una reacción de oxidación acelerada."
+    },
+    {
+        "palabra": "Libro",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por la unión de múltiples folios que contienen información codificada de manera permanente."
+    },
+    {
+        "palabra": "Aguja",
+        "categoría": "Utensilio",
+        "pista": "Es un elemento de la categoría Utensilio que se caracteriza por ser un filamento rígido y punzante con una cavidad para el paso de fibras textiles."
+    },
+    {
+        "palabra": "Sombra",
+        "categoría": "Fenómeno físico",
+        "pista": "Es un elemento de la categoría Fenómeno físico que se caracteriza por ser la proyección de una silueta oscura sobre una superficie debido a la interposición de un cuerpo ante la luz."
+    },
+    {
+        "palabra": "Viento",
+        "categoría": "Naturaleza",
+        "pista": "Es un elemento de la categoría Naturaleza que se caracteriza por el desplazamiento de masas gaseosas en la atmósfera debido a diferencias de presión y temperatura."
+    },
+    {
+        "palabra": "Zapatos",
+        "categoría": "Prenda",
+        "pista": "Es un objeto de la categoría Prenda que se caracteriza por brindar protección y soporte a la base de las extremidades inferiores durante la locomoción."
+    },
+    {
+        "palabra": "Cuchillo",
+        "categoría": "Utensilio",
+        "pista": "Es un elemento de la categoría Utensilio que se caracteriza por una lámina con borde acerado diseñada para la separación de materiales mediante presión."
+    },
+    {
+        "palabra": "Semáforo",
+        "categoría": "Mobiliario urbano",
+        "pista": "Es un objeto de la categoría Mobiliario urbano que se caracteriza por emitir señales lumínicas cromáticas de cumplimiento obligatorio para la regulación del flujo vial."
+    },
+    {
+        "palabra": "Guitarra",
+        "categoría": "Instrumento musical",
+        "pista": "Es un objeto de la categoría Instrumento musical que se caracteriza por producir sonidos mediante la vibración de filamentos tensados sobre una caja de resonancia."
+    },
+    {
+        "palabra": "Cámara",
+        "categoría": "Tecnología",
+        "pista": "Es un objeto de la categoría Tecnología que se caracteriza por el registro y almacenamiento de estímulos visuales en un soporte físico o digital."
+    },
+    {
+        "palabra": "Escalera",
+        "categoría": "Arquitectura",
+        "pista": "Es un elemento de la categoría Arquitectura que se caracteriza por una serie de planos horizontales dispuestos a diferentes niveles para permitir el ascenso o descenso."
+    },
+    {
+        "palabra": "Imán",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por poseer un campo de atracción permanente sobre materiales ferrosos."
+    },
+    {
+        "palabra": "Hielo",
+        "categoría": "Estado de la materia",
+        "pista": "Es un elemento de la categoría Estado de la materia que se caracteriza por la cristalización de moléculas de agua tras la pérdida de energía térmica."
+    },
+    {
+        "palabra": "Avión",
+        "categoría": "Transporte",
+        "pista": "Es un elemento de la categoría Transporte que se caracteriza por el desplazamiento aéreo de largo alcance mediante sustentación aerodinámica y propulsión."
+    },
+    {
+        "palabra": "Araña",
+        "categoría": "Animal",
+        "pista": "Es un ser de la categoría Animal que se caracteriza por poseer ocho apéndices articulados y glándulas para la producción de filamentos proteicos."
+    },
+    {
+        "palabra": "Cerebro",
+        "categoría": "Anatomía",
+        "pista": "Es un elemento de la categoría Anatomía que se caracteriza por centralizar el procesamiento de estímulos y la coordinación de funciones biológicas complejas."
+    },
+    {
+        "palabra": "Eco",
+        "categoría": "Fenómeno sonoro",
+        "pista": "Es un elemento de la categoría Fenómeno sonoro que se caracteriza por la reflexión de ondas acústicas que regresan al emisor con un retardo temporal."
+    },
+    {
+        "palabra": "Brújula",
+        "categoría": "Herramienta",
+        "pista": "Es un objeto de la categoría Herramienta que se caracteriza por orientar una aguja pivotante hacia los polos magnéticos del globo terrestre."
+    },
+    {
+        "palabra": "Nube",
+        "categoría": "Naturaleza",
+        "pista": "Es un elemento de la categoría Naturaleza que se caracteriza por la acumulación atmosférica de partículas de agua o cristales en suspensión."
+    },
+    {
+        "palabra": "Gato",
+        "categoría": "Animal",
+        "pista": "Es un ser de la categoría Animal que se caracteriza por ser un mamífero carnívoro de gran flexibilidad, garras retráctiles y hábitos territoriales."
+    },
+    {
+        "palabra": "Anillo",
+        "categoría": "Joyería",
+        "pista": "Es un objeto de la categoría Joyería que se caracteriza por ser una pieza circular diseñada para rodear una sección de las extremidades superiores."
+    },
+    {
+        "palabra": "Café",
+        "categoría": "Bebida",
+        "pista": "Es un elemento de la categoría Bebida que se caracteriza por ser una infusión de semillas tostadas con efectos estimulantes en el sistema nervioso."
+    },
+    {
+        "palabra": "Teclado",
+        "categoría": "Tecnología",
+        "pista": "Es un objeto de la categoría Tecnología que se caracteriza por una interfaz física con múltiples pulsadores para la entrada de caracteres alfanuméricos."
+    },
+    {
+        "palabra": "Sangre",
+        "categoría": "Biología",
+        "pista": "Es un elemento de la categoría Biología que se caracteriza por ser un tejido conectivo líquido que transporta oxígeno y nutrientes por el sistema circulatorio."
+    },
+    {
+        "palabra": "Dinero",
+        "categoría": "Concepto económico",
+        "pista": "Es un elemento de la categoría Concepto económico que se caracteriza por servir como unidad de medida de valor y medio de intercambio legalmente aceptado."
+    },
+    {
+        "palabra": "Tijeras",
+        "categoría": "Utensilio",
+        "pista": "Es un objeto de la categoría Utensilio que se caracteriza por el movimiento pivotante de dos hojas metálicas que seccionan materiales por cizalladura."
+    },
+    {
+        "palabra": "Mapa",
+        "categoría": "Documento",
+        "pista": "Es un objeto de la categoría Documento que se caracteriza por la representación bidimensional de coordenadas geográficas y accidentes de un territorio."
+    },
+    {
+        "palabra": "Ventana",
+        "categoría": "Construcción",
+        "pista": "Es un elemento de la categoría Construcción que se caracteriza por ser un vano en un paramento vertical que permite la iluminación y ventilación natural."
+    },
+    {
+        "palabra": "Miedo",
+        "categoría": "Emoción",
+        "pista": "Es un elemento de la categoría Emoción que se caracteriza por una respuesta psicofisiológica de alerta ante la percepción de una amenaza o riesgo."
+    },
+    {
+        "palabra": "Volcán",
+        "categoría": "Geografía",
+        "pista": "Es un elemento de la categoría Geografía que se caracteriza por ser una estructura geológica que permite la salida de magma y gases desde el interior terrestre."
+    },
+    {
+        "palabra": "Tren",
+        "categoría": "Transporte",
+        "pista": "Es un elemento de la categoría Transporte que se caracteriza por el desplazamiento de una hilera de unidades acopladas sobre estructuras de guía férrea."
+    },
+    {
+        "palabra": "Huevo",
+        "categoría": "Alimento / Biología",
+        "pista": "Es un elemento de la categoría Alimento / Biología que se caracteriza por ser una estructura orgánica de cubierta calcárea que contiene nutrientes para un embrión."
+    },
+    {
+        "palabra": "Escoba",
+        "categoría": "Utensilio",
+        "pista": "Es un objeto de la categoría Utensilio que se caracteriza por un conjunto de fibras fijadas a un mástil para el desplazamiento de partículas de residuo del suelo."
+    },
+    {
+        "palabra": "Lágrima",
+        "categoría": "Biología",
+        "pista": "Es un elemento de la categoría Biología que se caracteriza por ser una secreción líquida de las glándulas oculares que cumple funciones de lubricación o expresión."
+    },
+    {
+        "palabra": "Ojo",
+        "categoría": "Anatomía",
+        "pista": "Es un elemento de la categoría Anatomía que se caracteriza por la captación de ondas electromagnéticas para su interpretación como información visual."
+    },
+    {
+        "palabra": "Cama",
+        "categoría": "Mueble",
+        "pista": "Es un objeto de la categoría Mueble que se caracteriza por poseer una superficie horizontal acolchada destinada a los periodos de reposo biológico."
+    },
+    {
+        "palabra": "Mentira",
+        "categoría": "Concepto social",
+        "pista": "Es un elemento de la categoría Concepto social que se caracteriza por ser una declaración o expresión que distorsiona deliberadamente la realidad factual."
+    },
+    {
+        "palabra": "Sal",
+        "categoría": "Alimento / Mineral",
+        "pista": "Es un elemento de la categoría Alimento / Mineral que se caracteriza por ser un compuesto cristalino de sodio y cloro utilizado para potenciar sabores."
+    },
+    {
+        "palabra": "Bicicleta",
+        "categoría": "Transporte",
+        "pista": "Es un elemento de la categoría Transporte que se caracteriza por la tracción humana aplicada a un sistema de engranajes y dos puntos de apoyo circulares."
+    },
+    {
+        "palabra": "Perfume",
+        "categoría": "Cosmético",
+        "pista": "Es un elemento de la categoría Cosmético que se caracteriza por la combinación de aceites esenciales y disolventes para emitir una emanación olfativa persistente."
+    },
+    {
+        "palabra": "Alfombra",
+        "categoría": "Decoración",
+        "pista": "Es un objeto de la categoría Decoración que se caracteriza por ser una cobertura textil de superficie extensa diseñada para revestir suelos."
+    },
+    {
+        "palabra": "Llave",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por poseer un perfil dentado específico capaz de accionar mecanismos de bloqueo o seguridad."
+    },
+    {
+        "palabra": "Puerta",
+        "categoría": "Arquitectura",
+        "pista": "Es un elemento de la categoría Arquitectura que se caracteriza por ser una barrera móvil que regula el acceso entre espacios divididos por muros."
+    },
+    {
+        "palabra": "Gota",
+        "categoría": "Naturaleza",
+        "pista": "Es un elemento de la categoría Naturaleza que se caracteriza por ser el volumen mínimo de un líquido que adquiere forma esferoidal por tensión superficial."
+    },
+    {
+        "palabra": "Campana",
+        "categoría": "Objeto sonoro",
+        "pista": "Es un objeto de la categoría Objeto sonoro que se caracteriza por ser una pieza metálica hueca que resuena al recibir el impacto de un badajo interno."
+    },
+    {
+        "palabra": "Corazón",
+        "categoría": "Anatomía",
+        "pista": "Es un elemento de la categoría Anatomía que se caracteriza por ser una bomba de tejido muscular que mantiene el flujo sanguíneo constante en el organismo."
+    },
+    {
+        "palabra": "Silla",
+        "categoría": "Mobiliario",
+        "pista": "Es un objeto de la categoría Mobiliario que se caracteriza por ofrecer una base estable con apoyo dorsal para la posición sedente de un individuo."
+    },
+    {
+        "palabra": "Mesa",
+        "categoría": "Mobiliario",
+        "pista": "Es un objeto de la categoría Mobiliario que se caracteriza por un tablero liso elevado mediante soportes para realizar tareas o sostener elementos."
+    },
+    {
+        "palabra": "Lámpara",
+        "categoría": "Dispositivo de iluminación",
+        "pista": "Es un objeto de la categoría Dispositivo de iluminación que se caracteriza por convertir la energía eléctrica en un flujo de fotones para aclarar un entorno."
+    },
+    {
+        "palabra": "Martillo",
+        "categoría": "Herramienta manual",
+        "pista": "Es un objeto de la categoría Herramienta manual que se caracteriza por emplear la fuerza de impacto de una cabeza de alta densidad para fijar elementos."
+    },
+    {
+        "palabra": "Teléfono",
+        "categoría": "Dispositivo de comunicación",
+        "pista": "Es un objeto de la categoría Dispositivo de comunicación que se caracteriza por transmitir señales acústicas a través de redes eléctricas o inalámbricas."
+    },
+    {
+        "palabra": "Mochila",
+        "categoría": "Accesorio de carga",
+        "pista": "Es un objeto de la categoría Accesorio de carga que se caracteriza por ser un contenedor textil con correas diseñado para ser portado sobre el torso posterior."
+    },
+    {
+        "palabra": "Cepillo",
+        "categoría": "Utensilio de higiene",
+        "pista": "Es un objeto de la categoría Utensilio de higiene que se caracteriza por tener múltiples cerdas ancladas a una base para frotar superficies o fibras."
+    },
+    {
+        "palabra": "Esponja",
+        "categoría": "Material absorbente",
+        "pista": "Es un objeto de la categoría Material absorbente que se caracteriza por una estructura porosa capaz de retener líquidos por capilaridad."
+    },
+    {
+        "palabra": "Botella",
+        "categoría": "Recipiente",
+        "pista": "Es un objeto de la categoría Recipiente que se caracteriza por ser un envase rígido de sección circular con un orificio de salida estrecho."
+    },
+    {
+        "palabra": "Jabón",
+        "categoría": "Agente de limpieza",
+        "pista": "Es un elemento de la categoría Agente de limpieza que se caracteriza por ser una sustancia soluble que reduce la tensión superficial para eliminar impurezas."
+    },
+    {
+        "palabra": "Gorra",
+        "categoría": "Accesorio de vestimenta",
+        "pista": "Es un objeto de la categoría Accesorio de vestimenta que se caracteriza por ajustarse a la parte superior de la cabeza y proyectar un protector frontal."
+    },
+    {
+        "palabra": "Televisión",
+        "categoría": "Dispositivo electrónico",
+        "pista": "Es un objeto de la categoría Dispositivo electrónico que se caracteriza por la recepción y despliegue de secuencias de imágenes en movimiento y señales de audio."
+    },
+    {
+        "palabra": "Computadora",
+        "categoría": "Sistemas informáticos",
+        "pista": "Es un objeto de la categoría Sistemas informáticos que se caracteriza por la ejecución programada de operaciones lógicas y procesamiento de datos masivos."
+    },
+    {
+        "palabra": "Sartén",
+        "categoría": "Menaje de cocina",
+        "pista": "Es un objeto de la categoría Menaje de cocina que se caracteriza por ser un recipiente metálico de poca profundidad con un mango lateral para la cocción."
+    },
+    {
+        "palabra": "Plato",
+        "categoría": "Vajilla",
+        "pista": "Es un objeto de la categoría Vajilla que se caracteriza por ser una pieza de geometría circular y baja profundidad donde se disponen raciones de comida."
+    },
+    {
+        "palabra": "Vaso",
+        "categoría": "Vajilla",
+        "pista": "Es un objeto de la categoría Vajilla que se caracteriza por ser un contenedor vertical de boca ancha destinado a la ingesta de sustancias líquidas."
+    },
+    {
+        "palabra": "Cuchara",
+        "categoría": "Cubierto",
+        "pista": "Es un objeto de la categoría Cubierto que se caracteriza por poseer un extremo cóncavo para recolectar y trasladar porciones de sustancias fluidas."
+    },
+    {
+        "palabra": "Tenedor",
+        "categoría": "Cubierto",
+        "pista": "Es un objeto de la categoría Cubierto que se caracteriza por un conjunto de puntas paralelas diseñadas para la sujeción y elevación de porciones sólidas."
+    },
+    {
+        "palabra": "Radio",
+        "categoría": "Dispositivo electrónico",
+        "pista": "Es un objeto de la categoría Dispositivo electrónico que se caracteriza por la decodificación de ondas electromagnéticas en señales de audio audibles."
+    },
+    {
+        "palabra": "Árbol",
+        "categoría": "Vegetal",
+        "pista": "Es un ser de la categoría Vegetal que se caracteriza por una estructura central leñosa perenne que se ramifica a una altura considerable del suelo."
+    },
+    {
+        "palabra": "Perro",
+        "categoría": "Animal",
+        "pista": "Es un ser de la categoría Animal que se caracteriza por ser un cuadrúpedo domesticado perteneciente a la familia de los cánidos."
+    },
+    {
+        "palabra": "Sol",
+        "categoría": "Cuerpo celeste",
+        "pista": "Es un elemento de la categoría Cuerpo celeste que se caracteriza por ser el centro gravitacional de un sistema y la principal fuente de radiación."
+    },
+    {
+        "palabra": "Luna",
+        "categoría": "Cuerpo celeste",
+        "pista": "Es un elemento de la categoría Cuerpo celeste que se caracteriza por orbitar un planeta y reflejar la iluminación estelar en periodos nocturnos."
+    },
+    {
+        "palabra": "Estrella",
+        "categoría": "Cuerpo celeste",
+        "pista": "Es un elemento de la categoría Cuerpo celeste que se caracteriza por ser un esferoide de plasma que genera energía mediante procesos de fusión nuclear."
+    },
+    {
+        "palabra": "Papel",
+        "categoría": "Material de oficina",
+        "pista": "Es un elemento de la categoría Material de oficina que se caracteriza por ser una lámina delgada obtenida a partir del procesamiento de fibras de celulosa."
+    },
+    {
+        "palabra": "Lápiz",
+        "categoría": "Útil de escritura",
+        "pista": "Es un objeto de la categoría Útil de escritura que se caracteriza por una barra protectora que rodea un núcleo de grafito capaz de dejar rastro en superficies."
+    },
+    {
+        "palabra": "Goma",
+        "categoría": "Útil de escritura",
+        "pista": "Es un objeto de la categoría Útil de escritura que se caracteriza por una composición elástica diseñada para remover trazos de grafito por fricción."
+    },
+    {
+        "palabra": "Bolígrafo",
+        "categoría": "Útil de escritura",
+        "pista": "Es un objeto de la categoría Útil de escritura que se caracteriza por un depósito de tinta interna que se transfiere mediante una esfera rotatoria en la punta."
+    },
+    {
+        "palabra": "Carpeta",
+        "categoría": "Material de oficina",
+        "pista": "Es un objeto de la categoría Material de oficina que se caracteriza por dos cubiertas articuladas destinadas a la protección y agrupación de folios."
+    },
+    {
+        "palabra": "Almohada",
+        "categoría": "Ropa de cama",
+        "pista": "Es un objeto de la categoría Ropa de cama que se caracteriza por ser un soporte blando diseñado para alinear la zona cervical durante el descanso."
+    },
+    {
+        "palabra": "Manta",
+        "categoría": "Ropa de cama",
+        "pista": "Es un objeto de la categoría Ropa de cama que se caracteriza por ser una pieza textil de gran gramaje utilizada para mantener la temperatura corporal."
+    },
+    {
+        "palabra": "Pez",
+        "categoría": "Animal",
+        "pista": "Es un ser de la categoría Animal que se caracteriza por ser un vertebrado acuático con extremidades en forma de láminas y respiración por branquias."
+    },
+    {
+        "palabra": "Pájaro",
+        "categoría": "Animal",
+        "pista": "Es un ser de la categoría Animal que se caracteriza por poseer extremidades modificadas para la sustentación aérea y un tegumento de plumas."
+    },
+    {
+        "palabra": "Coche",
+        "categoría": "Vehículo terrestre",
+        "pista": "Es un elemento de la categoría Vehículo terrestre que se caracteriza por ser una unidad autopropulsada de cuatro apoyos para el transporte de personas."
+    },
+    {
+        "palabra": "Camión",
+        "categoría": "Vehículo terrestre",
+        "pista": "Es un elemento de la categoría Vehículo terrestre que se caracteriza por una estructura reforzada diseñada para el traslado de grandes volúmenes de mercancía."
+    },
+    {
+        "palabra": "Barco",
+        "categoría": "Vehículo acuático",
+        "pista": "Es un elemento de la categoría Vehículo acuático que se caracteriza por poseer un casco estanco capaz de desplazarse sobre la superficie de fluidos."
+    },
+    {
+        "palabra": "Llanta",
+        "categoría": "Componente automotriz",
+        "pista": "Es un objeto de la categoría Componente automotriz que se caracteriza por ser una pieza circular de compuesto elástico que asegura el contacto con el suelo."
+    },
+    {
+        "palabra": "Ventilador",
+        "categoría": "Electrodoméstico",
+        "pista": "Es un objeto de la categoría Electrodoméstico que se caracteriza por el movimiento rotativo de palas para generar un flujo de aire forzado."
+    },
+    {
+        "palabra": "Microondas",
+        "categoría": "Electrodoméstico",
+        "pista": "Es un objeto de la categoría Electrodoméstico que se caracteriza por agitar las moléculas de agua de los materiales mediante radiación electromagnética de alta frecuencia."
+    },
+    {
+        "palabra": "Horno",
+        "categoría": "Electrodoméstico",
+        "pista": "Es un objeto de la categoría Electrodoméstico que se caracteriza por ser una cavidad aislada térmicamente donde se alcanzan altas temperaturas para procesar sustancias."
+    },
+    {
+        "palabra": "Nevera",
+        "categoría": "Electrodoméstico",
+        "pista": "Es un objeto de la categoría Electrodoméstico que se caracteriza por extraer calor de su interior para ralentizar la descomposición de materia orgánica."
+    },
+    {
+        "palabra": "Lavadora",
+        "categoría": "Electrodoméstico",
+        "pista": "Es un objeto de la categoría Electrodoméstico que se caracteriza por un tambor giratorio que combina agua y agentes químicos para desprender suciedad de fibras textiles."
+    },
+    {
+        "palabra": "Toalla",
+        "categoría": "Accesorio de baño",
+        "pista": "Es un objeto de la categoría Accesorio de baño que se caracteriza por ser un tejido de alta capacidad hidrofílica destinado a la eliminación de humedad superficial."
+    },
+    {
+        "palabra": "Calculadora",
+        "categoría": "Dispositivo electrónico",
+        "pista": "Es un objeto de la categoría Dispositivo electrónico que se caracteriza por el procesamiento inmediato de algoritmos aritméticos y funciones numéricas."
+    },
+    {
+        "palabra": "Reloj de pulsera",
+        "categoría": "Accesorio personal",
+        "pista": "Es un objeto de la categoría Accesorio personal que se caracteriza por ser un cronómetro portátil que se ajusta a la articulación del carpo."
+    },
+    {
+        "palabra": "Maleta",
+        "categoría": "Accesorio de viaje",
+        "pista": "Es un objeto de la categoría Accesorio de viaje que se caracteriza por ser un contenedor rígido o semirrígido con sistemas de transporte manual para efectos personales."
+    },
+    {
+        "palabra": "Gafas",
+        "categoría": "Accesorio óptico",
+        "pista": "Es un objeto de la categoría Accesorio óptico que se caracteriza por sostener dos elementos de refracción frente a los órganos visuales para corregir la percepción."
+    },
+    {
+        "palabra": "Sombrero",
+        "categoría": "Accesorio de vestimenta",
+        "pista": "Es un objeto de la categoría Accesorio de vestimenta que se caracteriza por una copa y un ala perimetral destinados a cubrir la parte superior de la cabeza."
+    },
+    {
+        "palabra": "Cinturón",
+        "categoría": "Accesorio de vestimenta",
+        "pista": "Es un objeto de la categoría Accesorio de vestimenta que se caracteriza por ser una banda flexible con un mecanismo de ajuste para asegurar prendas a la sección media."
+    },
+    {
+        "palabra": "Parque",
+        "categoría": "Infraestructura urbana",
+        "pista": "Es un elemento de la categoría Infraestructura urbana que se caracteriza por ser un recinto delimitado con presencia de vegetación destinado al esparcimiento público."
+    },
+    {
+        "palabra": "Martillo",
+        "categoría": "Herramienta",
+        "pista": "Es una cosa de la categoría Herramienta que se caracteriza por unir o destruir estructuras mediante la aplicación de una voluntad súbita y contundente."
+    },
+    {
+        "palabra": "Pan",
+        "categoría": "Alimento",
+        "pista": "Es una cosa de la categoría Alimento que se caracteriza por ser el fruto transformado de la tierra que sostiene la energía básica de las civilizaciones."
+    },
+    {
+        "palabra": "Botella",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por confinar fluidos en un vacío controlado para su transporte o preservación temporal."
+    },
+    {
+        "palabra": "Puente",
+        "categoría": "Construcción",
+        "pista": "Es una cosa de la categoría Construcción que se caracteriza por anular el abismo y permitir que dos mundos separados se vuelvan uno solo para el caminante."
+    },
+    {
+        "palabra": "Pantalón",
+        "categoría": "Prenda",
+        "pista": "Es un objeto de la categoría Prenda que se caracteriza por envolver la parte inferior del ser para proteger su pudor y facilitar su movimiento."
+    },
+    {
+        "palabra": "Televisión",
+        "categoría": "Tecnología",
+        "pista": "Es una cosa de la categoría Tecnología que se caracteriza por ser la ventana eléctrica que proyecta realidades ajenas en la intimidad del hogar."
+    },
+    {
+        "palabra": "Sofá",
+        "categoría": "Mueble",
+        "pista": "Es un objeto de la categoría Mueble que se caracteriza por acoger la fatiga colectiva permitiendo el reposo de varios cuerpos en un mismo espacio."
+    },
+    {
+        "palabra": "Perro",
+        "categoría": "Animal",
+        "pista": "Es un elemento de la categoría Animal que se caracteriza por entregar una lealtad milenaria a cambio de protección y un lugar junto al fuego."
+    },
+    {
+        "palabra": "Mano",
+        "categoría": "Anatomía",
+        "pista": "Es un elemento de la categoría Anatomía que se caracteriza por ser la herramienta biológica principal para moldear la materia y acariciar la existencia."
+    },
+    {
+        "palabra": "Oro",
+        "categoría": "Mineral",
+        "pista": "Es un elemento de la categoría Mineral que se caracteriza por encerrar el brillo del sol en una materia pesada que los hombres usan para medir su valor."
+    },
+    {
+        "palabra": "Maquillaje",
+        "categoría": "Cosmético",
+        "pista": "Es una cosa de la categoría Cosmético que se caracteriza por ser la máscara sutil que se aplica para reescribir la expresión natural ante los demás."
+    },
+    {
+        "palabra": "Cuadro",
+        "categoría": "Decoración",
+        "pista": "Es un objeto de la categoría Decoración que se caracteriza por detener el tiempo y la visión de un autor en una superficie destinada a la contemplación."
+    },
+    {
+        "palabra": "Violín",
+        "categoría": "Instrumento musical",
+        "pista": "Es una cosa de la categoría Instrumento musical que se caracteriza por ser una voz vibrante que canta con agudeza cuando se frota su tensión interna."
+    },
+    {
+        "palabra": "Barco",
+        "categoría": "Transporte",
+        "pista": "Es una cosa de la categoría Transporte que se caracteriza por desafiar la profundidad líquida para llevar cargas sobre el lomo de los océanos."
+    },
+    {
+        "palabra": "Radio",
+        "categoría": "Tecnología",
+        "pista": "Es una cosa de la categoría Tecnología que se caracteriza por capturar voces y melodías invisibles que viajan por el aire para romper el silencio."
+    },
+    {
+        "palabra": "Sombrero",
+        "categoría": "Prenda",
+        "pista": "Es un objeto de la categoría Prenda que se caracteriza por coronar la presencia humana ofreciendo distinción ante las inclemencias o la mirada ajena."
+    },
+    {
+        "palabra": "Mesa",
+        "categoría": "Mueble",
+        "pista": "Es un objeto de la categoría Mueble que se caracteriza por ser el plano de encuentro donde se comparten los frutos o se organizan las tareas del pensamiento."
+    },
+    {
+        "palabra": "Lámpara",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por ser la portadora de una pequeña estrella cautiva que vence a la oscuridad en rincones específicos."
+    },
+    {
+        "palabra": "Cuchara",
+        "categoría": "Utensilio",
+        "pista": "Es un objeto de la categoría Utensilio que se caracteriza por actuar como una extensión de la mano para rescatar porciones de mundos líquidos."
+    },
+    {
+        "palabra": "Tenedor",
+        "categoría": "Utensilio",
+        "pista": "Es un objeto de la categoría Utensilio que se caracteriza por ser el tridente doméstico que ancla la materia sólida para conducirla hacia el sustento."
+    },
+    {
+        "palabra": "Plato",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por servir como el escenario donde se presenta el sacrificio del alimento antes de ser consumido."
+    },
+    {
+        "palabra": "Vaso",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por contener la dosis exacta de frescura que el cuerpo reclama para apagar su fuego interno."
+    },
+    {
+        "palabra": "Leche",
+        "categoría": "Bebida",
+        "pista": "Es una cosa de la categoría Bebida que se caracteriza por ser el primer vínculo nutritivo y primordial que une a los que nacen con la vida misma."
+    },
+    {
+        "palabra": "Queso",
+        "categoría": "Alimento",
+        "pista": "Es una cosa de la categoría Alimento que se caracteriza por ser la memoria sólida y madurada de un líquido que ha decidido detener su flujo."
+    },
+    {
+        "palabra": "Montaña",
+        "categoría": "Geografía",
+        "pista": "Es un elemento de la categoría Geografía que se caracteriza por ser el gigante de roca que intenta tocar el cielo mientras observa el paso de los siglos."
+    },
+    {
+        "palabra": "Ciudad",
+        "categoría": "Arquitectura",
+        "pista": "Es una cosa de la categoría Arquitectura que se caracteriza por ser el laberinto de piedra donde las multitudes se agrupan para soñar y trabajar juntas."
+    },
+    {
+        "palabra": "Calle",
+        "categoría": "Mobiliario urbano",
+        "pista": "Es una cosa de la categoría Mobiliario urbano que se caracteriza por ser la arteria que guía el pulso del tránsito entre los muros de la civilización."
+    },
+    {
+        "palabra": "Farola",
+        "categoría": "Mobiliario urbano",
+        "pista": "Es un objeto de la categoría Mobiliario urbano que se caracteriza por ser el centinela nocturno que regala claridad a los pasos cuando el sol se retira."
+    },
+    {
+        "palabra": "Teléfono",
+        "categoría": "Tecnología",
+        "pista": "Es una cosa de la categoría Tecnología que se caracteriza por ser el puente invisible que permite que dos voces se toquen a pesar de la distancia física."
+    },
+    {
+        "palabra": "Computadora",
+        "categoría": "Tecnología",
+        "pista": "Es una cosa de la categoría Tecnología que se caracteriza por ser el cerebro artificial que procesa infinitos mundos de lógica y datos en un instante."
+    },
+    {
+        "palabra": "Piano",
+        "categoría": "Instrumento musical",
+        "pista": "Es una cosa de la categoría Instrumento musical que se caracteriza por ser la orquesta encerrada que libera cascadas de armonía al ser despertada por el tacto."
+    },
+    {
+        "palabra": "Tambor",
+        "categoría": "Instrumento musical",
+        "pista": "Es una cosa de la categoría Instrumento musical que se caracteriza por ser el eco del pulso vital que marca el ritmo de la danza y la guerra."
+    },
+    {
+        "palabra": "Collar",
+        "categoría": "Joyería",
+        "pista": "Es un objeto de la categoría Joyería que se caracteriza por ser el círculo de distinción que adorna el tránsito entre el pensamiento y el pecho."
+    },
+    {
+        "palabra": "Pendientes",
+        "categoría": "Joyería",
+        "pista": "Es un objeto de la categoría Joyería que se caracteriza por ser los destellos gemelos que decoran el rostro para subrayar la belleza del portador."
+    },
+    {
+        "palabra": "Crema",
+        "categoría": "Cosmético",
+        "pista": "Es una cosa de la categoría Cosmético que se caracteriza por ser la caricia untuosa que busca preservar la juventud y suavidad de la envoltura humana."
+    },
+    {
+        "palabra": "Cortina",
+        "categoría": "Decoración",
+        "pista": "Es un objeto de la categoría Decoración que se caracteriza por ser el velo que decide cuándo el mundo exterior puede asomarse a la intimidad."
+    },
+    {
+        "palabra": "Almohada",
+        "categoría": "Mueble",
+        "pista": "Es un objeto de la categoría Mueble que se caracteriza por ser la nube doméstica que recibe los sueños y el cansancio al final de la jornada."
+    },
+    {
+        "palabra": "Silla",
+        "categoría": "Mueble",
+        "pista": "Es un objeto de la categoría Mueble que se caracteriza por ser el apoyo individual que eleva al ser humano sobre el suelo para su descanso o trabajo."
+    },
+    {
+        "palabra": "Calcetín",
+        "categoría": "Prenda",
+        "pista": "Es un objeto de la categoría Prenda que se caracteriza por ser el refugio suave que abraza el contacto inicial del cuerpo con el camino."
+    },
+    {
+        "palabra": "Camisa",
+        "categoría": "Prenda",
+        "pista": "Es un objeto de la categoría Prenda que se caracteriza por ser la segunda piel que viste el torso y se ajusta para presentarse ante la sociedad."
+    },
+    {
+        "palabra": "Abrigo",
+        "categoría": "Prenda",
+        "pista": "Es un objeto de la categoría Prenda que se caracteriza por ser el escudo envolvente que protege el calor interno contra los vientos gélidos del exterior."
+    },
+    {
+        "palabra": "Carretilla",
+        "categoría": "Herramienta",
+        "pista": "Es un objeto de la categoría Herramienta que se caracteriza por permitir que un solo hombre traslade el peso de muchos mediante el equilibrio y la palanca."
+    },
+    {
+        "palabra": "Destornillador",
+        "categoría": "Herramienta",
+        "pista": "Es un objeto de la categoría Herramienta que se caracteriza por ser el mediador que gira para asegurar o liberar la unión de las partes que forman un todo."
+    },
+    {
+        "palabra": "Escalinata",
+        "categoría": "Arquitectura",
+        "pista": "Es una cosa de la categoría Arquitectura que se caracteriza por ser el ascenso ceremonial que dignifica el tránsito hacia los niveles superiores del entorno."
+    },
+    {
+        "palabra": "Túnel",
+        "categoría": "Construcción",
+        "pista": "Es una cosa de la categoría Construcción que se caracteriza por perforar la resistencia de la tierra para abrir un camino donde antes solo había oscuridad."
+    },
+    {
+        "palabra": "Estadio",
+        "categoría": "Construcción",
+        "pista": "Es una cosa de la categoría Construcción que se caracteriza por ser el anfiteatro moderno donde las pasiones de las multitudes se concentran en un solo espectáculo."
+    },
+    {
+        "palabra": "Bosque",
+        "categoría": "Naturaleza",
+        "pista": "Es un elemento de la categoría Naturaleza que se caracteriza por ser el pulmón vivo donde el silencio se llena del susurro de miles de seres que respiran juntos."
+    },
+    {
+        "palabra": "Estrella",
+        "categoría": "Fenómeno",
+        "pista": "Es un elemento de la categoría Fenómeno que se caracteriza por ser el faro ancestral de luz propia que guía a los navegantes desde la inmensidad del cosmos."
+    },
+    {
+        "palabra": "Lápiz",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por desgastar su propio ser para dejar un rastro de ideas sobre la blancura."
+    },
+    {
+        "palabra": "Esponja",
+        "categoría": "Objeto",
+        "pista": "Es un objeto de la categoría Objeto que se caracteriza por tener la capacidad de absorber mundos líquidos en su interior y entregarlos ante la presión."
+    },
+    {
+        "palabra": "Silla",
+        "categoría": "Mueble",
+        "pista": "Es un objeto de la categoría Mueble que se caracteriza por facilitar el descanso en espacios cerrados"
+    },
+    {
+        "palabra": "Martillo",
+        "categoría": "Herramienta",
+        "pista": "Es un objeto de la categoría Herramienta que se caracteriza por aplicar fuerza para transformar estructuras"
+    },
+    {
+        "palabra": "Lápiz",
+        "categoría": "Escritura",
+        "pista": "Es un objeto de la categoría Escritura que se caracteriza por permitir el registro de ideas sobre superficies"
+    },
+    {
+        "palabra": "Sombrero",
+        "categoría": "Prenda",
+        "pista": "Es un objeto de la categoría Prenda que se caracteriza por brindar protección a la parte superior de la anatomía"
+    },
+    {
+        "palabra": "Jabón",
+        "categoría": "Higiene",
+        "pista": "Es un objeto de la categoría Higiene que se caracteriza por facilitar la eliminación de impurezas superficiales"
+    },
+    {
+        "palabra": "Teléfono",
+        "categoría": "Tecnología",
+        "pista": "Es un objeto de la categoría Tecnología que se caracteriza por acortar la distancia verbal entre individuos"
+    },
+    {
+        "palabra": "Medicamento",
+        "categoría": "Salud",
+        "pista": "Es un elemento de la categoría Salud que se caracteriza por restaurar el funcionamiento biológico habitual"
+    },
+    {
+        "palabra": "Cuchara",
+        "categoría": "Utensilio",
+        "pista": "Es un objeto de la categoría Utensilio que se caracteriza por facilitar el traslado de sustancias hacia el consumidor"
+    },
+    {
+        "palabra": "Árbol",
+        "categoría": "Elemento Natural",
+        "pista": "Es un elemento de la categoría Elemento Natural que se caracteriza por regular el entorno atmosférico circundante"
+    },
+    {
+        "palabra": "Puente",
+        "categoría": "Construcción",
+        "pista": "Es un objeto de la categoría Construcción que se caracteriza por permitir la continuidad del tránsito sobre obstáculos"
+    },
+    {
+        "palabra": "Almohada",
+        "categoría": "Hogar",
+        "pista": "Es un objeto de la categoría Hogar que se caracteriza por ofrecer soporte durante los periodos de inactividad"
+    },
+    {
+        "palabra": "Calcetín",
+        "categoría": "Prenda",
+        "pista": "Es un objeto de la categoría Prenda que se caracteriza por recubrir las extremidades inferiores para mayor confort"
+    },
+    {
+        "palabra": "Pelota",
+        "categoría": "Deporte",
+        "pista": "Es un objeto de la categoría Deporte que se caracteriza por ser el centro de interacción en actividades recreativas"
+    },
+    {
+        "palabra": "Vela",
+        "categoría": "Iluminación",
+        "pista": "Es un objeto de la categoría Iluminación que se caracteriza por generar claridad en ausencia de fuentes mayores"
+    },
+    {
+        "palabra": "Toalla",
+        "categoría": "Hogar",
+        "pista": "Es un objeto de la categoría Hogar que se caracteriza por absorber la humedad residual tras el aseo"
+    },
+    {
+        "palabra": "Calendario",
+        "categoría": "Documento",
+        "pista": "Es un objeto de la categoría Documento que se caracteriza por organizar la percepción del paso de los ciclos"
+    },
+    {
+        "palabra": "Gafas",
+        "categoría": "Accesorio",
+        "pista": "Es un objeto de la categoría Accesorio que se caracteriza por mejorar la percepción de los estímulos visuales"
+    },
+    {
+        "palabra": "Maleta",
+        "categoría": "Equipaje",
+        "pista": "Es un objeto de la categoría Equipaje que se caracteriza por contener pertenencias durante desplazamientos geográficos"
+    },
+    {
+        "palabra": "Horno",
+        "categoría": "Electrodoméstico",
+        "pista": "Es un objeto de la categoría Electrodoméstico que se caracteriza por transformar la materia mediante calor controlado"
+    },
+    {
+        "palabra": "Botella",
+        "categoría": "Contenedor",
+        "pista": "Es un objeto de la categoría Contenedor que se caracteriza por almacenar líquidos para su conservación"
+    },
+    {
+        "palabra": "Periódico",
+        "categoría": "Medio de Comunicación",
+        "pista": "Es un objeto de la categoría Medio de Comunicación que se caracteriza por difundir sucesos relevantes de la realidad"
+    },
+    {
+        "palabra": "Linterna",
+        "categoría": "Herramienta",
+        "pista": "Es un objeto de la categoría Herramienta que se caracteriza por proyectar un haz focalizado para orientar en la penumbra"
+    },
+    {
+        "palabra": "Guante",
+        "categoría": "Prenda",
+        "pista": "Es un objeto de la categoría Prenda que se caracteriza por proteger las extremidades superiores de agentes externos"
+    },
+    {
+        "palabra": "Mesa",
+        "categoría": "Mueble",
+        "pista": "Es un objeto de la categoría Mueble que se caracteriza por soportar otros elementos a una altura funcional"
+    },
+    {
+        "palabra": "Esponja",
+        "categoría": "Higiene",
+        "pista": "Es un objeto de la categoría Higiene que se caracteriza por retener sustancias para la limpieza de superficies"
+    },
+    {
+        "palabra": "Televisión",
+        "categoría": "Tecnología",
+        "pista": "Es un objeto de la categoría Tecnología que se caracteriza por proyectar imágenes para el consumo informativo"
+    },
+    {
+        "palabra": "Lámpara",
+        "categoría": "Mueble",
+        "pista": "Es un objeto de la categoría Mueble que se caracteriza por proveer iluminación artificial en ambientes interiores"
+    },
+    {
+        "palabra": "Camión",
+        "categoría": "Transporte",
+        "pista": "Es un objeto de la categoría Transporte que se caracteriza por trasladar grandes volúmenes de carga terrestre"
+    },
+    {
+        "palabra": "Lluvia",
+        "categoría": "Elemento Natural",
+        "pista": "Es un elemento de la categoría Elemento Natural que se caracteriza por precipitar humedad necesaria para el ciclo vital"
+    },
+    {
+        "palabra": "Pan",
+        "categoría": "Alimento",
+        "pista": "Es un elemento de la categoría Alimento que se caracteriza por servir como base nutricional en diversas culturas"
+    },
+    {
+        "palabra": "Peine",
+        "categoría": "Cuidado Personal",
+        "pista": "Es un objeto de la categoría Cuidado Personal que se caracteriza por ordenar las fibras naturales del cuerpo"
+    },
+    {
+        "palabra": "Plancha",
+        "categoría": "Electrodoméstico",
+        "pista": "Es un objeto de la categoría Electrodoméstico que se caracteriza por eliminar irregularidades en superficies de uso cotidiano"
+    },
+    {
+        "palabra": "Tornillo",
+        "categoría": "Herramienta",
+        "pista": "Es un objeto de la categoría Herramienta que se caracteriza por la aplicación de movimiento circular para asegurar la cohesión"
+    },
+    {
+        "palabra": "Papel",
+        "categoría": "Material",
+        "pista": "Es un objeto de la categoría Material que se caracteriza por servir como soporte para el registro gráfico"
+    },
+    {
+        "palabra": "Ancla",
+        "categoría": "Náutica",
+        "pista": "Es un objeto de la categoría Náutica que se caracteriza por mantener la posición fija de una estructura en entornos de alta inestabilidad geográfica"
+    },
+    {
+        "palabra": "Botón",
+        "categoría": "Accesorio",
+        "pista": "Es un objeto de la categoría Accesorio que se caracteriza por unir dos partes de una misma pieza por presión"
+    },
+    {
+        "palabra": "Pizarra",
+        "categoría": "Mueble",
+        "pista": "Es un objeto de la categoría Mueble que se caracteriza por permitir la exposición visual de conocimientos"
+    },
+    {
+        "palabra": "Raqueta",
+        "categoría": "Deporte",
+        "pista": "Es un objeto de la categoría Deporte que se caracteriza por ser utilizada para dirigir un proyectil deportivo"
+    },
+    {
+        "palabra": "Relámpago",
+        "categoría": "Fenómeno Natural",
+        "pista": "Es un elemento de la categoría Fenómeno Natural que se caracteriza por manifestar una descarga eléctrica súbita"
+    },
+    {
+        "palabra": "Aspiradora",
+        "categoría": "Electrodoméstico",
+        "pista": "Es un objeto de la categoría Electrodoméstico que se caracteriza por succionar partículas no deseadas del suelo"
+    },
+    {
+        "palabra": "Chaleco",
+        "categoría": "Prenda",
+        "pista": "Es un objeto de la categoría Prenda que se caracteriza por recubrir el torso sin limitar el movimiento"
+    },
+    {
+        "palabra": "Destornillador",
+        "categoría": "Herramienta",
+        "pista": "Es un objeto de la categoría Herramienta que se caracteriza por aplicar torque a piezas de sujeción"
+    },
+    {
+        "palabra": "Grifo",
+        "categoría": "Hogar",
+        "pista": "Es un objeto de la categoría Hogar que se caracteriza por regular la salida de fluidos en instalaciones"
+    },
+    {
+        "palabra": "Champú",
+        "categoría": "Higiene",
+        "pista": "Es un elemento de la categoría Higiene que se caracteriza por limpiar áreas específicas de la anatomía superior"
+    },
+    {
+        "palabra": "Estantería",
+        "categoría": "Mueble",
+        "pista": "Es un objeto de la categoría Mueble que se caracteriza por organizar elementos en planos horizontales"
+    },
+    {
+        "palabra": "Cronómetro",
+        "categoría": "Herramienta",
+        "pista": "Es un objeto de la categoría Herramienta que se caracteriza por medir intervalos de duración con precisión"
+    },
+    {
+        "palabra": "Tenedor",
+        "categoría": "Utensilio",
+        "pista": "Es un objeto de la categoría Utensilio que se caracteriza por facilitar la captura de alimentos sólidos"
+    },
+    {
+        "palabra": "Radio",
+        "categoría": "Tecnología",
+        "pista": "Es un objeto de la categoría Tecnología que se caracteriza por emitir señales audibles captadas a distancia"
+    },
+    {
+        "palabra": "Ascensor",
+        "categoría": "Construcción",
+        "pista": "Es un objeto de la categoría Construcción que se caracteriza por facilitar el desplazamiento vertical en estructuras de múltiples niveles"
+    },
+    {
+        "palabra": "Cinturón",
+        "categoría": "Accesorio",
+        "pista": "Es un objeto de la categoría Accesorio que se caracteriza por asegurar la sujeción de la vestimenta al cuerpo"
+    }, {
+    "palabra": "Telescopio",
+    "categoría": "Astronomía",
+    "pista": "Es un objeto de la categoría Astronomía que se caracteriza por facilitar la observación detallada de cuerpos celestes remotos."
+  },
+  {
+    "palabra": "Anestesia",
+    "categoría": "Medicina",
+    "pista": "Es un elemento de la categoría Medicina que se caracteriza por inducir un estado de insensibilidad temporal frente a intervenciones físicas."
+  },
+  {
+    "palabra": "Semilla",
+    "categoría": "Botánica",
+    "pista": "Es un elemento de la categoría Botánica que se caracteriza por contener el potencial biológico necesario para originar una nueva existencia vegetal."
+  },
+  {
+    "palabra": "Ancla",
+    "categoría": "Navegación",
+    "pista": "Es un objeto de la categoría Navegación que se caracteriza por fijar la posición de una estructura flotante al lecho sumergido."
+  },
+  {
+    "palabra": "Estufa",
+    "categoría": "Hogar",
+    "pista": "Es un objeto de la categoría Hogar que se caracteriza por la emisión controlada de energía térmica para aclimatar espacios cerrados."
+  },
+  {
+    "palabra": "Jabón",
+    "categoría": "Higiene",
+    "pista": "Es un objeto de la categoría Higiene que se caracteriza por su capacidad química para facilitar la remoción de impurezas en superficies orgánicas."
+  },
+  {
+    "palabra": "Vela",
+    "categoría": "Iluminación",
+    "pista": "Es un objeto de la categoría Iluminación que se caracteriza por la combustión lenta de una sustancia sólida para generar una fuente lumínica puntual."
+  },
+  {
+    "palabra": "Batería",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por el almacenamiento y suministro de energía eléctrica de forma portátil."
+  },
+  {
+    "palabra": "Calendario",
+    "categoría": "Tiempo",
+    "pista": "Es un objeto de la categoría Tiempo que se caracteriza por la segmentación y organización sistemática del transcurso de los días."
+  },
+  {
+    "palabra": "Radio",
+    "categoría": "Comunicación",
+    "pista": "Es un objeto de la categoría Comunicación que se caracteriza por la captura y reproducción de señales electromagnéticas transformadas en audio."
+  },
+  {
+    "palabra": "Peine",
+    "categoría": "Cuidado personal",
+    "pista": "Es un objeto de la categoría Cuidado personal que se caracteriza por la organización y desenredo de fibras capilares mediante el deslizamiento."
+  },
+  {
+    "palabra": "Almohada",
+    "categoría": "Hogar",
+    "pista": "Es un objeto de la categoría Hogar que se caracteriza por brindar soporte ergonómico a la parte superior del cuerpo durante el reposo."
+  },
+  {
+    "palabra": "Destornillador",
+    "categoría": "Herramienta",
+    "pista": "Es un objeto de la categoría Herramienta que se caracteriza por aplicar fuerza de torsión sobre elementos de fijación roscados."
+  },
+  {
+    "palabra": "Cepillo",
+    "categoría": "Limpieza",
+    "pista": "Es un objeto de la categoría Limpieza que se caracteriza por la aplicación de fricción mecánica para desprender partículas de una superficie."
+  },
+  {
+    "palabra": "Piano",
+    "categoría": "Instrumento musical",
+    "pista": "Es un objeto de la categoría Instrumento musical que se caracteriza por la percusión de mecanismos internos que producen una amplia escala de notas."
+  },
+  {
+    "palabra": "Micrófono",
+    "categoría": "Sonido",
+    "pista": "Es un objeto de la categoría Sonido que se caracteriza por la conversión de ondas acústicas en señales eléctricas para su amplificación."
+  },
+  {
+    "palabra": "Ascensor",
+    "categoría": "Arquitectura",
+    "pista": "Es un objeto de la categoría Arquitectura que se caracteriza por el desplazamiento vertical motorizado de personas entre diferentes niveles."
+  },
+  {
+    "palabra": "Farola",
+    "categoría": "Iluminación urbana",
+    "pista": "Es un objeto de la categoría Iluminación urbana que se caracteriza por proporcionar visibilidad en las vías públicas durante los periodos de oscuridad."
+  },
+  {
+    "palabra": "Calculadora",
+    "categoría": "Herramienta",
+    "pista": "Es un objeto de la categoría Herramienta que se caracteriza por el procesamiento electrónico de operaciones aritméticas complejas."
+  },
+  {
+    "palabra": "Periódico",
+    "categoría": "Comunicación",
+    "pista": "Es un objeto de la categoría Comunicación que se caracteriza por la difusión impresa y periódica de sucesos de relevancia social."
+  },
+  {
+    "palabra": "Aspiradora",
+    "categoría": "Electrodoméstico",
+    "pista": "Es un objeto de la categoría Electrodoméstico que se caracteriza por la succión de partículas no deseadas mediante la creación de un vacío parcial."
+  },
+  {
+    "palabra": "Neumático",
+    "categoría": "Automotriz",
+    "pista": "Es un objeto de la categoría Automotriz que se caracteriza por absorber irregularidades del terreno y proporcionar tracción mediante su contacto con el suelo."
+  },
+  {
+    "palabra": "Ventilador",
+    "categoría": "Climatización",
+    "pista": "Es un objeto de la categoría Climatización que se caracteriza por inducir un flujo de aire constante para facilitar la regulación térmica de un entorno."
+  },
+  {
+    "palabra": "Bombilla",
+    "categoría": "Electricidad",
+    "pista": "Es un objeto de la categoría Electricidad que se caracteriza por la transformación de energía en un flujo lumínico constante para anular la oscuridad."
+  },
+  {
+    "palabra": "Sillón",
+    "categoría": "Mueble",
+    "pista": "Es un objeto de la categoría Mueble que se caracteriza por proporcionar un asiento confortable y ergonómico para una sola persona."
+  },
+  {
+    "palabra": "Plancha",
+    "categoría": "Hogar",
+    "pista": "Es un objeto de la categoría Hogar que se caracteriza por la aplicación directa de calor y presión para eliminar irregularidades en los tejidos."
+  },
+  {
+    "palabra": "Cuchara",
+    "categoría": "Cubierto",
+    "pista": "Es un objeto de la categoría Cubierto que se caracteriza por permitir la recolección y transporte de sustancias fluidas hacia la ingesta."
+  },
+  {
+    "palabra": "Tenedor",
+    "categoría": "Cubierto",
+    "pista": "Es un objeto de la categoría Cubierto que se caracteriza por facilitar la fijación de porciones sólidas para su transporte y consumo."
+  },
+  {
+    "palabra": "Botella",
+    "categoría": "Contenedor",
+    "pista": "Es un objeto de la categoría Contenedor que se caracteriza por el almacenamiento y dosificación de sustancias fluidas en un entorno controlado."
+  },
+  {
+    "palabra": "Plato",
+    "categoría": "Vajilla",
+    "pista": "Es un objeto de la categoría Vajilla que se caracteriza por servir de soporte horizontal para la disposición y consumo de alimentos."
+  },
+  {
+    "palabra": "Grifo",
+    "categoría": "Fontanería",
+    "pista": "Es un objeto de la categoría Fontanería que se caracteriza por regular el paso y caudal de líquidos provenientes de una red de suministro."
+  },
+  {
+    "palabra": "Alarma",
+    "categoría": "Seguridad",
+    "pista": "Es un objeto de la categoría Seguridad que se caracteriza por la emisión de señales sonoras o visuales ante la detección de una anomalía."
+  },
+  {
+    "palabra": "Candidato",
+    "categoría": "Política",
+    "pista": "Es un elemento de la categoría Política que se caracteriza por postularse a una posición de autoridad mediante la obtención de respaldo popular."
+  },
+  {
+    "palabra": "Escudo",
+    "categoría": "Defensa",
+    "pista": "Es un objeto de la categoría Defensa que se caracteriza por ser una barrera física diseñada para interceptar ataques y proteger al usuario."
+  },
+  {
+    "palabra": "Espada",
+    "categoría": "Armamento",
+    "pista": "Es un objeto de la categoría Armamento que se caracteriza por ser un instrumento de combate que utiliza un borde cortante para la ofensiva."
+  },
+  {
+    "palabra": "Casco",
+    "categoría": "Seguridad",
+    "pista": "Es un objeto de la categoría Seguridad que se caracteriza por la protección de la estructura craneal contra impactos o proyecciones externas."
+  },
+  {
+    "palabra": "Guante",
+    "categoría": "Vestimenta",
+    "pista": "Es un objeto de la categoría Vestimenta que se caracteriza por cubrir y proteger las extremidades superiores manteniendo la movilidad de los dedos."
+  },
+  {
+    "palabra": "Sombrero",
+    "categoría": "Vestimenta",
+    "pista": "Es un objeto de la categoría Vestimenta que se caracteriza por proporcionar cobertura y protección a la parte superior de la cabeza."
+  },
+  {
+    "palabra": "Abrigo",
+    "categoría": "Vestimenta",
+    "pista": "Es un objeto de la categoría Vestimenta que se caracteriza por proporcionar aislamiento térmico al torso y extremidades frente a climas adversos."
+  },
+  {
+    "palabra": "Maleta",
+    "categoría": "Viaje",
+    "pista": "Es un objeto de la categoría Viaje que se caracteriza por el transporte organizado de pertenencias personales durante desplazamientos geográficos."
+  },
+  {
+    "palabra": "Sextante",
+    "categoría": "Navegación",
+    "pista": "Es un objeto de la categoría Navegación que se caracteriza por la medición de ángulos astronómicos para determinar la posición en el espacio."
+  },
+  {
+    "palabra": "Microscopio",
+    "categoría": "Ciencia",
+    "pista": "Es un objeto de la categoría Ciencia que se caracteriza por la observación amplificada de estructuras invisibles a la percepción humana ordinaria."
+  },
+  {
+    "palabra": "Balanza",
+    "categoría": "Medición",
+    "pista": "Es un objeto de la categoría Medición que se caracteriza por la determinación de la masa de un cuerpo mediante la comparación o equilibrio."
+  },
+  {
+    "palabra": "Metro",
+    "categoría": "Medición",
+    "pista": "Es un objeto de la categoría Medición que se caracteriza por establecer la magnitud de la longitud de un objeto o distancia lineal."
+  },
+  {
+    "palabra": "Termómetro",
+    "categoría": "Medicina",
+    "pista": "Es un objeto de la categoría Medicina que se caracteriza por la cuantificación precisa de la temperatura en organismos o entornos."
+  },
+  {
+    "palabra": "Champú",
+    "categoría": "Higiene",
+    "pista": "Es un objeto de la categoría Higiene que se caracteriza por la limpieza profunda y el cuidado de las fibras capilares."
+  },
+  {
+    "palabra": "Albornoz",
+    "categoría": "Ropa de baño",
+    "pista": "Es un objeto de la categoría Ropa de baño que se caracteriza por la absorción de humedad corporal tras el contacto con el agua."
+  },
+  {
+    "palabra": "Nevera",
+    "categoría": "Cocina",
+    "pista": "Es un objeto de la categoría Cocina que se caracteriza por el mantenimiento de temperaturas bajas para la preservación prolongada de insumos orgánicos."
+  },
+  {
+    "palabra": "Horno",
+    "categoría": "Cocina",
+    "pista": "Es un objeto de la categoría Cocina que se caracteriza por someter a los alimentos a altas temperaturas en un espacio confinado para su transformación."
+  },
+  {
+    "palabra": "Microondas",
+    "categoría": "Cocina",
+    "pista": "Es un objeto de la categoría Cocina que se caracteriza por el calentamiento rápido de sustancias mediante la agitación molecular por ondas de alta frecuencia."
+  }, {
+    "palabra": "Martillo",
+    "categoría": "Herramientas",
+    "pista": "Es un objeto de la categoría Herramientas que se caracteriza por facilitar la aplicación de fuerza cinética sobre elementos de fijación."
+  },
+  {
+    "palabra": "Isla",
+    "categoría": "Geografía",
+    "pista": "Es un elemento de la categoría Geografía que se caracteriza por representar una porción de estabilidad rodeada por la inmensidad de un entorno fluido."
+  },
+  {
+    "palabra": "Médico",
+    "categoría": "Profesiones",
+    "pista": "Es un elemento de la categoría Profesiones que se caracteriza por dedicarse a la preservación y restauración del equilibrio funcional de los sistemas biológicos."
+  },
+  {
+    "palabra": "Pan",
+    "categoría": "Alimentos",
+    "pista": "Es un elemento de la categoría Alimentos que se caracteriza por constituir la base elemental de la nutrición mediante la transformación de granos procesados."
+  },
+  {
+    "palabra": "Pluma",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por permitir la transferencia de pigmentos fluidos sobre superficies de registro de información."
+  },
+  {
+    "palabra": "Justicia",
+    "categoría": "Conceptos Abstractos",
+    "pista": "Es un elemento de la categoría Conceptos Abstractos que se caracteriza por buscar el equilibrio ideal en la distribución de responsabilidades y derechos."
+  },
+  {
+    "palabra": "Pulmón",
+    "categoría": "Anatomía",
+    "pista": "Es un elemento de la categoría Anatomía que se caracteriza por facilitar el intercambio de gases vitales entre el organismo y el medio ambiente exterior."
+  },
+  {
+    "palabra": "Satélite",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por orbitar cuerpos celestes para facilitar la transmisión de señales o la observación remota."
+  },
+  {
+    "palabra": "Rayo",
+    "categoría": "Fenómenos",
+    "pista": "Es un elemento de la categoría Fenómenos que se caracteriza por manifestar una descarga súbita de energía eléctrica a través de la atmósfera."
+  },
+  {
+    "palabra": "Jabón",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por interactuar con elementos grasos para facilitar su remoción mediante un solvente."
+  },
+  {
+    "palabra": "Cascada",
+    "categoría": "Geografía",
+    "pista": "Es un elemento de la categoría Geografía que se caracteriza por representar el descenso vertical y continuo de un flujo hídrico por irregularidades del terreno."
+  },
+  {
+    "palabra": "Carpintero",
+    "categoría": "Profesiones",
+    "pista": "Es un elemento de la categoría Profesiones que se caracteriza por transformar la materia prima vegetal en estructuras funcionales para el hábitat."
+  },
+  {
+    "palabra": "Arroz",
+    "categoría": "Alimentos",
+    "pista": "Es un elemento de la categoría Alimentos que se caracteriza por ser un grano fundamental que sustenta la dieta de vastas poblaciones globales."
+  },
+  {
+    "palabra": "Toalla",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por poseer una alta capacidad de absorción para retirar la humedad de una superficie."
+  },
+  {
+    "palabra": "Tiempo",
+    "categoría": "Conceptos Abstractos",
+    "pista": "Es un elemento de la categoría Conceptos Abstractos que se caracteriza por marcar la progresión lineal e irreversible de los sucesos en el universo."
+  },
+  {
+    "palabra": "Esqueleto",
+    "categoría": "Anatomía",
+    "pista": "Es un elemento de la categoría Anatomía que se caracteriza por proveer la estructura rígida necesaria para el soporte y protección orgánica."
+  },
+  {
+    "palabra": "Microchip",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por integrar circuitos complejos en una superficie mínima para el procesamiento de datos."
+  },
+  {
+    "palabra": "Niebla",
+    "categoría": "Fenómenos",
+    "pista": "Es un elemento de la categoría Fenómenos que se caracteriza por reducir la visibilidad mediante la suspensión de partículas acuosas atmosféricas."
+  },
+  {
+    "palabra": "Silla",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por proveer un soporte diseñado para el descanso en posición sedente."
+  },
+  {
+    "palabra": "Desierto",
+    "categoría": "Geografía",
+    "pista": "Es un elemento de la categoría Geografía que se caracteriza por una aridez extrema y una escasa presencia de ciclos biológicos activos."
+  },
+  {
+    "palabra": "Astronauta",
+    "categoría": "Profesiones",
+    "pista": "Es un elemento de la categoría Profesiones que se caracteriza por operar sistemas de exploración en entornos fuera de la atmósfera terrestre."
+  },
+  {
+    "palabra": "Manzana",
+    "categoría": "Alimentos",
+    "pista": "Es un elemento de la categoría Alimentos que se caracteriza por ser un fruto que simboliza la nutrición y el conocimiento en diversos contextos."
+  },
+  {
+    "palabra": "Botella",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por servir como receptáculo estanco para la conservación de sustancias fluidas."
+  },
+  {
+    "palabra": "Libertad",
+    "categoría": "Conceptos Abstractos",
+    "pista": "Es un elemento de la categoría Conceptos Abstractos que se caracteriza por representar la facultad de autodeterminación sin coacciones externas."
+  },
+  {
+    "palabra": "Piel",
+    "categoría": "Anatomía",
+    "pista": "Es un elemento de la categoría Anatomía que se caracteriza por actuar como la barrera externa principal que delimita la integridad de un ser vivo."
+  },
+  {
+    "palabra": "Servidor",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por gestionar y proveer recursos o datos a múltiples nodos de una red."
+  },
+  {
+    "palabra": "Terremoto",
+    "categoría": "Fenómenos",
+    "pista": "Es un elemento de la categoría Fenómenos que se caracteriza por producir una liberación súbita de energía mecánica en la corteza planetaria."
+  },
+  {
+    "palabra": "Sombrero",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por proporcionar protección o distinción a la extremidad superior humana."
+  },
+  {
+    "palabra": "Selva",
+    "categoría": "Geografía",
+    "pista": "Es un elemento de la categoría Geografía que se caracteriza por albergar una biodiversidad densa bajo un ecosistema de alta humedad."
+  },
+  {
+    "palabra": "Chef",
+    "categoría": "Profesiones",
+    "pista": "Es un elemento de la categoría Profesiones que se caracteriza por dirigir la preparación técnica de sustancias destinadas a la ingesta humana."
+  },
+  {
+    "palabra": "Carne",
+    "categoría": "Alimentos",
+    "pista": "Es un elemento de la categoría Alimentos que se caracteriza por aportar proteínas mediante el tejido muscular de origen animal para el consumo."
+  },
+  {
+    "palabra": "Almohada",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por facilitar el posicionamiento de la zona craneal durante el estado de inconsciencia reparadora."
+  },
+  {
+    "palabra": "Sueño",
+    "categoría": "Conceptos Abstractos",
+    "pista": "Es un elemento de la categoría Conceptos Abstractos que se caracteriza por experimentar una actividad mental involuntaria durante el reposo biológico."
+  },
+  {
+    "palabra": "Riñón",
+    "categoría": "Anatomía",
+    "pista": "Es un elemento de la categoría Anatomía que se caracteriza por filtrar las impurezas de los fluidos internos para mantener la homeostasis química."
+  },
+  {
+    "palabra": "Batería",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por almacenar energía química para su posterior conversión en flujo eléctrico."
+  },
+  {
+    "palabra": "Arcoíris",
+    "categoría": "Fenómenos",
+    "pista": "Es un elemento de la categoría Fenómenos que se caracteriza por la fragmentación cromática del espectro lumínico ante la presencia de humedad ambiental."
+  },
+  {
+    "palabra": "Maleta",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por facilitar el traslado organizado de pertenencias durante desplazamientos."
+  },
+  {
+    "palabra": "Cueva",
+    "categoría": "Geografía",
+    "pista": "Es un elemento de la categoría Geografía que se caracteriza por constituir una cavidad natural formada por procesos erosivos internos."
+  },
+  {
+    "palabra": "Abogado",
+    "categoría": "Profesiones",
+    "pista": "Es un elemento de la categoría Profesiones que se caracteriza por ejercer la representación de individuos dentro de un sistema normativo."
+  },
+  {
+    "palabra": "Queso",
+    "categoría": "Alimentos",
+    "pista": "Es un elemento de la categoría Alimentos que se caracteriza por resultar de la maduración y coagulación de derivados lácteos procesados."
+  },
+  {
+    "palabra": "Cepillo",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por permitir la remoción de partículas o el ordenamiento de fibras mediante la fricción superficial múltiple."
+  },
+  {
+    "palabra": "Silencio",
+    "categoría": "Conceptos Abstractos",
+    "pista": "Es un elemento de la categoría Conceptos Abstractos que se caracteriza por representar la ausencia total de estímulos auditivos en un entorno."
+  },
+  {
+    "palabra": "Lengua",
+    "categoría": "Anatomía",
+    "pista": "Es un elemento de la categoría Anatomía que se caracteriza por ser el órgano encargado de la percepción del gusto y la articulación de señales."
+  },
+  {
+    "palabra": "Radar",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por detectar la posición de elementos distantes mediante la emisión de ondas."
+  },
+  {
+    "palabra": "Nieve",
+    "categoría": "Fenómenos",
+    "pista": "Es un elemento de la categoría Fenómenos que se caracteriza por la acumulación de precipitaciones en estado sólido sobre la superficie terrestre."
+  },
+  {
+    "palabra": "Cuchara",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por facilitar el desplazamiento de volúmenes mínimos hacia el punto de ingesta."
+  },
+  {
+    "palabra": "Cordillera",
+    "categoría": "Geografía",
+    "pista": "Es un elemento de la categoría Geografía que se caracteriza por formar una alineación continua de estructuras geológicas de gran magnitud."
+  },
+  {
+    "palabra": "Bombero",
+    "categoría": "Profesiones",
+    "pista": "Es un elemento de la categoría Profesiones que se caracteriza por intervenir en situaciones de riesgo térmico para preservar bienes y personas."
+  },
+  {
+    "palabra": "Leche",
+    "categoría": "Alimentos",
+    "pista": "Es un elemento de la categoría Alimentos que se caracteriza por ser la secreción nutritiva fundamental para el desarrollo biológico inicial."
+  },
+  {
+    "palabra": "Esponja",
+    "categoría": "Objetos Cotidianos",
+    "pista": "Es un objeto de la categoría Objetos Cotidianos que se caracteriza por permitir la absorción y liberación controlada de fluidos mediante vacíos internos."
+  }, { "palabra": "Telescopio", "categoría": "Astronomía", "pista": "Es un objeto de la categoría astronomía que se caracteriza por facilitar la observación de entidades situadas a distancias extremas" }, { "palabra": "Microscopio", "categoría": "Ciencia", "pista": "Es un objeto de la categoría ciencia que se caracteriza por revelar dimensiones que resultan imperceptibles para la visión natural" }, { "palabra": "Pinzas", "categoría": "Herramientas", "pista": "Es un objeto de la categoría herramientas que se caracteriza por permitir la manipulación precisa de elementos de magnitud mínima" }, { "palabra": "Destornillador", "categoría": "Herramientas", "pista": "Es un objeto de la categoría herramientas que se caracteriza por facilitar la fijación o liberación de uniones mediante un movimiento rotatorio" }, { "palabra": "Escafandra", "categoría": "Vestimenta", "pista": "Es una cosa de la categoría vestimenta que se caracteriza por aislar al individuo de un entorno hostil para permitir su supervivencia" }, { "palabra": "Astronauta", "categoría": "Profesiones", "pista": "Es un elemento de la categoría profesiones que se caracteriza por realizar actividades de exploración en entornos exteriores a la atmósfera terrestre" }, { "palabra": "Átomo", "categoría": "Física", "pista": "Es un elemento de la categoría física que se caracteriza por constituir la unidad fundamental de la materia con propiedades químicas definidas" }, { "palabra": "Oxígeno", "categoría": "Elementos Químicos", "pista": "Es un elemento de la categoría elementos químicos que se caracteriza por ser indispensable para el mantenimiento de los procesos biológicos aeróbicos" }, { "palabra": "Oro", "categoría": "Elementos Químicos", "pista": "Es un elemento de la categoría elementos químicos que se caracteriza por su alta resistencia a la degradación y su valor intrínseco en los sistemas de intercambio" }, { "palabra": "Fútbol", "categoría": "Deportes", "pista": "Es un elemento de la categoría deportes que se caracteriza por la disputa de un recurso común entre dos colectivos para lograr una anotación en el área oponente" }, { "palabra": "Natación", "categoría": "Deportes", "pista": "Es un elemento de la categoría deportes que se caracteriza por el desplazamiento autónomo a través de un medio líquido" }, { "palabra": "Pantalón", "categoría": "Vestimenta", "pista": "Es una cosa de la categoría vestimenta que se caracteriza por cubrir individualmente las extremidades inferiores para protección y decoro" }, { "palabra": "Sombrero", "categoría": "Vestimenta", "pista": "Es una cosa de la categoría vestimenta que se caracteriza por situarse en la región superior del individuo para resguardarlo de factores externos" }, { "palabra": "Montaña", "categoría": "Geografía", "pista": "Es un elemento de la categoría geografía que se caracteriza por ser una prominencia natural de gran relieve sobre la superficie del terreno" }, { "palabra": "Desierto", "categoría": "Geografía", "pista": "Es un elemento de la categoría geografía que se caracteriza por la escasez crítica de recursos hídricos y condiciones térmicas extremas" }, { "palabra": "Piano", "categoría": "Música", "pista": "Es un objeto de la categoría música que se caracteriza por producir sonidos mediante la percusión interna activada por un mecanismo de palancas" }, { "palabra": "Violín", "categoría": "Música", "pista": "Es un objeto de la categoría música que se caracteriza por la generación de vibraciones mediante la fricción de un arco sobre filamentos tensados" }, { "palabra": "Grapadora", "categoría": "Objetos de Oficina", "pista": "Es un objeto de la categoría objetos de oficina que se caracteriza por unir superficies laminares mediante la inserción de filamentos de sujeción" }, { "palabra": "Borrador", "categoría": "Objetos de Oficina", "pista": "Es un objeto de la categoría objetos de oficina que se caracteriza por revertir la aplicación de pigmentos o marcas sobre una superficie" }, { "palabra": "Pegamento", "categoría": "Objetos de Oficina", "pista": "Es una cosa de la categoría objetos de oficina que se caracteriza por proporcionar cohesión permanente entre dos materiales distintos" }, { "palabra": "Galaxia", "categoría": "Astronomía", "pista": "Es un elemento de la categoría astronomía que se caracteriza por ser una agrupación masiva de cuerpos celestes vinculados por la atracción gravitatoria" }, { "palabra": "Cometa", "categoría": "Astronomía", "pista": "Es un elemento de la categoría astronomía que se caracteriza por describir recorridos orbitales alrededor de una estrella liberando residuos volátiles" }, { "palabra": "Cirujano", "categoría": "Profesiones", "pista": "Es un elemento de la categoría profesiones que se caracteriza por la alteración física de un organismo con fines terapéuticos o correctivos" }, { "palabra": "Arquitecto", "categoría": "Profesiones", "pista": "Es un elemento de la categoría profesiones que se caracteriza por concebir y proyectar espacios destinados al hábitat humano" }, { "palabra": "Alicates", "categoría": "Herramientas", "pista": "Es un objeto de la categoría herramientas que se caracteriza por multiplicar la fuerza de presión ejercida manualmente para sujetar materiales" }, { "palabra": "Taladro", "categoría": "Herramientas", "pista": "Es un objeto de la categoría herramientas que se caracteriza por generar perforaciones profundas mediante la rotación de un componente de penetración" }, { "palabra": "Abrigo", "categoría": "Vestimenta", "pista": "Es una cosa de la categoría vestimenta que se caracteriza por proporcionar una barrera térmica contra las condiciones ambientales de baja temperatura" }, { "palabra": "Guante", "categoría": "Vestimenta", "pista": "Es una cosa de la categoría vestimenta que se caracteriza por ajustarse a la anatomía de las extremidades superiores para protegerlas de agentes externos" }, { "palabra": "Península", "categoría": "Geografía", "pista": "Es un elemento de la categoría geografía que se caracteriza por ser una extensión de tierra vinculada al continente y rodeada predominantemente por agua" }, { "palabra": "Cascada", "categoría": "Geografía", "pista": "Es un elemento de la categoría geografía que se caracteriza por el tránsito gravitacional de un flujo hídrico debido a un desnivel abrupto en el terreno" }, { "palabra": "Flauta", "categoría": "Música", "pista": "Es un objeto de la categoría música que se caracteriza por la modulación de una corriente gaseosa al pasar a través de conductos y orificios específicos" }, { "palabra": "Tambor", "categoría": "Música", "pista": "Es un objeto de la categoría música que se caracteriza por la emisión de ondas sonoras al impactar sobre una superficie tensada" }, { "palabra": "Clip", "categoría": "Objetos de Oficina", "pista": "Es un objeto de la categoría objetos de oficina que se caracteriza por mantener agrupados documentos de forma temporal mediante presión mecánica" }, { "palabra": "Sobre", "categoría": "Objetos de Oficina", "pista": "Es un objeto de la categoría objetos de oficina que se caracteriza por actuar como contenedor para el transporte y resguardo de comunicaciones físicas" }, { "palabra": "Plata", "categoría": "Elementos Químicos", "pista": "Es un elemento de la categoría elementos químicos que se caracteriza por su excepcional conductividad eléctrica y su relevancia en la acuñación de valor" }, { "palabra": "Hierro", "categoría": "Elementos Químicos", "pista": "Es un elemento de la categoría elementos químicos que se caracteriza por su abundancia y su papel crucial en la formación de estructuras de alta resistencia" }, { "palabra": "Tenis", "categoría": "Deportes", "pista": "Es un elemento de la categoría deportes que se caracteriza por el intercambio de un proyectil ligero sobre una división intermedia mediante el uso de implementos" }, { "palabra": "Atletismo", "categoría": "Deportes", "pista": "Es un elemento de la categoría deportes que se caracteriza por la competición basada en las capacidades fundamentales de locomoción y proyección de objetos" }, { "palabra": "Boxeo", "categoría": "Deportes", "pista": "Es un elemento de la categoría deportes que se caracteriza por la confrontación física reglamentada mediante el impacto directo entre los participantes debidamente protegidos" }, { "palabra": "Periodista", "categoría": "Profesiones", "pista": "Es un elemento de la categoría profesiones que se caracteriza por la recolección, procesamiento y difusión de información relevante para la opinión pública" }, { "palabra": "Bombero", "categoría": "Profesiones", "pista": "Es un elemento de la categoría profesiones que se caracteriza por la gestión de emergencias y la neutralización de incidentes de origen térmico" }, { "palabra": "Nivel", "categoría": "Herramientas", "pista": "Es un objeto de la categoría herramientas que se caracteriza por verificar la alineación perfecta de una superficie respecto a un plano de referencia" }, { "palabra": "Sierra", "categoría": "Herramientas", "pista": "Es un objeto de la categoría herramientas que se caracteriza por la segmentación de materiales sólidos mediante la fricción mecánica de una hoja de corte" }, { "palabra": "Chaleco", "categoría": "Vestimenta", "pista": "Es una cosa de la categoría vestimenta que se caracteriza por cubrir la región central del cuerpo sin interferir en la movilidad de las extremidades" }, { "palabra": "Isla", "categoría": "Geografía", "pista": "Es un elemento de la categoría geografía que se caracteriza por ser una porción de tierra completamente rodeada por masas hídricas" }, { "palabra": "Selva", "categoría": "Geografía", "pista": "Es un elemento de la categoría geografía que se caracteriza por la densidad extrema de vegetación y una alta biodiversidad en ecosistemas húmedos" }, { "palabra": "Saxofón", "categoría": "Música", "pista": "Es un objeto de la categoría música que se caracteriza por emplear una lengüeta simple y una estructura de resonancia para producir sonidos armónicos" }, { "palabra": "Arpa", "categoría": "Música", "pista": "Es un objeto de la categoría música que se caracteriza por poseer una serie de cuerdas de diversas afinaciones dispuestas en un marco de soporte" }, { "palabra": "Archivador", "categoría": "Objetos de Oficina", "pista": "Es un objeto de la categoría objetos de oficina que se caracteriza por la organización y almacenamiento sistemático de registros de información física" }, { "palabra": "Agenda", "categoría": "Objetos de Oficina", "pista": "Es un objeto de la categoría objetos de oficina que se caracteriza por permitir la planificación y el registro cronológico de eventos o compromisos" }
+  ,{
+    "palabra": "Grapadora",
+    "categoría": "Herramientas de oficina",
+    "pista": "Es un objeto de la categoría Herramientas de oficina que se caracteriza por asegurar la unión de planos mediante elementos de fijación intrusiva"
+  },
+  {
+    "palabra": "Bufanda",
+    "categoría": "Vestimenta",
+    "pista": "Es un objeto de la categoría Vestimenta que se caracteriza por proporcionar aislamiento térmico en la zona superior del torso"
+  },
+  {
+    "palabra": "Microondas",
+    "categoría": "Electrodomésticos",
+    "pista": "Es un objeto de la categoría Electrodomésticos que se caracteriza por elevar la temperatura de la materia orgánica mediante radiación de alta frecuencia"
+  },
+  {
+    "palabra": "Techo",
+    "categoría": "Arquitectura",
+    "pista": "Es un elemento de la categoría Arquitectura que se caracteriza por proporcionar protección superior contra las condiciones ambientales externas"
+  },
+  {
+    "palabra": "Neumático",
+    "categoría": "Automotriz",
+    "pista": "Es un objeto de la categoría Automotriz que se caracteriza por permitir el desplazamiento de estructuras rodantes mediante el contacto directo con la superficie"
+  },
+  {
+    "palabra": "Ventilador",
+    "categoría": "Climatización",
+    "pista": "Es un objeto de la categoría Climatización que se caracteriza por la inducción de desplazamiento gaseoso mediante energía mecánica"
+  },
+  {
+    "palabra": "Pantuflas",
+    "categoría": "Vestimenta",
+    "pista": "Es un objeto de la categoría Vestimenta que se caracteriza por proporcionar comodidad y protección podológica en entornos domésticos"
+  },
+  {
+    "palabra": "Licuadora",
+    "categoría": "Cocina",
+    "pista": "Es un objeto de la categoría Cocina que se caracteriza por triturar e integrar sustancias alimenticias mediante rotación veloz"
+  },
+  {
+    "palabra": "Jabón",
+    "categoría": "Higiene",
+    "pista": "Es un objeto de la categoría Higiene que se caracteriza por disolver impurezas y facilitar la desinfección en contacto con el agua"
+  },
+  {
+    "palabra": "Cepillo",
+    "categoría": "Higiene",
+    "pista": "Es un objeto de la categoría Higiene que se caracteriza por organizar o limpiar superficies mediante la fricción de filamentos múltiples"
+  },
+  {
+    "palabra": "Toalla",
+    "categoría": "Higiene",
+    "pista": "Es un objeto de la categoría Higiene que se caracteriza por absorber la humedad residual de una superficie mediante contacto directo"
+  },
+  {
+    "palabra": "Esponja",
+    "categoría": "Limpieza",
+    "pista": "Es un objeto de la categoría Limpieza que se caracteriza por retener líquidos y facilitar la remoción de residuos por abrasión suave"
+  },
+  {
+    "palabra": "Cinturón",
+    "categoría": "Vestimenta",
+    "pista": "Es un objeto de la categoría Vestimenta que se caracteriza por ajustar y asegurar prendas al contorno del usuario mediante tensión periférica"
+  },
+  {
+    "palabra": "Botón",
+    "categoría": "Vestimenta",
+    "pista": "Es un objeto de la categoría Vestimenta que se caracteriza por permitir el cierre o apertura de planos textiles mediante su inserción en orificios específicos"
+  },
+  {
+    "palabra": "Perchero",
+    "categoría": "Mobiliario",
+    "pista": "Es un objeto de la categoría Mobiliario que se caracteriza por sostener elementos de uso exterior en una posición suspendida y ordenada"
+  },
+  {
+    "palabra": "Lámpara",
+    "categoría": "Iluminación",
+    "pista": "Es un objeto de la categoría Iluminación que se caracteriza por transformar energía en visibilidad para un entorno determinado"
+  },
+  {
+    "palabra": "Interruptor",
+    "categoría": "Electricidad",
+    "pista": "Es un objeto de la categoría Electricidad que se caracteriza por habilitar o interrumpir el paso de una corriente mediante una acción mecánica"
+  },
+  {
+    "palabra": "Enchufe",
+    "categoría": "Electricidad",
+    "pista": "Es un objeto de la categoría Electricidad que se caracteriza por permitir la conexión de dispositivos a una red de suministro energético"
+  },
+  {
+    "palabra": "Batería",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por almacenar energía para su posterior uso en sistemas portátiles"
+  },
+  {
+    "palabra": "Pantalla",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por proyectar información visual generada por un sistema de procesamiento"
+  },
+  {
+    "palabra": "Auriculares",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por transmitir señales sonoras de manera individual y cercana al sistema auditivo"
+  },
+  {
+    "palabra": "Mouse",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por permitir la interacción con interfaces gráficas mediante el movimiento de un cursor"
+  },
+  {
+    "palabra": "Impresora",
+    "categoría": "Oficina",
+    "pista": "Es un objeto de la categoría Oficina que se caracteriza por materializar información digital en un soporte físico tangible"
+  },
+  {
+    "palabra": "Goma",
+    "categoría": "Oficina",
+    "pista": "Es un objeto de la categoría Oficina que se caracteriza por eliminar rastros de pigmento sobre una superficie mediante fricción mecánica"
+  },
+  {
+    "palabra": "Clip",
+    "categoría": "Oficina",
+    "pista": "Es un objeto de la categoría Oficina que se caracteriza por agrupar láminas de manera temporal mediante presión elástica"
+  },
+  {
+    "palabra": "Lápiz",
+    "categoría": "Oficina",
+    "pista": "Es un objeto de la categoría Oficina que se caracteriza por depositar material de contraste para generar grafismos sobre una superficie"
+  },
+  {
+    "palabra": "Sacapuntas",
+    "categoría": "Oficina",
+    "pista": "Es un objeto de la categoría Oficina que se caracteriza por reducir el grosor de un extremo para facilitar el trazado de líneas"
+  },
+  {
+    "palabra": "Regla",
+    "categoría": "Oficina",
+    "pista": "Es un objeto de la categoría Oficina que se caracteriza por servir de guía para el trazado de trayectorias lineales o la medición de dimensiones"
+  },
+  {
+    "palabra": "Sartén",
+    "categoría": "Cocina",
+    "pista": "Es un objeto de la categoría Cocina que se caracteriza por facilitar la cocción de insumos mediante la transmisión directa de calor en una base plana"
+  },
+  {
+    "palabra": "Olla",
+    "categoría": "Cocina",
+    "pista": "Es un objeto de la categoría Cocina que se caracteriza por contener líquidos o sólidos para su procesamiento térmico prolongado"
+  },
+  {
+    "palabra": "Colador",
+    "categoría": "Cocina",
+    "pista": "Es un objeto de la categoría Cocina que se caracteriza por separar elementos sólidos de un medio líquido mediante una superficie filtrante"
+  },
+  {
+    "palabra": "Tostadora",
+    "categoría": "Cocina",
+    "pista": "Es un objeto de la categoría Cocina que se caracteriza por aplicar calor seco para modificar la textura de productos derivados del cereal"
+  },
+  {
+    "palabra": "Refrigerador",
+    "categoría": "Electrodomésticos",
+    "pista": "Es un objeto de la categoría Electrodomésticos que se caracteriza por preservar la integridad de insumos orgánicos mediante el descenso controlado de la temperatura"
+  },
+  {
+    "palabra": "Lavadora",
+    "categoría": "Electrodomésticos",
+    "pista": "Es un objeto de la categoría Electrodomésticos que se caracteriza por remover impurezas de materiales textiles mediante ciclos de agitación y agua"
+  },
+  {
+    "palabra": "Plancha",
+    "categoría": "Electrodomésticos",
+    "pista": "Es un objeto de la categoría Electrodomésticos que se caracteriza por eliminar irregularidades en superficies textiles mediante la aplicación de presión y calor"
+  },
+  {
+    "palabra": "Destornillador",
+    "categoría": "Herramientas",
+    "pista": "Es un objeto de la categoría Herramientas que se caracteriza por aplicar torque a elementos de fijación rotativa"
+  },
+  {
+    "palabra": "Alicate",
+    "categoría": "Herramientas",
+    "pista": "Es un objeto de la categoría Herramientas que se caracteriza por permitir la sujeción, corte o deformación de materiales mediante presión manual"
+  },
+  {
+    "palabra": "Sierra",
+    "categoría": "Herramientas",
+    "pista": "Es un objeto de la categoría Herramientas que se caracteriza por la división de sólidos mediante la aplicación de fricción discontinua"
+  },
+  {
+    "palabra": "Taladro",
+    "categoría": "Herramientas",
+    "pista": "Es un objeto de la categoría Herramientas que se caracteriza por generar perforaciones cilíndricas mediante rotación mecánica de alta velocidad"
+  },
+  {
+    "palabra": "Tornillo",
+    "categoría": "Ferretería",
+    "pista": "Es un objeto de la categoría Ferretería que se caracteriza por la conversión de movimiento rotativo en sujeción lineal"
+  },
+  {
+    "palabra": "Tuerca",
+    "categoría": "Ferretería",
+    "pista": "Es un objeto de la categoría Ferretería que se caracteriza por la estabilización de un sistema de fijación mediante acoplamiento interno"
+  },
+  {
+    "palabra": "Clavo",
+    "categoría": "Ferretería",
+    "pista": "Es un objeto de la categoría Ferretería que se caracteriza por penetrar superficies para unir componentes mediante impacto y fricción"
+  },
+  {
+    "palabra": "Candado",
+    "categoría": "Seguridad",
+    "pista": "Es un objeto de la categoría Seguridad que se caracteriza por restringir el acceso o movimiento mediante un bloqueo mecánico externo"
+  },
+  {
+    "palabra": "Alarma",
+    "categoría": "Seguridad",
+    "pista": "Es una cosa de la categoría Seguridad que se caracteriza por emitir una señal de advertencia ante una intrusión o evento irregular"
+  },
+  {
+    "palabra": "Timbre",
+    "categoría": "Comunicación",
+    "pista": "Es una cosa de la categoría Comunicación que se caracteriza por alertar sobre la presencia de alguien ante una barrera de acceso"
+  },
+  {
+    "palabra": "Teléfono",
+    "categoría": "Comunicación",
+    "pista": "Es un objeto de la categoría Comunicación que se caracteriza por permitir el intercambio de información auditiva a largas distancias en tiempo real"
+  },
+  {
+    "palabra": "Radio",
+    "categoría": "Comunicación",
+    "pista": "Es un objeto de la categoría Comunicación que se caracteriza por captar señales invisibles y transformarlas en ondas sonoras informativas o recreativas"
+  },
+  {
+    "palabra": "Televisor",
+    "categoría": "Entretenimiento",
+    "pista": "Es un objeto de la categoría Entretenimiento que se caracteriza por reproducir secuencias de imágenes y sonidos con fines informativos o lúdicos"
+  },
+  {
+    "palabra": "Proyector",
+    "categoría": "Tecnología",
+    "pista": "Es un objeto de la categoría Tecnología que se caracteriza por emitir un haz de luz que reproduce contenido visual sobre una superficie externa"
+  },
+  {
+    "palabra": "Aspiradora",
+    "categoría": "Limpieza",
+    "pista": "Es un objeto de la categoría Limpieza que se caracteriza por succionar partículas y residuos del entorno mediante la generación de un vacío parcial"
+  },
+   {
+    "palabra": "Ventilador",
+    "categoría": "Climatización",
+    "pista": "Es una cosa de la categoría Climatización que se caracteriza por inducir el desplazamiento forzado de masas gaseosas para optimizar el equilibrio térmico."
+  },
+  {
+    "palabra": "Cinturón",
+    "categoría": "Accesorios",
+    "pista": "Es un elemento de la categoría Accesorios que se caracteriza por estabilizar la posición de la vestimenta mediante la compresión periférica de la zona media del usuario."
+  },
+  {
+    "palabra": "Semilla",
+    "categoría": "Botánica",
+    "pista": "Es un objeto de la categoría Botánica que se caracteriza por encapsular el código genético y las reservas energéticas para la generación de un nuevo sistema biológico."
+  },
+  {
+    "palabra": "Jabón",
+    "categoría": "Higiene",
+    "pista": "Es una cosa de la categoría Higiene que se caracteriza por actuar como agente tensioactivo para despojar a las superficies de impurezas y agentes patógenos."
+  },
+  {
+    "palabra": "Brida",
+    "categoría": "Bricolaje",
+    "pista": "Es un elemento de la categoría Bricolaje que se caracteriza por la sujeción irreversible de componentes mediante un ajuste de tensión unidireccional."
+  },
+  {
+    "palabra": "Radar",
+    "categoría": "Defensa",
+    "pista": "Es un objeto de la categoría Defensa que se caracteriza por la detección de entidades distantes a través del análisis de la reflexión de ondas electromagnéticas."
+  },
+  {
+    "palabra": "Pincel",
+    "categoría": "Artes Plásticas",
+    "pista": "Es una cosa de la categoría Artes Plásticas que se caracteriza por la transferencia controlada de medios pigmentados hacia un plano de trabajo específico."
+  },
+  {
+    "palabra": "Toalla",
+    "categoría": "Hogar",
+    "pista": "Es un elemento de la categoría Hogar que se caracteriza por la eliminación de residuos líquidos superficiales mediante capilaridad y absorción pasiva."
+  },
+  {
+    "palabra": "Ancla",
+    "categoría": "Náutica",
+    "pista": "Es un objeto de la categoría Náutica que se caracteriza por inmovilizar un sistema flotante mediante el acoplamiento con la superficie del lecho sumergido."
+  },
+  {
+    "palabra": "Chaleco",
+    "categoría": "Indumentaria",
+    "pista": "Es una cosa de la categoría Indumentaria que se caracteriza por proporcionar una capa de protección o señalización al torso sin restringir los vectores de movimiento de los brazos."
+  },
+  {
+    "palabra": "Peine",
+    "categoría": "Higiene",
+    "pista": "Es un elemento de la categoría Higiene que se caracteriza por la ordenación de filamentos biológicos mediante la inserción de una estructura funcional de segmentación."
+  },
+  {
+    "palabra": "Candado",
+    "categoría": "Seguridad",
+    "pista": "Es un objeto de la categoría Seguridad que se caracteriza por establecer una restricción de acceso física mediante un cierre mecánico que requiere una validación específica."
+  },
+  {
+    "palabra": "Filtro",
+    "categoría": "Procesamiento",
+    "pista": "Es una cosa de la categoría Procesamiento que se caracteriza por la separación de fases o componentes basándose en un criterio de magnitud física."
+  },
+  {
+    "palabra": "Satélite",
+    "categoría": "Telecomunicaciones",
+    "pista": "Es un elemento de la categoría Telecomunicaciones que se caracteriza por mantener una trayectoria orbital para servir como nodo de retransmisión de datos a escala global."
+  },
+  {
+    "palabra": "Estufa",
+    "categoría": "Hogar",
+    "pista": "Es un objeto de la categoría Hogar que se caracteriza por la generación y propagación de energía calórica para modificar las condiciones atmosféricas de un entorno confinado."
+  },
+  {
+    "palabra": "Micrófono",
+    "categoría": "Audio",
+    "pista": "Es una cosa de la categoría Audio que se caracteriza por la transducción de variaciones de presión acústica en impulsos eléctricos modulados."
+  },
+  {
+    "palabra": "Microscopio",
+    "categoría": "Laboratorio",
+    "pista": "Es un elemento de la categoría Laboratorio que se caracteriza por la amplificación visual de estructuras cuya escala se sitúa por debajo del umbral de resolución del ojo humano."
+  },
+  {
+    "palabra": "Raqueta",
+    "categoría": "Deportes",
+    "pista": "Es un objeto de la categoría Deportes que se caracteriza por servir de interfaz de impacto para la redirección de proyectiles elásticos durante una actividad competitiva."
+  },
+  {
+    "palabra": "Casco",
+    "categoría": "Seguridad",
+    "pista": "Es una cosa de la categoría Seguridad que se caracteriza por la absorción y disipación de energía cinética para proteger el centro de procesamiento del sistema nervioso."
+  },
+  {
+    "palabra": "Maleta",
+    "categoría": "Logística Personal",
+    "pista": "Es un elemento de la categoría Logística Personal que se caracteriza por el confinamiento y transporte de bienes durante el desplazamiento entre coordenadas geográficas."
+  },
+  {
+    "palabra": "Botella",
+    "categoría": "Almacenamiento",
+    "pista": "Es un objeto de la categoría Almacenamiento que se caracteriza por la contención de volúmenes de fluido y la prevención de su pérdida por evaporación o vertido."
+  },
+  {
+    "palabra": "Lámpara",
+    "categoría": "Iluminación",
+    "pista": "Es una cosa de la categoría Iluminación que se caracteriza por la conversión de energía en flujo fotónico para facilitar la percepción visual en ausencia de luz natural."
+  },
+  {
+    "palabra": "Escudo",
+    "categoría": "Defensa",
+    "pista": "Es un elemento de la categoría Defensa que se caracteriza por actuar como barrera física interceptora de vectores de agresión dirigidos hacia el usuario."
+  },
+  {
+    "palabra": "Grapa",
+    "categoría": "Papelería",
+    "pista": "Es un objeto de la categoría Papelería que se caracteriza por la consolidación de sustratos laminares mediante la perforación y el anclaje mecánico permanente."
+  },
+  {
+    "palabra": "Embudo",
+    "categoría": "Herramientas de Taller",
+    "pista": "Es una cosa de la categoría Herramientas de Taller que se caracteriza por la convergencia de un flujo de materia desde un área de recepción amplia hacia un orificio de salida restringido."
+  },
+  {
+    "palabra": "Termómetro",
+    "categoría": "Medicina",
+    "pista": "Es un elemento de la categoría Medicina que se caracteriza por la monitorización y registro del nivel de agitación térmica de un cuerpo biológico o del entorno."
+  },
+  {
+    "palabra": "Taladro",
+    "categoría": "Ferretería",
+    "pista": "Es un objeto de la categoría Ferretería que se caracteriza por la generación de vacíos en superficies sólidas mediante la aplicación de energía cinética rotacional."
+  },
+  {
+    "palabra": "Clavo",
+    "categoría": "Construcción",
+    "pista": "Es una cosa de la categoría Construcción que se caracteriza por el ensamblaje de componentes estructurales a través de la inserción forzada y la fricción resultante."
+  },
+  {
+    "palabra": "Sombrero",
+    "categoría": "Moda",
+    "pista": "Es un elemento de la categoría Moda que se caracteriza por la cobertura de la región craneal con fines estéticos o de aislamiento térmico superior."
+  },
+  {
+    "palabra": "Guante",
+    "categoría": "Protección Laboral",
+    "pista": "Es un objeto de la categoría Protección Laboral que se caracteriza por la cobertura de los terminales táctiles para aislar la piel de riesgos térmicos, químicos o mecánicos."
+  },
+  {
+    "palabra": "Tornillo",
+    "categoría": "Ferretería",
+    "pista": "Es una cosa de la categoría Ferretería que se caracteriza por la fijación de piezas mediante una trayectoria helicoidal que transforma el movimiento circular en presión axial."
+  },
+  {
+    "palabra": "Alicates",
+    "categoría": "Bricolaje",
+    "pista": "Es un elemento de la categoría Bricolaje que se caracteriza por la manipulación y deformación de componentes rígidos mediante la multiplicación de la fuerza de prensión manual."
+  },
+  {
+    "palabra": "Pizarra",
+    "categoría": "Educación",
+    "pista": "Es un objeto de la categoría Educación que se caracteriza por actuar como soporte físico para la representación de datos visuales de carácter efímero y reversible."
+  },
+  {
+    "palabra": "Auriculares",
+    "categoría": "Tecnología",
+    "pista": "Es una cosa de la categoría Tecnología que se caracteriza por el aislamiento sonoro y la entrega de señales de audio directamente a la periferia auditiva."
+  },
+  {
+    "palabra": "Aspiradora",
+    "categoría": "Electrodomésticos",
+    "pista": "Es un elemento de la categoría Electrodomésticos que se caracteriza por la succión de partículas sólidas mediante la generación de un diferencial de presión atmosférica."
+  },
+  {
+    "palabra": "Perchero",
+    "categoría": "Mobiliario",
+    "pista": "Es un objeto de la categoría Mobiliario que se caracteriza por facilitar la suspensión estática de prendas de vestir para optimizar el aprovechamiento del espacio vertical."
+  },
+  {
+    "palabra": "Jarra",
+    "categoría": "Vajilla",
+    "pista": "Es una cosa de la categoría Vajilla que se caracteriza por el almacenamiento temporal de fluidos y su posterior distribución controlada mediante la inclinación del recipiente."
+  },
+  {
+    "palabra": "Telescopio",
+    "categoría": "Astronomía",
+    "pista": "Es un elemento de la categoría Astronomía que se caracteriza por la recolección de radiación luminosa de fuentes situadas a distancias interplanetarias o interestelares."
+  },
+  {
+    "palabra": "Puente",
+    "categoría": "Infraestructura",
+    "pista": "Es un objeto de la categoría Infraestructura que se caracteriza por la resolución de una discontinuidad en el terreno para permitir la transición de cargas o individuos."
+  },
+  {
+    "palabra": "Túnel",
+    "categoría": "Infraestructura",
+    "pista": "Es una cosa de la categoría Infraestructura que se caracteriza por la creación de un paso subterráneo que atraviesa una elevación geográfica o un entorno urbano."
+  },
+  {
+    "palabra": "Grúa",
+    "categoría": "Maquinaria Pesada",
+    "pista": "Es un elemento de la categoría Maquinaria Pesada que se caracteriza por la elevación y el posicionamiento preciso de masas de gran magnitud mediante sistemas de tracción vertical."
+  },
+  {
+    "palabra": "Extintor",
+    "categoría": "Seguridad",
+    "pista": "Es un objeto de la categoría Seguridad que se caracteriza por la supresión de reacciones exotérmicas descontroladas mediante la proyección de sustancias inhibidoras."
+  },
+  {
+    "palabra": "Anzuelo",
+    "categoría": "Pesca",
+    "pista": "Es una cosa de la categoría Pesca que se caracteriza por la captura de fauna hidrodinámica mediante un principio de anclaje en tejidos blandos."
+  },
+  {
+    "palabra": "Trampa",
+    "categoría": "Caza",
+    "pista": "Es un elemento de la categoría Caza que se caracteriza por la captura de entidades biológicas sin intervención directa, basándose en la activación de un mecanismo por proximidad."
+  },
+  {
+    "palabra": "Escalpelo",
+    "categoría": "Cirugía",
+    "pista": "Es un objeto de la categoría Cirugía que se caracteriza por la realización de incisiones de precisión milimétrica en sustratos orgánicos vivos."
+  },
+  {
+    "palabra": "Proyector",
+    "categoría": "Comunicación Visual",
+    "pista": "Es una cosa de la categoría Comunicación Visual que se caracteriza por la representación de información gráfica sobre una superficie externa mediante la emisión de luz focalizada."
+  },
+  {
+    "palabra": "Techo",
+    "categoría": "Arquitectura",
+    "pista": "Es un elemento de la categoría Arquitectura que se caracteriza por constituir el límite superior de una estructura para asegurar el aislamiento respecto al entorno cenital."
+  },
+  {
+    "palabra": "Muelle",
+    "categoría": "Náutica",
+    "pista": "Es un objeto de la categoría Náutica que se caracteriza por servir de interfaz entre un entorno terrestre y uno acuático para facilitar la transferencia de recursos."
+  },
+  {
+    "palabra": "Raíz",
+    "categoría": "Botánica",
+    "pista": "Es una cosa de la categoría Botánica que se caracteriza por la fijación del espécimen al sustrato y la extracción de nutrientes y fluidos del medio inferior."
+  },
+  {
+    "palabra": "Pulmón",
+    "categoría": "Anatomía",
+    "pista": "Es un elemento de la categoría Anatomía que se caracteriza por la ejecución de la mecánica respiratoria para el intercambio gaseoso entre el organismo y el ambiente."
+  }, 
+  {
+    "palabra": "grapadora",
+    "categoría": "papelería",
+    "pista": "Es un elemento de la categoría papelería que se caracteriza por fijar múltiples láminas delgadas mediante una presión mecánica que las atraviesa."
+  },
+  {
+    "palabra": "jabón",
+    "categoría": "aseo personal",
+    "pista": "Es un elemento de la categoría aseo personal que se caracteriza por reducir la tensión superficial para facilitar la eliminación de residuos biológicos."
+  },
+  {
+    "palabra": "peine",
+    "categoría": "aseo personal",
+    "pista": "Es un elemento de la categoría aseo personal que se caracteriza por organizar fibras naturales para evitar su enredo mediante el desplazamiento lineal."
+  },
+  {
+    "palabra": "borrador",
+    "categoría": "papelería",
+    "pista": "Es un elemento de la categoría papelería que se caracteriza por deshacer el rastro de una acción previa mediante la fricción controlada."
+  },
+  {
+    "palabra": "sobre",
+    "categoría": "papelería",
+    "pista": "Es un elemento de la categoría papelería que se caracteriza por encapsular y proteger el contenido informativo durante su tránsito de un punto a otro."
+  },
+  {
+    "palabra": "regla",
+    "categoría": "papelería",
+    "pista": "Es un elemento de la categoría papelería que se caracteriza por servir como guía para la rectitud o para determinar la extensión lineal de una superficie."
+  },
+  {
+    "palabra": "clip",
+    "categoría": "papelería",
+    "pista": "Es un elemento de la categoría papelería que se caracteriza por mantener la cohesión temporal de un conjunto de láminas sin alterar su integridad."
+  },
+  {
+    "palabra": "toalla",
+    "categoría": "aseo personal",
+    "pista": "Es un elemento de la categoría aseo personal que se caracteriza por absorber la saturación hídrica residual tras el contacto con fluidos."
+  },
+  {
+    "palabra": "alicate",
+    "categoría": "herramientas",
+    "pista": "Es un elemento de la categoría herramientas que se caracteriza por multiplicar la fuerza manual para la sujeción o deformación de materiales resistentes."
+  },
+  {
+    "palabra": "destornillador",
+    "categoría": "herramientas",
+    "pista": "Es un elemento de la categoría herramientas que se caracteriza por aplicar un torque rotativo para asegurar o liberar mecanismos de fijación helicoidales."
+  },
+  {
+    "palabra": "internet",
+    "categoría": "tecnología",
+    "pista": "Es un elemento de la categoría tecnología que se caracteriza por ser el tejido inmaterial que sostiene el flujo constante de la comunicación global."
+  },
+  {
+    "palabra": "teléfono",
+    "categoría": "tecnología",
+    "pista": "Es un elemento de la categoría tecnología que se caracteriza por permitir la mediación de interacciones auditivas inmediatas a través de distancias geográficas."
+  },
+  {
+    "palabra": "antena",
+    "categoría": "tecnología",
+    "pista": "Es un elemento de la categoría tecnología que se caracteriza por la transducción de señales electromagnéticas para facilitar el transporte de datos."
+  },
+  {
+    "palabra": "correo",
+    "categoría": "comunicación",
+    "pista": "Es un proceso de la categoría comunicación que se caracteriza por ser el protocolo de transferencia y recepción de mensajes asíncronos."
+  },
+  {
+    "palabra": "micrófono",
+    "categoría": "tecnología",
+    "pista": "Es un elemento de la categoría tecnología que se caracteriza por transformar las vibraciones de un fluido en señales eléctricas para su procesamiento."
+  },
+  {
+    "palabra": "altavoz",
+    "categoría": "tecnología",
+    "pista": "Es un elemento de la categoría tecnología que se caracteriza por la traducción de impulsos eléctricos en ondas perceptibles para el sistema auditivo."
+  },
+  {
+    "palabra": "satélite",
+    "categoría": "tecnología",
+    "pista": "Es un elemento de la categoría tecnología que se caracteriza por su posicionamiento orbital para la retransmisión de señales o la vigilancia remota."
+  },
+  {
+    "palabra": "batería",
+    "categoría": "tecnología",
+    "pista": "Es un elemento de la categoría tecnología que se caracteriza por el almacenamiento de potencial químico para su liberación energética bajo demanda."
+  },
+  {
+    "palabra": "pantalla",
+    "categoría": "tecnología",
+    "pista": "Es un elemento de la categoría tecnología que se caracteriza por servir como interfaz visual para la representación de datos y procesos digitales."
+  },
+  {
+    "palabra": "enchufe",
+    "categoría": "tecnología",
+    "pista": "Es un elemento de la categoría tecnología que se caracteriza por establecer el acoplamiento físico necesario para el flujo de corriente hacia un dispositivo."
+  },
+  {
+    "palabra": "lluvia",
+    "categoría": "fenómenos",
+    "pista": "Es un proceso de la categoría fenómenos que se caracteriza por el retorno del ciclo hídrico a la superficie para el mantenimiento de la biomasa."
+  },
+  {
+    "palabra": "isla",
+    "categoría": "geografía",
+    "pista": "Es un elemento de la categoría geografía que se caracteriza por el aislamiento de una unidad territorial mediante un contorno líquido continuo."
+  },
+  {
+    "palabra": "río",
+    "categoría": "geografía",
+    "pista": "Es un elemento de la categoría geografía que se caracteriza por ser un vector de transporte hídrico continuo hacia un cuerpo de agua mayor."
+  },
+  {
+    "palabra": "desierto",
+    "categoría": "geografía",
+    "pista": "Es un elemento de la categoría geografía que se caracteriza por la inhibición del desarrollo biológico debido a la escasez crítica de recursos hídricos."
+  },
+  {
+    "palabra": "trueno",
+    "categoría": "fenómenos",
+    "pista": "Es un proceso de la categoría fenómenos que se caracteriza por ser la consecuencia acústica de una expansión violenta del aire tras una descarga eléctrica."
+  },
+  {
+    "palabra": "terremoto",
+    "categoría": "fenómenos",
+    "pista": "Es un proceso de la categoría fenómenos que se caracteriza por la liberación súbita de energía cortical que altera la estabilidad del plano base."
+  },
+  {
+    "palabra": "bosque",
+    "categoría": "geografía",
+    "pista": "Es un elemento de la categoría geografía que se caracteriza por la regulación climática local mediante una alta densidad de biomasa vegetal."
+  },
+  {
+    "palabra": "raíz",
+    "categoría": "botánica",
+    "pista": "Es un elemento de la categoría botánica que se caracteriza por el anclaje al sustrato y la absorción de nutrientes esenciales para el organismo."
+  },
+  {
+    "palabra": "semilla",
+    "categoría": "botánica",
+    "pista": "Es un elemento de la categoría botánica que se caracteriza por contener el potencial biológico necesario para iniciar un nuevo ciclo vital."
+  },
+  {
+    "palabra": "cascada",
+    "categoría": "geografía",
+    "pista": "Es un proceso de la categoría geografía que se caracteriza por la transición gravitacional acelerada de un fluido debido a una discontinuidad en el lecho."
+  },
+  {
+    "palabra": "pulmón",
+    "categoría": "anatomía",
+    "pista": "Es un elemento de la categoría anatomía que se caracteriza por ejecutar el intercambio gaseoso indispensable para la oxigenación sistémica."
+  },
+  {
+    "palabra": "estómago",
+    "categoría": "anatomía",
+    "pista": "Es un elemento de la categoría anatomía que se caracteriza por el procesamiento químico de materia orgánica para su posterior asimilación."
+  },
+  {
+    "palabra": "hígado",
+    "categoría": "anatomía",
+    "pista": "Es un elemento de la categoría anatomía que se caracteriza por actuar como el nodo principal para la desintoxicación y síntesis metabólica del organismo."
+  },
+  {
+    "palabra": "hueso",
+    "categoría": "anatomía",
+    "pista": "Es un elemento de la categoría anatomía que se caracteriza por proporcionar la rigidez estructural necesaria para el soporte del sistema biológico."
+  },
+  {
+    "palabra": "músculo",
+    "categoría": "anatomía",
+    "pista": "Es un elemento de la categoría anatomía que se caracteriza por generar la tracción mecánica necesaria para permitir el desplazamiento cinético."
+  },
+  {
+    "palabra": "nervio",
+    "categoría": "anatomía",
+    "pista": "Es un elemento de la categoría anatomía que se caracteriza por la transmisión de impulsos eléctricos que coordinan la respuesta sensorial y motora."
+  },
+  {
+    "palabra": "riñón",
+    "categoría": "anatomía",
+    "pista": "Es un elemento de la categoría anatomía que se caracteriza por el filtrado de fluidos internos para la eliminación de desechos mediante la excreción."
+  },
+  {
+    "palabra": "pulso",
+    "categoría": "salud",
+    "pista": "Es un proceso de la categoría salud que se caracteriza por la manifestación rítmica del flujo vital detectable en los conductos de transporte internos."
+  },
+  {
+    "palabra": "respiración",
+    "categoría": "salud",
+    "pista": "Es un proceso de la categoría salud que se caracteriza por el ciclo involuntario de captación de energía externa para el mantenimiento homeostático."
+  },
+  {
+    "palabra": "sueño",
+    "categoría": "salud",
+    "pista": "Es un proceso de la categoría salud que se caracteriza por la sincronización del ciclo de recuperación neuronal y restauración de facultades cognitivas."
+  },
+  {
+    "palabra": "estatua",
+    "categoría": "mobiliario urbano",
+    "pista": "Es un elemento de la categoría mobiliario urbano que se caracteriza por la conmemoración simbólica mediante una representación estática en el espacio común."
+  },
+  {
+    "palabra": "banco",
+    "categoría": "mobiliario urbano",
+    "pista": "Es un elemento de la categoría mobiliario urbano que se caracteriza por ofrecer un nodo de descanso transitorio para los individuos en la vía pública."
+  },
+  {
+    "palabra": "barco",
+    "categoría": "transporte",
+    "pista": "Es un elemento de la categoría transporte que se caracteriza por el desplazamiento sobre superficies líquidas utilizando principios de flotabilidad."
+  },
+  {
+    "palabra": "pantalón",
+    "categoría": "vestimenta",
+    "pista": "Es un elemento de la categoría vestimenta que se caracteriza por la cobertura inferior del torso dividiendo la protección para cada eje motor."
+  },
+  {
+    "palabra": "camisa",
+    "categoría": "vestimenta",
+    "pista": "Es un elemento de la categoría vestimenta que se caracteriza por el resguardo del torso permitiendo la articulación flexible de los miembros superiores."
+  },
+  {
+    "palabra": "autobús",
+    "categoría": "transporte",
+    "pista": "Es un elemento de la categoría transporte que se caracteriza por el traslado masivo de sujetos siguiendo una trayectoria preestablecida."
+  },
+  {
+    "palabra": "puente",
+    "categoría": "infraestructura",
+    "pista": "Es un elemento de la categoría infraestructura que se caracteriza por garantizar la continuidad vial sobre una discontinuidad física o un vacío."
+  },
+  {
+    "palabra": "túnel",
+    "categoría": "infraestructura",
+    "pista": "Es un elemento de la categoría infraestructura que se caracteriza por permitir el tránsito a través de una masa sólida mediante una cavidad artificial."
+  },
+  {
+    "palabra": "gorra",
+    "categoría": "vestimenta",
+    "pista": "Es un elemento de la categoría vestimenta que se caracteriza por proporcionar una cobertura superior que mitiga la incidencia lumínica directa sobre la visión."
+  },
+  {
+    "palabra": "metro",
+    "categoría": "transporte",
+    "pista": "Es un elemento de la categoría transporte que se caracteriza por el desplazamiento masivo en vías segregadas para optimizar el flujo en núcleos urbanos."
+  }
+]

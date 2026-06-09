@@ -14,7 +14,7 @@ const StopVoteVetoSchema = z.object({
   targetId: z.string()
 });
 const StopConfigSchema = z.object({
-  categories: z.array(z.string()).min(3).max(8),
+  categories: z.array(z.string()).min(3).max(12),
   rounds: z.number().min(1).max(10)
 });
 

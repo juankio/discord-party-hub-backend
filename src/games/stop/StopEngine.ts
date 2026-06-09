@@ -61,8 +61,8 @@ export class StopEngine {
   public startGame(rules: StopRules, lastWinnerId?: string) {
     if (this.players.length < 1) return;
     this.rules = rules;
-    if (this.rules.categories.length > 8) {
-      this.rules.categories = this.rules.categories.slice(0, 8);
+    if (this.rules.categories.length > 12) {
+      this.rules.categories = this.rules.categories.slice(0, 12);
     }
     this.currentRound = 0;
     this.usedLetters.clear();

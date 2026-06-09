@@ -1,7 +1,7 @@
 export type StopGameState = 'LOBBY' | 'PLAYING' | 'VERIFYING' | 'SCORING' | 'FINISHED';
 
 export interface StopRules {
-  categories: string[]; // max 8
+  categories: string[]; // max 12
   rounds: number; // e.g. 3, 5, 10
   timeLimit?: number; // optional time limit in seconds
 }

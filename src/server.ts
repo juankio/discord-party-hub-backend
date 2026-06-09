@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import cors from 'cors';
 import { logger } from "./core/Logger.js";
 import { RoomManager } from "./core/RoomManager.js";
-import { startGameDispatcher, handleUnoEvents } from "./core/GameDispatcher.js";
+import { startGameDispatcher, registerAllGameRoutes } from "./core/GameDispatcher.js";
 import { connectDB } from "./config/db.js";
 
 import authRoutes from './routes/auth.routes.js';
@@ -70,7 +70,7 @@ io.on("connection", (socket) => {
 
 
   startGameDispatcher(socket, roomManager);
-  handleUnoEvents(socket, roomManager);
+  registerAllGameRoutes(socket, roomManager);
 });
 
 httpServer.listen(PORT, () => {

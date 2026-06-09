@@ -155,7 +155,11 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       room.gameEngine.startGame(rules, room.lastWinnerUserId);
       logger.info(`🎮 Partida de UNO iniciada en la sala ${roomId}`);
     } else if (data.gameType === 'stop') {
-      const rules = (data.rules as any) as StopRules; // Using any for mapping from frontend rules if they differ, or rely on defaults
+      const frontendRules = (data.rules as any) || {};
+      const rules: StopRules = {
+        categories: frontendRules.stopCategories || ['NOMBRE', 'ANIMAL', 'COLOR', 'COSA', 'FRUTA'],
+        rounds: frontendRules.stopRounds || 5
+      };
 
       room.gameType = 'stop';
       room.gameEngine = new StopEngine(roomId, async (event: string, eventPayload?: any) => {
@@ -205,7 +209,7 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       });
 
       io.to(roomId).emit("game_started", { gameType: 'stop' });
-      room.gameEngine.startGame(rules || { categories: ['Nombre', 'Animal', 'Color', 'Cosa', 'Fruta'], rounds: 5 }, room.lastWinnerUserId);
+      room.gameEngine.startGame(rules, room.lastWinnerUserId);
       logger.info(`🛑 Partida de STOP iniciada en la sala ${roomId}`);
     }
   });

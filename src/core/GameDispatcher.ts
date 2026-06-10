@@ -21,7 +21,10 @@ const StartGameSchema = z.object({
     playMultipleSame: z.boolean().default(false),
     interceptExact: z.boolean().default(false),
     zeroAndSevenRules: z.boolean().default(false),
-    extendedLobby: z.boolean().default(false)
+    extendedLobby: z.boolean().default(false),
+    stopCategories: z.array(z.string()).optional(),
+    stopRounds: z.number().optional(),
+    bannedLetters: z.array(z.string()).optional()
   }).optional()
 });
 
@@ -216,7 +219,8 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       const frontendRules = (data.rules as any) || {};
       const rules: StopRules = {
         categories: frontendRules.stopCategories || ['NOMBRE', 'ANIMAL', 'COLOR', 'COSA', 'FRUTA'],
-        rounds: frontendRules.stopRounds || 5
+        rounds: frontendRules.stopRounds || 5,
+        bannedLetters: frontendRules.bannedLetters || []
       };
 
       room.gameType = 'stop';

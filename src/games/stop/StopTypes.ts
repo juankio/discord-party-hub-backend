@@ -4,6 +4,7 @@ export interface StopRules {
   categories: string[]; // max 12
   rounds: number; // e.g. 3, 5, 10
   timeLimit?: number; // optional time limit in seconds
+  bannedLetters?: string[]; // letters to exclude from the roulette
 }
 
 export interface PlayerAnswers {
@@ -24,6 +25,7 @@ export interface StopPlayerState {
   color: string;
   isOffline: boolean;
   score: number;
+  invalidatedCount: number; // tracks how many words got invalidated across all rounds
   currentAnswers: PlayerAnswers;
   submitted: boolean; // Did they submit their answers?
 }

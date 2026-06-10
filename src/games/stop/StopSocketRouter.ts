@@ -15,7 +15,8 @@ const StopVoteVetoSchema = z.object({
 });
 const StopConfigSchema = z.object({
   categories: z.array(z.string()).min(3).max(12),
-  rounds: z.number().min(1).max(10)
+  rounds: z.number().min(1).max(10),
+  bannedLetters: z.array(z.string()).optional()
 });
 
 export function registerStopRoutes(socket: Socket, roomManager: RoomManager, validateSocketContext: (s: Socket) => boolean) {

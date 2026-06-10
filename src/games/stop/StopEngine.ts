@@ -38,6 +38,7 @@ export class StopEngine {
       color,
       isOffline: false,
       score: 0,
+      invalidatedCount: 0,
       currentAnswers: {},
       submitted: false
     });
@@ -64,9 +65,15 @@ export class StopEngine {
     if (this.rules.categories.length > 12) {
       this.rules.categories = this.rules.categories.slice(0, 12);
     }
+    if (!this.rules.bannedLetters) {
+      this.rules.bannedLetters = [];
+    }
     this.currentRound = 0;
     this.usedLetters.clear();
-    this.players.forEach(p => p.score = 0);
+    this.players.forEach(p => {
+      p.score = 0;
+      p.invalidatedCount = 0;
+    });
     this.startRound();
   }
 
@@ -78,7 +85,9 @@ export class StopEngine {
     }
 
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    const available = alphabet.filter(l => !this.usedLetters.has(l));
+    const banned = this.rules.bannedLetters || [];
+    const available = alphabet.filter(l => !this.usedLetters.has(l) && !banned.includes(l));
+    
     if (available.length === 0) {
       this.endGame();
       return;
@@ -207,6 +216,8 @@ export class StopEngine {
         
         if (isVetoed) {
           ans.finalPoints = 0;
+          const player = this.players.find(p => p.userId === ans.userId);
+          if (player) player.invalidatedCount++;
         } else {
           const lowerAns = ans.answer;
           if (!answersMap.has(lowerAns)) answersMap.set(lowerAns, []);
@@ -273,6 +284,7 @@ export class StopEngine {
         color: p.color,
         isOffline: p.isOffline,
         score: p.score,
+        invalidatedCount: p.invalidatedCount,
         submitted: p.submitted
       })),
       currentRound: this.currentRound,

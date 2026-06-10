@@ -2,6 +2,7 @@ import type { Server, Socket } from 'socket.io';
 import { logger } from './Logger.js';
 import type { UnoEngine } from '../games/uno/UnoEngine.js';
 import type { ImpostorEngine } from '../games/impostor/ImpostorEngine.js';
+import type { StopEngine } from '../games/stop/StopEngine.js';
 import { z } from 'zod';
 import { RoomGarbageCollector } from './RoomGarbageCollector.js';
 
@@ -32,7 +33,7 @@ export interface RoomData {
     isOffline?: boolean;
   }>;
   hostUserId: string;
-  gameEngine?: UnoEngine | ImpostorEngine;
+  gameEngine?: UnoEngine | ImpostorEngine | StopEngine | any;
   gameType?: string;
   roomRules?: Record<string, boolean>;
   lastWinnerUserId?: string;
@@ -103,7 +104,7 @@ export class RoomManager {
       }
 
       if (room.gameEngine) {
-        const p = room.gameEngine.players.find(player => player.userId === user.userId);
+        const p = room.gameEngine.players.find((player: any) => player.userId === user.userId);
         if (p) {
           p.nickname = newName;
         }
@@ -163,11 +164,13 @@ export class RoomManager {
       logger.info(`Host migrated to ${room.hostUserId} in room ${roomId}`);
     }
 
-    if (room.gameEngine && room.gameType === 'uno') {
+    if (room.gameEngine && (room.gameType === 'uno' || room.gameType === 'stop')) {
       room.gameEngine.setPlayerOffline(userId, false);
       (room.gameEngine as UnoEngine).addPlayer(userId, socket.id, nickname, avatarId, color);
-      this.io.to(socket.id).emit("game_started", { gameType: 'uno' });
-      room.gameEngine.broadcastState();
+      this.io.to(socket.id).emit("game_started", { gameType: room.gameType });
+      if (room.gameType === 'uno') {
+          (room.gameEngine as UnoEngine).broadcastState();
+      }
     } else {
       this.io.to(socket.id).emit("return_to_lobby");
     }
@@ -201,8 +204,8 @@ export class RoomManager {
     socket.data.avatarId = avatarId;
     socket.data.color = color;
 
-    if (room.gameEngine && room.gameType === 'uno') {
-      const p = room.gameEngine.players.find(player => player.userId === userId);
+    if (room.gameEngine && (room.gameType === 'uno' || room.gameType === 'stop')) {
+      const p = room.gameEngine.players.find((player: any) => player.userId === userId);
       if (p) {
         p.avatarId = avatarId;
         p.color = color;
@@ -251,7 +254,7 @@ export class RoomManager {
       const currentUser = room.users.find(u => u.userId === userId);
       if (currentUser) {
         currentUser.isOffline = true;
-        if (room.gameEngine && room.gameType === 'uno') {
+        if (room.gameEngine && (room.gameType === 'uno' || room.gameType === 'stop')) {
           room.gameEngine.setPlayerOffline(userId, true);
         } else if (room.gameEngine && room.gameType === 'impostor') {
           room.gameEngine.setPlayerOffline(userId, true);

@@ -4,6 +4,7 @@ export interface StopRules {
   categories: string[]; // max 12
   rounds: number; // e.g. 3, 5, 10
   timeLimit?: number; // optional time limit in seconds
+  verificationTime?: number; // time to verify answers in seconds
   bannedLetters?: string[]; // letters to exclude from the roulette
 }
 

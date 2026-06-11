@@ -20,6 +20,8 @@ export class StopEngine {
   public winnerId: string | null = null;
   
   private collectingTimeout: NodeJS.Timeout | null = null;
+  private verifyingDeadline: number | null = null;
+  private verifyingTimeout: NodeJS.Timeout | null = null;
 
   constructor(roomId: string, emitCallback: (event: string, payload?: any) => void) {
     this.roomId = roomId;
@@ -62,6 +64,9 @@ export class StopEngine {
   public startGame(rules: StopRules, lastWinnerId?: string) {
     if (this.players.length < 1) return;
     this.rules = rules;
+    if (!this.rules.verificationTime) {
+      this.rules.verificationTime = 30;
+    }
     if (this.rules.categories.length > 12) {
       this.rules.categories = this.rules.categories.slice(0, 12);
     }
@@ -158,6 +163,12 @@ export class StopEngine {
     this.state = 'VERIFYING';
     this.verifyingData = [];
 
+    const timeInSeconds = this.rules.verificationTime || 30;
+    this.verifyingDeadline = Date.now() + (timeInSeconds * 1000);
+    this.verifyingTimeout = setTimeout(() => {
+      this.finishVerifyingAndScore();
+    }, timeInSeconds * 1000);
+
     for (const cat of this.rules.categories) {
       const catVerif: CategoryVerification = { category: cat, answers: [] };
       for (const p of this.players) {
@@ -200,6 +211,12 @@ export class StopEngine {
   public finishVerifyingAndScore() {
     if (this.state !== 'VERIFYING') return;
     
+    if (this.verifyingTimeout) {
+      clearTimeout(this.verifyingTimeout);
+      this.verifyingTimeout = null;
+    }
+    this.verifyingDeadline = null;
+
     const activePlayers = this.players.filter(p => !p.isOffline).length;
     const threshold = Math.floor(activePlayers / 2); // >50% means if 4 players, need 2 or more vetos (wait >50% means > 4/2 = 2, so 3. Actually let's use strict > 50% => vetos.length > activePlayers / 2).
 
@@ -212,7 +229,7 @@ export class StopEngine {
           continue;
         }
 
-        const isVetoed = ans.vetos.length > threshold || !ans.answer.toLowerCase().startsWith(this.currentLetter!.toLowerCase());
+        const isVetoed = ans.vetos.length > threshold || !ans.answer.toLowerCase().startsWith(this.currentLetter!.toLowerCase()) || ans.answer.length < 2;
         
         if (isVetoed) {
           ans.finalPoints = 0;
@@ -275,6 +292,11 @@ export class StopEngine {
   }
 
   public broadcastState() {
+    let timeRemaining: number | undefined;
+    if (this.verifyingDeadline) {
+      timeRemaining = Math.max(0, this.verifyingDeadline - Date.now());
+    }
+
     const publicState: StopPublicState = {
       state: this.state,
       players: this.players.map(p => ({
@@ -294,7 +316,8 @@ export class StopEngine {
       verifyingCategoryIndex: 0, // Frontend handles pagination if needed
       verifyingData: this.verifyingData.length > 0 ? this.verifyingData : null,
       roundScores: Object.keys(this.roundScores).length > 0 ? this.roundScores : null,
-      winnerId: this.winnerId
+      winnerId: this.winnerId,
+      timeRemaining
     };
 
     this.emitCallback('game_state_update', { state: publicState });

@@ -24,6 +24,7 @@ const StartGameSchema = z.object({
     extendedLobby: z.boolean().default(false),
     stopCategories: z.array(z.string()).optional(),
     stopRounds: z.number().optional(),
+    verificationTime: z.number().optional(),
     bannedLetters: z.array(z.string()).optional()
   }).optional()
 });
@@ -220,6 +221,7 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       const rules: StopRules = {
         categories: frontendRules.stopCategories || ['NOMBRE', 'ANIMAL', 'COLOR', 'COSA', 'FRUTA'],
         rounds: frontendRules.stopRounds || 5,
+        verificationTime: frontendRules.verificationTime,
         bannedLetters: frontendRules.bannedLetters || []
       };
 

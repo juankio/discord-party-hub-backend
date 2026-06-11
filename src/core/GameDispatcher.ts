@@ -15,18 +15,7 @@ import { registerStopRoutes } from "../games/stop/StopSocketRouter.js";
 // -- Esquemas de validación ZOD --
 const StartGameSchema = z.object({
   gameType: z.enum(["uno", "parchis", "stop", "pinturillo", "liars", "impostor"]).default("uno"),
-  rules: z.object({
-    stackDrawCards: z.boolean().default(false),
-    drawUntilPlayable: z.boolean().default(false),
-    playMultipleSame: z.boolean().default(false),
-    interceptExact: z.boolean().default(false),
-    zeroAndSevenRules: z.boolean().default(false),
-    extendedLobby: z.boolean().default(false),
-    stopCategories: z.array(z.string()).optional(),
-    stopRounds: z.number().optional(),
-    verificationTime: z.number().optional(),
-    bannedLetters: z.array(z.string()).optional()
-  }).optional()
+  rules: z.any().optional()
 });
 
 // Guard global
@@ -85,16 +74,32 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
     io.to(socket.data.roomId).emit("room_update", {
       users: room.users,
       hostUserId: room.hostUserId,
-      roomRules: room.roomRules
+      roomRules: room.roomRules,
+      selectedGame: room.selectedGame
+    });
+  });
+
+  socket.on("update_selected_game", (gameId: string) => {
+    if (!validateSocketContext(socket)) return;
+    const room = rooms.get(socket.data.roomId);
+    if (!room || room.hostUserId !== socket.data.userId) return;
+
+    room.selectedGame = gameId;
+    io.to(socket.data.roomId).emit("room_update", {
+      users: room.users,
+      hostUserId: room.hostUserId,
+      roomRules: room.roomRules,
+      selectedGame: room.selectedGame
     });
   });
 
   socket.on("start_game", (payload: any) => {
+    logger.warn("[DEBUG] start_game received: " + JSON.stringify(payload));
     if (!validateSocketContext(socket)) return;
 
     const result = StartGameSchema.safeParse(payload);
     if (!result.success) {
-      logger.warn("[ZOD] Payload de start_game invalido de " + socket.data.userId);
+      logger.warn("[ZOD] Payload de start_game invalido de " + socket.data.userId + " Error: " + JSON.stringify(result.error));
       return;
     }
 
@@ -117,7 +122,12 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
               const user = room.users.find((u: any) => u.userId === eventPayload);
               if (user) {
                 user.totalWins += 1;
-                io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId });
+                io.to(roomId).emit("room_update", { 
+                  users: room.users, 
+                  hostUserId: room.hostUserId,
+                  roomRules: room.roomRules,
+                  selectedGame: room.selectedGame 
+                });
               }
 
               try {
@@ -172,7 +182,12 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
             const user = room.users.find((u: any) => u.userId === eventPayload);
             if (user) {
               user.totalWins += 1;
-              io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId, roomRules: room.roomRules });
+              io.to(roomId).emit("room_update", { 
+                users: room.users, 
+                hostUserId: room.hostUserId, 
+                roomRules: room.roomRules,
+                selectedGame: room.selectedGame 
+              });
             }
             
             try {
@@ -233,7 +248,12 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
             const user = room.users.find((u: any) => u.userId === eventPayload);
             if (user) {
               user.totalWins += 1;
-              io.to(roomId).emit("room_update", { users: room.users, hostUserId: room.hostUserId, roomRules: room.roomRules });
+              io.to(roomId).emit("room_update", { 
+                users: room.users, 
+                hostUserId: room.hostUserId, 
+                roomRules: room.roomRules,
+                selectedGame: room.selectedGame 
+              });
             }
             
             try {

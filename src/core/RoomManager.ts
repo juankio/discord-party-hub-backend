@@ -36,6 +36,7 @@ export interface RoomData {
   gameEngine?: UnoEngine | ImpostorEngine | StopEngine | any;
   gameType?: string;
   roomRules?: Record<string, boolean>;
+  selectedGame?: string;
   lastWinnerUserId?: string;
   lastActive: number;
 }
@@ -59,6 +60,7 @@ export class RoomManager {
       users: [],
       hostUserId,
       lastActive: Date.now(),
+      selectedGame: 'uno',
       roomRules: { stackDrawCards: true, playMultipleSame: true, zeroAndSevenRules: true, drawUntilPlayable: false, interceptExact: false, extendedLobby: false }
     });
     logger.info("Sala oficial creada vía API: " + roomId);
@@ -114,7 +116,8 @@ export class RoomManager {
     this.io.to(roomId).emit("room_update", {
       users: room.users,
       hostUserId: room.hostUserId,
-      roomRules: room.roomRules
+      roomRules: room.roomRules,
+      selectedGame: room.selectedGame
     });
 
     if (room.gameEngine) {

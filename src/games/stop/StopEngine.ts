@@ -125,9 +125,12 @@ export class StopEngine {
     this.emitCallback('stop_called', { userId: player.userId });
 
     // Wait max 3 seconds for others to submit their partial answers
-    this.collectingTimeout = setTimeout(() => {
-      this.startVerifying();
-    }, 3000);
+    if (!this.collectingTimeout) {
+      this.collectingTimeout = setTimeout(() => {
+        this.collectingTimeout = null;
+        this.startVerifying();
+      }, 3000);
+    }
   }
 
   public submitAnswers(userId: string, answers: PlayerAnswers) {

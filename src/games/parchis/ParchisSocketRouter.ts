@@ -22,10 +22,30 @@ export function registerParchisRoutes(socket: Socket, roomManager: RoomManager, 
     }
   };
 
-  socket.on("parchis:join", () => wrapParchisHandler((engine) => {
-    // Already added on start_game, but can broadcast state here
-    engine.broadcastState();
-  }));
+  socket.on("parchis:join", (payload: any = {}) => {
+    try {
+      const roomId = payload?.roomId || socket.data?.roomId;
+      if (!roomId) return;
+      
+      const room = roomManager.getRoomsMap().get(roomId);
+      if (!room) {
+        socket.emit("room_not_found");
+        return;
+      }
+      
+      if (room.gameType !== 'parchis' || !room.gameEngine) return;
+      
+      if (!socket.data) socket.data = {};
+      if (!socket.data.roomId) socket.data.roomId = roomId;
+
+      if (!validate(socket)) return;
+
+      const engine = room.gameEngine as ParchisEngine;
+      engine.broadcastState();
+    } catch (e) {
+      logger.error(`[ERROR] Unhandled error in Parchis join for socket ${socket.id}: ${e}`);
+    }
+  });
 
   socket.on("parchis:roll_dice", () => wrapParchisHandler((engine) => {
     engine.rollDice(socket.data.userId);

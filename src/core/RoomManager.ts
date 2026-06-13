@@ -12,13 +12,15 @@ const JoinRoomSchema = z.object({
   nickname: z.string().max(30).default('Anon'),
   avatarId: z.number().int().default(1),
   color: z.string().max(20).default('#ffffff'),
+  tokenType: z.string().max(20).default('gem'),
   totalWins: z.number().default(0)
 });
 
 const UpdateProfileSchema = z.object({
   nickname: z.string().max(30).default('Anon'),
   avatarId: z.number().int().default(1),
-  color: z.string().max(20).default('#ffffff')
+  color: z.string().max(20).default('#ffffff'),
+  tokenType: z.string().max(20).default('gem')
 });
 
 export interface RoomData {
@@ -29,6 +31,7 @@ export interface RoomData {
     originalNickname: string;
     avatarId: number;
     color: string;
+    tokenType?: string;
     totalWins: number;
     isOffline?: boolean;
   }>;
@@ -132,10 +135,10 @@ export class RoomManager {
       return;
     }
 
-    const { roomId, userId, nickname, avatarId, color, totalWins } = result.data;
+    const { roomId, userId, nickname, avatarId, color, tokenType, totalWins } = result.data;
 
     socket.join(roomId);
-    socket.data = { userId, nickname, avatarId, color, roomId, totalWins };
+    socket.data = { userId, nickname, avatarId, color, tokenType, roomId, totalWins };
 
     if (!this.rooms.has(roomId)) {
       this.io.to(socket.id).emit("room_not_found");
@@ -156,9 +159,9 @@ export class RoomManager {
     }
 
     if (existingIndex === -1) {
-      room.users.push({ socketId: socket.id, userId, originalNickname: nickname, nickname, avatarId, color, totalWins, isOffline: false });
+      room.users.push({ socketId: socket.id, userId, originalNickname: nickname, nickname, avatarId, color, tokenType, totalWins, isOffline: false });
     } else {
-      room.users[existingIndex] = { socketId: socket.id, userId, originalNickname: nickname, nickname, avatarId, color, totalWins, isOffline: false };
+      room.users[existingIndex] = { socketId: socket.id, userId, originalNickname: nickname, nickname, avatarId, color, tokenType, totalWins, isOffline: false };
     }
 
     const hostStillExists = room.users.some(u => u.userId === room.hostUserId);
@@ -188,7 +191,7 @@ export class RoomManager {
       return;
     }
 
-    const { nickname, avatarId, color } = result.data;
+    const { nickname, avatarId, color, tokenType } = result.data;
     const roomId = socket.data?.roomId;
     const userId = socket.data?.userId;
 
@@ -203,9 +206,11 @@ export class RoomManager {
     currentUser.originalNickname = nickname;
     currentUser.avatarId = avatarId;
     currentUser.color = color;
+    currentUser.tokenType = tokenType;
 
     socket.data.avatarId = avatarId;
     socket.data.color = color;
+    socket.data.tokenType = tokenType;
 
     if (room.gameEngine && (room.gameType === 'uno' || room.gameType === 'stop')) {
       const p = room.gameEngine.players.find((player: any) => player.userId === userId);

@@ -11,6 +11,9 @@ import { User } from "../models/User.js";
 import { registerUnoRoutes } from "../games/uno/UnoSocketRouter.js";
 import { registerImpostorRoutes } from "../games/impostor/ImpostorSocketRouter.js";
 import { registerStopRoutes } from "../games/stop/StopSocketRouter.js";
+import { registerParchisRoutes } from "../games/parchis/ParchisSocketRouter.js";
+import { ParchisEngine } from "../games/parchis/ParchisEngine.js";
+import type { ParchisRules } from "../games/parchis/ParchisTypes.js";
 
 // -- Esquemas de validación ZOD --
 const StartGameSchema = z.object({
@@ -34,6 +37,7 @@ export function registerAllGameRoutes(socket: Socket, roomManager: RoomManager) 
   // Register all Uno-specific routes (play, draw, declare, swap, etc.)
   registerUnoRoutes(socket, roomManager, validateSocketContext);
   registerStopRoutes(socket, roomManager, validateSocketContext);
+  registerParchisRoutes(socket, roomManager, validateSocketContext);
 
   const wrapHandler = (handler: () => void) => {
     try {
@@ -295,6 +299,68 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       io.to(roomId).emit("game_started", { gameType: 'stop' });
       room.gameEngine.startGame(rules, room.lastWinnerUserId);
       logger.info(`🛑 Partida de STOP iniciada en la sala ${roomId}`);
+    } else if (data.gameType === 'parchis') {
+      const frontendRules = (data.rules as any) || {};
+      const rules: Partial<ParchisRules> = {};
+      if (frontendRules.diceCount) rules.diceCount = frontendRules.diceCount;
+      if (frontendRules.tokensPerPlayer) rules.tokensPerPlayer = frontendRules.tokensPerPlayer;
+
+      room.gameType = 'parchis';
+      room.gameEngine = new ParchisEngine(roomId, async (event: string, eventPayload?: any) => {
+        try {
+          if (event === 'player_won') {
+            room.lastWinnerUserId = eventPayload;
+            const user = room.users.find((u: any) => u.userId === eventPayload);
+            if (user) {
+              user.totalWins += 1;
+              io.to(roomId).emit("room_update", { 
+                users: room.users, 
+                hostUserId: room.hostUserId, 
+                roomRules: room.roomRules,
+                selectedGame: room.selectedGame 
+              });
+            }
+            
+            try {
+              const registeredUserIds = room.users
+                .filter((u: any) => /^[0-9a-fA-F]{24}$/.test(u.userId))
+                .map((u: any) => u.userId);
+                
+              if (registeredUserIds.length > 0) {
+                await User.updateMany(
+                  { _id: { $in: registeredUserIds } },
+                  { $inc: { gamesPlayed: 1 }, $set: { lastPlayed: new Date() } }
+                );
+              }
+              
+              if (user && /^[0-9a-fA-F]{24}$/.test(user.userId)) {
+                await User.findByIdAndUpdate(user.userId, { 
+                  $inc: { 'stats.totalWins': 1, 'stats.parchisWins': 1 } 
+                });
+              }
+            } catch (dbErr) {
+              logger.error(`Error guardando victoria/stats Parchis en DB: ${dbErr}`);
+            }
+            return;
+          }
+          if (event === 'game_state_update') {
+            const targetSocketId = room.users.find((u:any) => u.userId === eventPayload.targetUserId)?.socketId;
+            if (targetSocketId) io.to(targetSocketId).emit(event, eventPayload.state);
+          } else {
+            io.to(roomId).emit(event, eventPayload);
+          }
+        } catch (e) {
+          logger.error(`Error emitiendo evento de juego Parchis: ${e}`);
+        }
+      });
+
+      room.users.forEach((u: any) => {
+        room.gameEngine!.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
+      });
+
+      io.to(roomId).emit("game_started", { gameType: 'parchis' });
+      (room.gameEngine as ParchisEngine).startGame(rules);
+      logger.info(`🎲 Partida de PARCHIS iniciada en la sala ${roomId}`);
     }
   });
 }

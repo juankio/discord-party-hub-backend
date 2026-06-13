@@ -2,6 +2,7 @@ export interface ParchisRules {
   diceCount: 1 | 2;
   tokensPerPlayer: 3 | 4;
   safeZones: number[];
+  exactMeta: boolean;
 }
 
 export interface ParchisToken {
@@ -32,4 +33,6 @@ export interface ParchisPublicState {
   currentTurnIndex: number;
   rules: ParchisRules;
   diceValue: number[];
+  availableMoves: number[];
+  consecutivePairs: number;
 }

@@ -31,6 +31,10 @@ export function registerParchisRoutes(socket: Socket, roomManager: RoomManager, 
     engine.rollDice(socket.data.userId);
   }));
 
+  socket.on("parchis:choose_figure", (payload: { figureId: string }) => wrapParchisHandler((engine) => {
+    engine.chooseFigure(socket.data.userId, payload.figureId);
+  }));
+
   socket.on("parchis:move_token", (tokenId: string) => wrapParchisHandler((engine) => {
     engine.moveToken(socket.data.userId, tokenId);
   }));

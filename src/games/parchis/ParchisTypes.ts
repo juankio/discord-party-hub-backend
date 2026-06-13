@@ -20,9 +20,11 @@ export interface ParchisPlayer {
   color: string;
   tokens: ParchisToken[];
   isOffline: boolean;
+  selectedFigure?: string;
+  hasChosenFigure?: boolean;
 }
 
-export type ParchisGameState = 'LOBBY' | 'PLAYING' | 'FINISHED';
+export type ParchisGameState = 'LOBBY' | 'CHOOSING_TOKENS' | 'PLAYING' | 'FINISHED';
 
 export interface ParchisPublicState {
   state: ParchisGameState;

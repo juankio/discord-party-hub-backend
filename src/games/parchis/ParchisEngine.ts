@@ -28,7 +28,8 @@ export class ParchisEngine {
       avatarId,
       color,
       tokens: [],
-      isOffline: false
+      isOffline: false,
+      hasChosenFigure: false
     });
   }
 
@@ -50,21 +51,43 @@ export class ParchisEngine {
       this.rules = { ...this.rules, ...rules };
     }
     
-    // Initialize tokens
+    // Reset figure choices
     this.players.forEach(player => {
-      player.tokens = Array.from({ length: this.rules.tokensPerPlayer }, (_, i) => ({
-        id: `${player.userId}-token-${i}`,
-        color: player.color,
-        ownerId: player.userId,
-        position: -1,
-        state: 'HOME'
-      }));
+      player.hasChosenFigure = false;
+      player.selectedFigure = undefined;
     });
 
-    this.state = 'PLAYING';
+    this.state = 'CHOOSING_TOKENS';
     this.currentTurnIndex = 0;
     this.diceValue = [];
     
+    this.broadcastState();
+  }
+
+  public chooseFigure(userId: string, figureId: string) {
+    if (this.state !== 'CHOOSING_TOKENS') return;
+    const player = this.players.find(p => p.userId === userId);
+    if (!player || player.hasChosenFigure) return;
+
+    player.selectedFigure = figureId;
+    player.hasChosenFigure = true;
+
+    const allActivePlayersChosen = this.players.every(p => p.isOffline || p.hasChosenFigure);
+
+    if (allActivePlayersChosen) {
+      // Initialize tokens
+      this.players.forEach(p => {
+        p.tokens = Array.from({ length: this.rules.tokensPerPlayer }, (_, i) => ({
+          id: `${p.userId}-token-${i}`,
+          color: p.color,
+          ownerId: p.userId,
+          position: -1,
+          state: 'HOME'
+        }));
+      });
+      this.state = 'PLAYING';
+    }
+
     this.broadcastState();
   }
 

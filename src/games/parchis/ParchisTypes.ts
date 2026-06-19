@@ -1,8 +1,12 @@
 export interface ParchisRules {
   diceCount: 1 | 2;
   tokensPerPlayer: 3 | 4;
+  parchisBoardSize?: 4 | 6 | 8; // Added for different board sizes
   safeZones: number[];
   exactMeta: boolean;
+  threePairsRule?: 'penalty' | 'reward';
+  safeBlocks?: boolean;
+  autoSoplar?: boolean;
 }
 
 export interface ParchisToken {
@@ -10,7 +14,7 @@ export interface ParchisToken {
   color: string;
   ownerId: string;
   position: number;
-  state: 'HOME' | 'BOARD' | 'PATH' | 'META';
+  state: 'HOME' | 'BOARD' | 'PATH' | 'META' | 'FINISHED';
 }
 
 export interface ParchisPlayer {
@@ -35,4 +39,5 @@ export interface ParchisPublicState {
   diceValue: number[];
   availableMoves: number[];
   consecutivePairs: number;
+  winner?: string | null;
 }

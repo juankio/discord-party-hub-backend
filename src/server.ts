@@ -25,7 +25,7 @@ app.use(cors({
 app.use(express.json());
 
 // Health Check (Azure keep-alive)
-app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok', time: Date.now() }));
+app.get('/api/health', (req, res) => res.status(200).json({ success: true, data: { status: 'ok', time: Date.now() }, message: 'Server healthy', error: null }));
 
 // Montar rutas HTTP
 app.use('/api/auth', authRoutes);
@@ -47,10 +47,15 @@ const roomManager = new RoomManager(io);
 app.post('/api/rooms/create', (req, res) => {
   const { userId } = req.body;
   if (!userId) {
-    return res.status(400).json({ success: false, error: 'userId is required' });
+    return res.status(400).json({ success: false, data: null, message: 'userId is required', error: 'MISSING_DATA' });
   }
-  const roomId = roomManager.createRoom(userId);
-  res.json({ success: true, data: { roomId } });
+  try {
+    const roomId = roomManager.createRoom(userId);
+    res.json({ success: true, data: { roomId }, message: 'Room created successfully', error: null });
+  } catch (err: any) {
+    logger.error(`Error creating room: ${err.message}`);
+    res.status(500).json({ success: false, data: null, message: 'Internal Server Error', error: err.message });
+  }
 });
 
 // Implementar Seguridad en Sockets (Zero-Trust)

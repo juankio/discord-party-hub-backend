@@ -60,4 +60,8 @@ export function registerParchisRoutes(socket: Socket, roomManager: RoomManager, 
       engine.moveToken(socket.data.userId, payload.tokenId, payload.diceValue);
     }
   }));
+
+  socket.on("parchis:surrender", () => wrapParchisHandler((engine) => {
+    engine.surrender(socket.data.userId);
+  }));
 }

@@ -67,6 +67,7 @@ export class ParchisEngine {
     if ((this.state === 'PLAYING' || this.state === 'CHOOSING_TOKENS') && this.players.length === 1) {
       this.winner = this.players[0].userId;
       this.state = 'FINISHED';
+      this.emitEvent('player_won', this.winner);
     } else if (this.players.length === 0) {
       this.state = 'FINISHED';
     }
@@ -187,6 +188,7 @@ export class ParchisEngine {
               if (player.tokens.every(t => t.state === 'FINISHED')) {
                 this.winner = player.userId;
                 this.state = 'FINISHED';
+                this.emitEvent('player_won', this.winner);
               }
             } else {
               token.state = 'HOME';
@@ -386,6 +388,7 @@ export class ParchisEngine {
            if (player.tokens.every(t => t.state === 'FINISHED')) {
                this.winner = player.userId;
                this.state = 'FINISHED';
+               this.emitEvent('player_won', this.winner);
            }
         } else {
            token.state = 'META';

@@ -39,8 +39,8 @@ export const getTopPlayers = async (req: Request, res: Response) => {
       totalWins: (p as any).stats?.totalWins || 0
     }));
 
-    res.json(mapped);
+    res.json({ success: true, data: mapped, message: 'Leaderboard fetched', error: null });
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ success: false, data: null, message: 'Internal Server Error', error: e.message });
   }
 };

@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import type { Player, UnoRules, GameState, Card, CardColor } from './UnoTypes.js';
 import { UnoDeckManager } from './UnoDeck.js';
 import { UnoActions } from './UnoActions.js';
+import { UnoGameManager } from './UnoGameManager.js';
 
 export class UnoEngine extends EventEmitter {
   public roomId: string;
@@ -39,26 +40,7 @@ export class UnoEngine extends EventEmitter {
   }
 
   public removePlayer(userId: string) {
-    this.players = this.players.filter(p => p.userId !== userId);
-    if (this.state !== 'WAITING' && this.state !== 'FINISHED') {
-      if (this.players.length < 2) {
-        this.state = 'FINISHED';
-        if (this.players.length === 1) {
-          this.winner = this.players[0].userId;
-          this.emit('player_won', this.players[0].userId);
-        }
-        this.broadcastState();
-      } else {
-        if (this.actionRequiredFrom === userId) {
-          this.actionRequiredFrom = '';
-          this.state = 'PLAYING';
-          this.advanceTurn(1 + (this.pendingSkips || 0));
-          this.pendingSkips = 0;
-        }
-        this.currentTurnIndex = this.currentTurnIndex % this.players.length;
-        this.broadcastState();
-      }
-    }
+    UnoGameManager.removePlayer(this, userId);
   }
 
   public setPlayerOffline(userId: string, isOffline: boolean) {
@@ -70,44 +52,7 @@ export class UnoEngine extends EventEmitter {
   }
 
   public startGame(rules: UnoRules, lastWinnerUserId?: string) {
-    if (this.players.length < 2) return;
-    this.rules = rules;
-    this.deckManager.reset();
-    this.pendingDraws = 0; this.playDirection = 1;
-
-    // Barajar los jugadores para asientos dinámicos
-    for (let i = this.players.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [this.players[i], this.players[j]] = [this.players[j], this.players[i]];
-    }
-
-    // Ventaja del ganador o aleatorio
-    let startIndex = -1;
-    if (lastWinnerUserId) {
-      startIndex = this.players.findIndex(p => p.userId === lastWinnerUserId);
-    }
-    
-    if (startIndex !== -1) {
-      this.currentTurnIndex = startIndex;
-    } else {
-      this.currentTurnIndex = Math.floor(Math.random() * this.players.length);
-    }
-    
-    for (const p of this.players) { p.hand = this.deckManager.drawCards(7); p.hasYelledUno = false; }
-
-    let firstCard = this.deckManager.drawCards(1)[0];
-    if (!firstCard) return;
-    while (['wild', 'reverse', 'skip', 'draw2'].includes(firstCard.value) || firstCard.color === 'wild') {
-      this.deckManager.deck.push(firstCard);
-      this.deckManager.shuffleDeck();
-      firstCard = this.deckManager.drawCards(1)[0] || firstCard;
-    }
-    this.deckManager.discardPile.push(firstCard);
-    this.currentColor = firstCard.color;
-    
-    this.state = 'PLAYING';
-    this.broadcastState();
-    this.broadcastMessage(`¡La partida ha comenzado!`);
+    UnoGameManager.startGame(this, rules, lastWinnerUserId);
   }
 
   public playCards(userId: string, cardIds: string[]) {
@@ -131,18 +76,7 @@ export class UnoEngine extends EventEmitter {
   }
 
   public yellUno(userId: string) {
-    const player = this.players.find(p => p.userId === userId);
-    if (!player || player.hasYelledUno) return;
-
-    if (player.hand.length === 1) {
-      player.hasYelledUno = true;
-      this.broadcastMessage(`¡${player.nickname} gritó UNO!`);
-    } else if (player.hand.length > 1) {
-      player.hand.push(...this.deckManager.drawCards(2));
-      this.broadcastMessage(`¡${player.nickname} cantó UNO en falso y roba 2 cartas!`);
-      this.broadcastAction("rival_drew", player.userId, { cardsCount: 2 });
-      this.broadcastState();
-    }
+    UnoGameManager.yellUno(this, userId);
   }
 
   public challengeUno(challengerId: string, targetId: string) {
@@ -153,22 +87,12 @@ export class UnoEngine extends EventEmitter {
     UnoActions.surrender(this, userId);
   }
 
-  
   public applyZeroRule() {
-    const hands = this.players.map(p => p.hand);
-    if (this.playDirection === 1) hands.unshift(hands.pop()!);
-    else hands.push(hands.shift()!);
-    this.players.forEach((p, i) => p.hand = hands[i] || []);
-    this.broadcastAction("action_zero", this.players[this.currentTurnIndex]?.userId || '');
+    UnoGameManager.applyZeroRule(this);
   }
 
   public advanceTurn(steps: number) {
-    let rawIndex = this.currentTurnIndex + (steps * this.playDirection);
-    while (rawIndex < 0) rawIndex += this.players.length;
-    this.currentTurnIndex = rawIndex % this.players.length;
-    if (this.players[this.currentTurnIndex]) {
-      this.players[this.currentTurnIndex].hasDrawnThisTurn = false;
-    }
+    UnoGameManager.advanceTurn(this, steps);
   }
 
   public broadcastMessage(msg: string) { this.emit("game_message", { message: msg }); }
@@ -195,4 +119,3 @@ export class UnoEngine extends EventEmitter {
     }
   }
 }
-

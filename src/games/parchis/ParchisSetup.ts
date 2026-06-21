@@ -11,28 +11,36 @@ export function setupParchisGame(roomId: string, room: any, io: Server, frontend
   if (frontendRules.parchisBoardSize) rules.parchisBoardSize = frontendRules.parchisBoardSize;
 
   room.gameType = "parchis";
-  room.gameEngine = new ParchisEngine(roomId, async (event: string, eventPayload?: any) => {
+  
+  const engine = new ParchisEngine(roomId);
+  room.gameEngine = engine;
+
+  engine.on("player_won", async (eventPayload) => {
     try {
-      if (event === "player_won") {
-        await handlePlayerWon(roomId, eventPayload, room, io, "parchisWins");
-        return;
-      }
-      if (event === "game_state_update") {
-        const targetSocketId = room.users.find((u: any) => u.userId === eventPayload.targetUserId)?.socketId;
-        if (targetSocketId) io.to(targetSocketId).emit(event, eventPayload.state);
-      } else {
-        io.to(roomId).emit(event, eventPayload);
-      }
+      await handlePlayerWon(roomId, eventPayload, room, io, "parchisWins");
     } catch (e) {
-      logger.error(`Error emitiendo evento de juego Parchis: ${e}`);
+      logger.error(`Error emitiendo evento de juego Parchis (player_won): ${e}`);
     }
   });
 
+  engine.on("game_state_update", (eventPayload) => {
+    try {
+      const targetSocketId = room.users.find((u: any) => u.userId === eventPayload.targetUserId)?.socketId;
+      if (targetSocketId) io.to(targetSocketId).emit("game_state_update", eventPayload.state);
+    } catch (e) {
+      logger.error(`Error emitiendo evento de juego Parchis (game_state_update): ${e}`);
+    }
+  });
+
+  engine.on("parchis:dice_rolled", (eventPayload) => {
+    io.to(roomId).emit("parchis:dice_rolled", eventPayload);
+  });
+
   room.users.forEach((u: any) => {
-    room.gameEngine!.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
+    engine.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
   });
 
   io.to(roomId).emit("game_started", { gameType: "parchis" });
-  room.gameEngine.startGame(rules);
+  engine.startGame(rules);
   logger.info(`🎲 Partida de PARCHIS iniciada en la sala ${roomId}`);
 }

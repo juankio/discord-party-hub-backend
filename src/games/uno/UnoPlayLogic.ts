@@ -87,7 +87,7 @@ export class UnoPlayLogic {
       engine.state = 'FINISHED'; engine.winner = player.userId;
       engine.broadcastMessage(`¡${player.nickname} HA GANADO! 🎉`);
       
-      engine.broadcastCallback('player_won', player.userId);
+      engine.emit('player_won', player.userId);
       return engine.broadcastState();
     }
 

@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import type {
   WordEntry,
   ImpostorGameState,
@@ -18,7 +19,7 @@ const RESULTS_DURATION = 10;
 const MAX_ROUNDS = 3;
 const MIN_PLAYERS = 3;
 
-export class ImpostorEngine {
+export class ImpostorEngine extends EventEmitter {
   public roomId: string;
   public players: ImpostorPlayer[] = [];
   public state: ImpostorGameState = 'WAITING';
@@ -31,11 +32,10 @@ export class ImpostorEngine {
   public impostorUserId: string | null = null;
 
   private timerInterval: ReturnType<typeof setInterval> | null = null;
-  public broadcastCallback: (event: string, data?: any) => void;
 
-  constructor(roomId: string, broadcastCallback: (event: string, data?: any) => void) {
+  constructor(roomId: string) {
+    super();
     this.roomId = roomId;
-    this.broadcastCallback = broadcastCallback;
   }
 
   // ──────────────────── Gestión de jugadores ────────────────────
@@ -82,7 +82,7 @@ export class ImpostorEngine {
 
   public startGame() {
     if (this.players.length < MIN_PLAYERS) {
-      this.broadcastCallback('game_message', { message: `Se necesitan al menos ${MIN_PLAYERS} jugadores para empezar.` });
+      this.emit('game_message', { message: `Se necesitan al menos ${MIN_PLAYERS} jugadores para empezar.` });
       return;
     }
 
@@ -111,7 +111,7 @@ export class ImpostorEngine {
     // Seleccionar palabra aleatoria
     const wordEntry = WORDS[Math.floor(Math.random() * WORDS.length)];
     if (!wordEntry) {
-      this.broadcastCallback('game_message', { message: 'Error: no hay palabras disponibles.' });
+      this.emit('game_message', { message: 'Error: no hay palabras disponibles.' });
       return;
     }
 
@@ -299,7 +299,7 @@ export class ImpostorEngine {
     }
 
     this.broadcastState();
-    this.broadcastCallback('player_won', winner === 'innocents' ? this.getAliveInnocentId() : this.impostorUserId);
+    this.emit('player_won', winner === 'innocents' ? this.getAliveInnocentId() : this.impostorUserId);
   }
 
   private getAliveInnocentId(): string | null {
@@ -333,7 +333,7 @@ export class ImpostorEngine {
   // ──────────────────── Broadcast ────────────────────
 
   public broadcastMessage(msg: string) {
-    this.broadcastCallback('game_message', { message: msg });
+    this.emit('game_message', { message: msg });
   }
 
   public broadcastState() {
@@ -350,7 +350,7 @@ export class ImpostorEngine {
         privateState.impostorUserId = undefined;
       }
 
-      this.broadcastCallback('game_state_update', {
+      this.emit('game_state_update', {
         targetUserId: p.userId,
         state: privateState,
       });
@@ -394,6 +394,6 @@ export class ImpostorEngine {
       p.isAlive = true;
     });
     this.broadcastState();
-    this.broadcastCallback('return_to_lobby', null);
+    this.emit('return_to_lobby', null);
   }
 }

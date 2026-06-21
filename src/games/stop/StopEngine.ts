@@ -1,14 +1,14 @@
+import { EventEmitter } from 'events';
 import { logger } from '../../core/Logger.js';
 import { 
   StopGameState, StopPlayerState, StopRules, StopPublicState, 
   PlayerAnswers, CategoryVerification, AnswerToVerify
 } from './StopTypes.js';
 
-export class StopEngine {
+export class StopEngine extends EventEmitter {
   public roomId: string;
   public state: StopGameState = 'LOBBY';
   public players: StopPlayerState[] = [];
-  public emitCallback: (event: string, payload?: any) => void;
   
   public rules: StopRules = { categories: ['Nombre', 'Animal', 'Color', 'Cosa', 'Fruta'], rounds: 5 };
   public currentRound = 0;
@@ -23,9 +23,9 @@ export class StopEngine {
   private verifyingDeadline: number | null = null;
   private verifyingTimeout: NodeJS.Timeout | null = null;
 
-  constructor(roomId: string, emitCallback: (event: string, payload?: any) => void) {
+  constructor(roomId: string) {
+    super();
     this.roomId = roomId;
-    this.emitCallback = emitCallback;
   }
 
   public addPlayer(userId: string, socketId: string, nickname: string, avatarId: number, color: string) {
@@ -122,7 +122,7 @@ export class StopEngine {
     player.submitted = true;
 
     // We keep state as PLAYING internally but emit stop_called to force others to submit
-    this.emitCallback('stop_called', { userId: player.userId });
+    this.emit('stop_called', { userId: player.userId });
 
     // Wait max 3 seconds for others to submit their partial answers
     if (!this.collectingTimeout) {
@@ -288,7 +288,7 @@ export class StopEngine {
     
     if (winner) {
       this.winnerId = winner.userId;
-      this.emitCallback('player_won', winner.userId);
+      this.emit('player_won', winner.userId);
     }
     
     this.broadcastState();
@@ -323,6 +323,6 @@ export class StopEngine {
       timeRemaining
     };
 
-    this.emitCallback('game_state_update', { state: publicState });
+    this.emit('game_state_update', { state: publicState });
   }
 }

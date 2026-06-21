@@ -6,26 +6,38 @@ import { logger } from "../../core/Logger.js";
 
 export function setupUnoGame(roomId: string, room: any, io: Server, rules: UnoRules) {
   room.gameType = "uno";
-  room.gameEngine = new UnoEngine(roomId, async (event: string, eventPayload?: any) => {
+  
+  const engine = new UnoEngine(roomId);
+  room.gameEngine = engine;
+
+  engine.on("player_won", async (eventPayload) => {
     try {
-      if (event === "player_won") {
-        await handlePlayerWon(roomId, eventPayload, room, io, "unoWins");
-        return;
-      }
-      if (event === "game_state_update") {
-        const targetSocketId = room.users.find((u: any) => u.userId === eventPayload.targetUserId)?.socketId;
-        logger.info(`Emitting game_state_update to ${targetSocketId} for ${eventPayload.targetUserId}`);
-        if (targetSocketId) io.to(targetSocketId).emit(event, eventPayload.state);
-      } else {
-        io.to(roomId).emit(event, eventPayload);
-      }
+      await handlePlayerWon(roomId, eventPayload, room, io, "unoWins");
     } catch (e) {
-      logger.error("Error emitiendo evento de juego Uno: " + e);
+      logger.error("Error emitiendo evento de juego Uno (player_won): " + e);
     }
   });
 
+  engine.on("game_state_update", (eventPayload) => {
+    try {
+      const targetSocketId = room.users.find((u: any) => u.userId === eventPayload.targetUserId)?.socketId;
+      logger.info(`Emitting game_state_update to ${targetSocketId} for ${eventPayload.targetUserId}`);
+      if (targetSocketId) io.to(targetSocketId).emit("game_state_update", eventPayload.state);
+    } catch (e) {
+      logger.error("Error emitiendo evento de juego Uno (game_state_update): " + e);
+    }
+  });
+
+  engine.on("game_action", (eventPayload) => {
+    io.to(roomId).emit("game_action", eventPayload);
+  });
+
+  engine.on("game_message", (eventPayload) => {
+    io.to(roomId).emit("game_message", eventPayload);
+  });
+
   room.users.forEach((u: any) => {
-    room.gameEngine!.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
+    engine.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
   });
 
   io.to(roomId).emit("game_started", { gameType: "uno" });

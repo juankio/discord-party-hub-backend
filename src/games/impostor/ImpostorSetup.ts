@@ -5,30 +5,42 @@ import { logger } from "../../core/Logger.js";
 
 export function setupImpostorGame(roomId: string, room: any, io: Server) {
   room.gameType = "impostor";
-  room.gameEngine = new ImpostorEngine(roomId, async (event: string, eventPayload?: any) => {
+  
+  const engine = new ImpostorEngine(roomId);
+  room.gameEngine = engine;
+
+  engine.on("player_won", async (eventPayload) => {
     try {
-      if (event === "player_won") {
-        if (eventPayload) {
-          await handlePlayerWon(roomId, eventPayload, room, io, "");
-        }
-        return;
-      }
-      if (event === "game_state_update") {
-        const targetSocketId = room.users.find((u: any) => u.userId === eventPayload.targetUserId)?.socketId;
-        if (targetSocketId) io.to(targetSocketId).emit(event, eventPayload.state);
-      } else {
-        io.to(roomId).emit(event, eventPayload);
+      if (eventPayload) {
+        await handlePlayerWon(roomId, eventPayload, room, io, "");
       }
     } catch (e) {
-      logger.error("Error emitiendo evento de juego Impostor: " + e);
+      logger.error("Error emitiendo evento de juego Impostor (player_won): " + e);
     }
   });
 
+  engine.on("game_state_update", (eventPayload) => {
+    try {
+      const targetSocketId = room.users.find((u: any) => u.userId === eventPayload.targetUserId)?.socketId;
+      if (targetSocketId) io.to(targetSocketId).emit("game_state_update", eventPayload.state);
+    } catch (e) {
+      logger.error("Error emitiendo evento de juego Impostor (game_state_update): " + e);
+    }
+  });
+
+  engine.on("game_message", (eventPayload) => {
+    io.to(roomId).emit("game_message", eventPayload);
+  });
+
+  engine.on("return_to_lobby", (eventPayload) => {
+    io.to(roomId).emit("return_to_lobby", eventPayload);
+  });
+
   room.users.forEach((u: any) => {
-    (room.gameEngine as ImpostorEngine).addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
+    engine.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
   });
 
   io.to(roomId).emit("game_started", { gameType: "impostor" });
-  (room.gameEngine as ImpostorEngine).startGame();
+  engine.startGame();
   logger.info(`Partida de IMPOSTOR iniciada en la sala ${roomId}`);
 }

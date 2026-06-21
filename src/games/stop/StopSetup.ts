@@ -13,27 +13,31 @@ export function setupStopGame(roomId: string, room: any, io: Server, frontendRul
   };
 
   room.gameType = "stop";
-  room.gameEngine = new StopEngine(roomId, async (event: string, eventPayload?: any) => {
+
+  const engine = new StopEngine(roomId);
+  room.gameEngine = engine;
+
+  engine.on("player_won", async (eventPayload) => {
     try {
-      if (event === "player_won") {
-        await handlePlayerWon(roomId, eventPayload, room, io, "stopWins");
-        return;
-      }
-      if (event === "game_state_update") {
-        io.to(roomId).emit(event, eventPayload.state); // En Stop el state es global
-      } else {
-        io.to(roomId).emit(event, eventPayload);
-      }
+      await handlePlayerWon(roomId, eventPayload, room, io, "stopWins");
     } catch (e) {
-      logger.error(`Error emitiendo evento de juego Stop: ${e}`);
+      logger.error(`Error emitiendo evento de juego Stop (player_won): ${e}`);
     }
   });
 
+  engine.on("game_state_update", (eventPayload) => {
+    io.to(roomId).emit("game_state_update", eventPayload.state); // En Stop el state es global
+  });
+
+  engine.on("stop_called", (eventPayload) => {
+    io.to(roomId).emit("stop_called", eventPayload);
+  });
+
   room.users.forEach((u: any) => {
-    room.gameEngine!.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
+    engine.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
   });
 
   io.to(roomId).emit("game_started", { gameType: "stop" });
-  room.gameEngine.startGame(rules, room.lastWinnerUserId);
+  engine.startGame(rules, room.lastWinnerUserId);
   logger.info(`🛑 Partida de STOP iniciada en la sala ${roomId}`);
 }

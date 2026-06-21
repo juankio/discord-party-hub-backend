@@ -1,13 +1,13 @@
+import { EventEmitter } from 'events';
 import type { ParchisPlayer, ParchisRules, ParchisGameState, ParchisPublicState } from './ParchisTypes.js';
 
-export class ParchisEngine {
+export class ParchisEngine extends EventEmitter {
   public roomId: string;
   public players: ParchisPlayer[] = [];
   public rules: ParchisRules;
   public winner: string | null = null;
   public state: ParchisGameState = 'LOBBY';
   public currentTurnIndex: number = 0;
-  private emitEvent: (event: string, payload?: any) => void;
   public diceValue: number[] = [];
   public availableMoves: number[] = [];
   public consecutivePairs: number = 0;
@@ -22,9 +22,9 @@ export class ParchisEngine {
     return this.sides * 17;
   }
 
-  constructor(roomId: string, emitEvent: (event: string, payload?: any) => void) {
+  constructor(roomId: string) {
+    super();
     this.roomId = roomId;
-    this.emitEvent = emitEvent;
     this.rules = {
       diceCount: 1,
       tokensPerPlayer: 4,
@@ -67,7 +67,7 @@ export class ParchisEngine {
     if ((this.state === 'PLAYING' || this.state === 'CHOOSING_TOKENS') && this.players.length === 1) {
       this.winner = this.players[0].userId;
       this.state = 'FINISHED';
-      this.emitEvent('player_won', this.winner);
+      this.emit('player_won', this.winner);
     } else if (this.players.length === 0) {
       this.state = 'FINISHED';
     }
@@ -188,7 +188,7 @@ export class ParchisEngine {
               if (player.tokens.every(t => t.state === 'FINISHED')) {
                 this.winner = player.userId;
                 this.state = 'FINISHED';
-                this.emitEvent('player_won', this.winner);
+                this.emit('player_won', this.winner);
               }
             } else {
               token.state = 'HOME';
@@ -204,7 +204,7 @@ export class ParchisEngine {
       this.consecutivePairs = 0;
     }
 
-    this.emitEvent('parchis:dice_rolled', { userId, dice: this.diceValue });
+    this.emit('parchis:dice_rolled', { userId, dice: this.diceValue });
     
     const allTokensHome = player.tokens.every(t => t.state === 'HOME');
     const hasFive = this.rules.diceCount === 1 ? this.availableMoves.includes(5) : false;
@@ -388,7 +388,7 @@ export class ParchisEngine {
            if (player.tokens.every(t => t.state === 'FINISHED')) {
                this.winner = player.userId;
                this.state = 'FINISHED';
-               this.emitEvent('player_won', this.winner);
+               this.emit('player_won', this.winner);
            }
         } else {
            token.state = 'META';
@@ -462,7 +462,7 @@ export class ParchisEngine {
     
     // Send state to everyone
     this.players.forEach(p => {
-      this.emitEvent('game_state_update', { targetUserId: p.userId, state: publicState });
+      this.emit('game_state_update', { targetUserId: p.userId, state: publicState });
     });
   }
 }

@@ -1,8 +1,9 @@
+import { EventEmitter } from 'events';
 import type { Player, UnoRules, GameState, Card, CardColor } from './UnoTypes.js';
 import { UnoDeckManager } from './UnoDeck.js';
 import { UnoActions } from './UnoActions.js';
 
-export class UnoEngine {
+export class UnoEngine extends EventEmitter {
   public roomId: string;
   public players: Player[] = [];
   public state: GameState = 'WAITING';
@@ -22,11 +23,9 @@ export class UnoEngine {
     playMultipleSame: false, interceptExact: false, zeroAndSevenRules: false
   };
 
-  public broadcastCallback: (event: string, data?: any) => void;
-
-  constructor(roomId: string, broadcastCallback: (event: string, data?: any) => void) {
+  constructor(roomId: string) {
+    super();
     this.roomId = roomId;
-    this.broadcastCallback = broadcastCallback;
   }
 
   public addPlayer(userId: string, socketId: string, nickname: string, avatarId: number, color: string) {
@@ -46,7 +45,7 @@ export class UnoEngine {
         this.state = 'FINISHED';
         if (this.players.length === 1) {
           this.winner = this.players[0].userId;
-          this.broadcastCallback('player_won', this.players[0].userId);
+          this.emit('player_won', this.players[0].userId);
         }
         this.broadcastState();
       } else {
@@ -172,14 +171,14 @@ export class UnoEngine {
     }
   }
 
-  public broadcastMessage(msg: string) { this.broadcastCallback("game_message", { message: msg }); }
+  public broadcastMessage(msg: string) { this.emit("game_message", { message: msg }); }
   public broadcastAction(action: string, userId: string, payload: any = {}) { 
-    this.broadcastCallback("game_action", { action, userId, ...payload }); 
+    this.emit("game_action", { action, userId, ...payload }); 
   }
 
   public broadcastState() {
     for (const p of this.players) {
-      this.broadcastCallback("game_state_update", {
+      this.emit("game_state_update", {
         targetUserId: p.userId,
         state: {
           state: this.state, currentTurnUserId: this.players[this.currentTurnIndex]?.userId || '',

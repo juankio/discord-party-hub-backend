@@ -38,7 +38,7 @@ describe('UnoEngine', () => {
     // Verify it emits
     expect(emitSpy).toHaveBeenCalled();
     const emitCalls = emitSpy.mock.calls;
-    const hasGameStateUpdate = emitCalls.some(call => call[0] === 'game_state_update');
+    const hasGameStateUpdate = emitCalls.some(call => (call as any)[0] === 'game_state_update');
     expect(hasGameStateUpdate).toBe(true);
   });
 

@@ -1,3 +1,13 @@
+/**
+ * Orquestador principal de Partidas (Game Dispatcher).
+ * 
+ * Actua como enrutador principal cuando el Host de una sala decide iniciar una partida.
+ * En base al `gameType`, delega la inicialización del juego al adaptador (Setup) correspondiente,
+ * respetando el patrón Core-Adapter.
+ * 
+ * @module GameDispatcher
+ */
+
 import type { Socket } from "socket.io";
 import { z } from "zod";
 import { logger } from "./Logger.js";

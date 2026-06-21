@@ -1,3 +1,14 @@
+/**
+ * Manejador centralizado de victorias.
+ * 
+ * Este módulo se encarga de acoplar el evento logico de victoria (`player_won`) 
+ * emitido por el Core del juego, con los efectos secundarios de la infraestructura:
+ * 1. Actualizar el documento del User en MongoDB (sumando victorias generales y especificas del juego).
+ * 2. Transmitir el evento WebSocket real hacia el frontend (`io.to().emit()`).
+ *
+ * @module WinHandler
+ */
+
 import { User } from "../models/User.js";
 import { logger } from "./Logger.js";
 import type { Server } from "socket.io";

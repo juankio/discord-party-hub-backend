@@ -134,4 +134,12 @@ export class RoomManager {
   public handleAddBots(socket: Socket, data: any) {
     this.connectionHandler.handleAddBots(socket, data);
   }
+
+  public handleUpdateBotConfig(socket: Socket, data: any) {
+    this.connectionHandler.handleUpdateBotConfig(socket, data);
+  }
+
+  public handleKickBot(socket: Socket, data: any) {
+    this.connectionHandler.handleKickBot(socket, data);
+  }
 }

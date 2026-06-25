@@ -116,4 +116,29 @@ export class BotManager {
       }
     }
   }
+
+  public updateBotDifficulty(userId: string, newDifficulty: number): void {
+    const bot = this.activeBots.get(userId);
+    if (bot) {
+      bot.difficultyLevel = newDifficulty;
+      logger.info(`Bot ${bot.nickname} (${userId}) difficulty updated to ${newDifficulty}`);
+    }
+  }
+
+  public removeBot(userId: string, roomId: string): void {
+    const bot = this.activeBots.get(userId);
+    if (!bot || bot.roomId !== roomId) return;
+
+    this.activeBots.delete(userId);
+
+    const room = this.roomManager.getRoom(roomId);
+    if (room) {
+      room.users = room.users.filter(u => u.userId !== userId);
+      if (room.gameEngine) {
+        room.gameEngine.removePlayer(userId);
+      }
+      this.roomManager.recomputeNicknames(room, roomId);
+      logger.info(`Bot ${bot.nickname} (${userId}) removed from room ${roomId}`);
+    }
+  }
 }

@@ -24,6 +24,15 @@ const AddBotsSchema = z.object({
   difficulty: z.number().int().min(1).max(10)
 });
 
+const UpdateBotConfigSchema = z.object({
+  botId: z.string().min(1),
+  difficulty: z.number().int().min(1).max(10)
+});
+
+const KickBotSchema = z.object({
+  botId: z.string().min(1)
+});
+
 export class RoomConnectionHandler {
   constructor(private io: Server, private manager: RoomManager) {}
 
@@ -194,5 +203,49 @@ export class RoomConnectionHandler {
     }
 
     this.manager.botManager.addBotsToRoom(roomId, count, difficulty);
+  }
+
+  public handleUpdateBotConfig(socket: Socket, data: any) {
+    const result = UpdateBotConfigSchema.safeParse(data);
+    if (!result.success) {
+      logger.warn(`[SECURITY] Invalid update_bot_config payload: ${result.error.issues[0]?.message}`);
+      return;
+    }
+
+    const { botId, difficulty } = result.data;
+    const roomId = socket.data?.roomId;
+    if (!roomId) return;
+
+    const room = this.manager.getRoom(roomId);
+    if (!room) return;
+
+    if (room.hostUserId !== socket.data?.userId) {
+      logger.warn(`[SECURITY] Non-host user ${socket.data?.userId} tried to update bot ${botId} in room ${roomId}`);
+      return;
+    }
+
+    this.manager.botManager.updateBotDifficulty(botId, difficulty);
+  }
+
+  public handleKickBot(socket: Socket, data: any) {
+    const result = KickBotSchema.safeParse(data);
+    if (!result.success) {
+      logger.warn(`[SECURITY] Invalid kick_bot payload: ${result.error.issues[0]?.message}`);
+      return;
+    }
+
+    const { botId } = result.data;
+    const roomId = socket.data?.roomId;
+    if (!roomId) return;
+
+    const room = this.manager.getRoom(roomId);
+    if (!room) return;
+
+    if (room.hostUserId !== socket.data?.userId) {
+      logger.warn(`[SECURITY] Non-host user ${socket.data?.userId} tried to kick bot ${botId} in room ${roomId}`);
+      return;
+    }
+
+    this.manager.botManager.removeBot(botId, roomId);
   }
 }

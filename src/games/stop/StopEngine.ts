@@ -98,6 +98,13 @@ export class StopEngine extends EventEmitter {
     StopUtils.submitAnswers(this, userId, answers);
   }
 
+  public submitAnswer(userId: string, category: string, answer: string) {
+    if (this.state !== 'PLAYING') return;
+    const player = this.players.find(p => p.userId === userId);
+    if (!player) return;
+    player.currentAnswers[category] = answer.trim().toLowerCase();
+  }
+
   public voteVeto(userId: string, category: string, targetUserId: string) {
     StopValidationLogic.voteVeto(this, userId, category, targetUserId);
   }

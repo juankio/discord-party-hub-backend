@@ -1,6 +1,7 @@
 import { BaseBot, BotConfig } from "./BaseBot.js";
 import { UnoBot } from "./uno/UnoBot.js";
 import { ParchisBot } from "./parchis/ParchisBot.js";
+import { StopBot } from "./stop/StopBot.js";
 import type { RoomManager } from "../RoomManager.js";
 import { logger } from "../Logger.js";
 
@@ -54,6 +55,9 @@ export class BotManager {
           break;
         case 'parchis':
           newBot = new ParchisBot(botConfig, nickname, avatarId, color);
+          break;
+        case 'stop':
+          newBot = new StopBot(botConfig, nickname, avatarId, color);
           break;
         default:
           newBot = new DummyBot(botConfig, nickname, avatarId, color);

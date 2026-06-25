@@ -70,6 +70,7 @@ io.on("connection", (socket) => {
 
   socket.on("join_room", (data: any) => roomManager.handleJoin(socket, data));
   socket.on("update_profile", (data: any) => roomManager.handleUpdateProfile(socket, data));
+  socket.on("add_bots", (data: any) => roomManager.handleAddBots(socket, data));
   socket.on("disconnect", () => roomManager.handleDisconnect(socket));
   socket.on("leave_room", () => roomManager.handleExplicitLeave(socket));
 

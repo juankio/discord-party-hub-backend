@@ -4,7 +4,9 @@ import type { UnoRules } from "./UnoTypes.js";
 import { handlePlayerWon } from "../../core/WinHandler.js";
 import { logger } from "../../core/Logger.js";
 
-export function setupUnoGame(roomId: string, room: any, io: Server, rules: UnoRules) {
+import type { RoomManager } from "../../core/RoomManager.js";
+
+export function setupUnoGame(roomId: string, room: any, io: Server, rules: UnoRules, roomManager: RoomManager) {
   room.gameType = "uno";
   
   const engine = new UnoEngine(roomId);
@@ -39,6 +41,11 @@ export function setupUnoGame(roomId: string, room: any, io: Server, rules: UnoRu
   room.users.forEach((u: any) => {
     engine.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
   });
+
+  // Attach bots before starting the game to receive initial state update
+  if (roomManager && roomManager.botManager) {
+    roomManager.botManager.attachEngineToBots(roomId, engine);
+  }
 
   io.to(roomId).emit("game_started", { gameType: "uno" });
   room.gameEngine.startGame(rules, room.lastWinnerUserId);

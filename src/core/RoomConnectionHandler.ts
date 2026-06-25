@@ -18,6 +18,12 @@ const UpdateProfileSchema = z.object({
   color: z.string().max(20).default('#ffffff')
 });
 
+const AddBotsSchema = z.object({
+  roomId: z.string().min(1).max(50),
+  count: z.number().int().min(1).max(7),
+  difficulty: z.number().int().min(1).max(10)
+});
+
 export class RoomConnectionHandler {
   constructor(private io: Server, private manager: RoomManager) {}
 
@@ -54,7 +60,8 @@ export class RoomConnectionHandler {
 
     const hostStillExists = room.users.some(u => u.userId === room.hostUserId);
     if (!hostStillExists && room.users.length > 0) {
-      room.hostUserId = room.users[0]!.userId;
+      const firstRealPlayer = room.users.find(u => !u.isBot);
+      room.hostUserId = firstRealPlayer ? firstRealPlayer.userId : room.users[0]!.userId;
       logger.info(`Host migrated to ${room.hostUserId} in room ${roomId}`);
     }
 
@@ -111,11 +118,17 @@ export class RoomConnectionHandler {
     room.users = room.users.filter(u => u.userId !== userId);
     if (room.gameEngine) room.gameEngine.removePlayer(userId);
 
-    if (room.users.length === 0) {
+    const hasRealPlayers = room.users.some(u => !u.isBot);
+
+    if (room.users.length === 0 || !hasRealPlayers) {
       this.manager.deleteRoom(roomId);
     } else {
       if (room.hostUserId === userId) {
-        room.hostUserId = room.users[0]!.userId;
+        // Assign host to the first real player
+        const firstRealPlayer = room.users.find(u => !u.isBot);
+        if (firstRealPlayer) {
+          room.hostUserId = firstRealPlayer.userId;
+        }
       }
       this.manager.recomputeNicknames(room, roomId);
     }
@@ -144,13 +157,42 @@ export class RoomConnectionHandler {
         currentRoom.users = currentRoom.users.filter(x => x.userId !== userId);
         if (currentRoom.gameEngine) currentRoom.gameEngine.removePlayer(userId);
 
-        if (currentRoom.users.length > 0) {
+        const hasRealPlayers = currentRoom.users.some(u => !u.isBot);
+
+        if (currentRoom.users.length === 0 || !hasRealPlayers) {
+          this.manager.deleteRoom(roomId);
+        } else {
           if (currentRoom.hostUserId === userId) {
-            currentRoom.hostUserId = currentRoom.users[0]!.userId;
+            const firstRealPlayer = currentRoom.users.find(u => !u.isBot);
+            if (firstRealPlayer) {
+              currentRoom.hostUserId = firstRealPlayer.userId;
+            }
           }
           this.manager.recomputeNicknames(currentRoom, roomId);
         }
       }
     }, 30000);
+  }
+
+  public handleAddBots(socket: Socket, data: any) {
+    const result = AddBotsSchema.safeParse(data);
+    if (!result.success) {
+      logger.warn(`[SECURITY] Invalid add_bots payload: ${result.error.issues[0]?.message}`);
+      return;
+    }
+
+    const { roomId, count, difficulty } = result.data;
+    const room = this.manager.getRoom(roomId);
+    if (!room) {
+      this.io.to(socket.id).emit("room_not_found");
+      return;
+    }
+
+    if (room.hostUserId !== socket.data?.userId) {
+      logger.warn(`[SECURITY] Non-host user ${socket.data?.userId} tried to add bots to room ${roomId}`);
+      return;
+    }
+
+    this.manager.botManager.addBotsToRoom(roomId, count, difficulty);
   }
 }

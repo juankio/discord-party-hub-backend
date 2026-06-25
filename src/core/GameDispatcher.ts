@@ -127,7 +127,7 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
     if (data.gameType === 'impostor') {
       setupImpostorGame(roomId, room, io);
     } else if (data.gameType === 'uno') {
-      setupUnoGame(roomId, room, io, data.rules);
+      setupUnoGame(roomId, room, io, data.rules, roomManager);
     } else if (data.gameType === 'stop') {
       setupStopGame(roomId, room, io, data.rules || {});
     } else if (data.gameType === 'parchis') {

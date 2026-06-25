@@ -5,6 +5,7 @@ import type { ImpostorEngine } from '../games/impostor/ImpostorEngine.js';
 import type { StopEngine } from '../games/stop/StopEngine.js';
 import { RoomGarbageCollector } from './RoomGarbageCollector.js';
 import { RoomConnectionHandler } from './RoomConnectionHandler.js';
+import { BotManager } from './bots/BotManager.js';
 
 export interface RoomData {
   users: Array<{
@@ -16,6 +17,7 @@ export interface RoomData {
     color: string;
     totalWins: number;
     isOffline?: boolean;
+    isBot?: boolean;
   }>;
   hostUserId: string;
   gameEngine?: UnoEngine | ImpostorEngine | StopEngine | any;
@@ -31,12 +33,14 @@ export class RoomManager {
   private io: Server;
   private gc: RoomGarbageCollector;
   private connectionHandler: RoomConnectionHandler;
+  public botManager: BotManager;
 
   constructor(io: Server) {
     this.io = io;
     this.gc = new RoomGarbageCollector(this.rooms, this.io);
     this.gc.start();
     this.connectionHandler = new RoomConnectionHandler(this.io, this);
+    this.botManager = new BotManager(this);
   }
 
   public createRoom(hostUserId: string): string {
@@ -60,6 +64,9 @@ export class RoomManager {
 
   public deleteRoom(roomId: string): void {
     this.rooms.delete(roomId);
+    if (this.botManager) {
+      this.botManager.removeBotsFromRoom(roomId);
+    }
     logger.info(`Room ${roomId} destroyed.`);
   }
 
@@ -122,5 +129,9 @@ export class RoomManager {
 
   public handleDisconnect(socket: Socket) {
     this.connectionHandler.handleDisconnect(socket);
+  }
+
+  public handleAddBots(socket: Socket, data: any) {
+    this.connectionHandler.handleAddBots(socket, data);
   }
 }

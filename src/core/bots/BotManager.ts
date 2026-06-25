@@ -1,0 +1,107 @@
+import { BaseBot, BotConfig } from "./BaseBot.js";
+import { UnoBot } from "./uno/UnoBot.js";
+import { ParchisBot } from "./parchis/ParchisBot.js";
+import type { RoomManager } from "../RoomManager.js";
+import { logger } from "../Logger.js";
+
+// Placeholder DummyBot
+class DummyBot extends BaseBot {
+  protected onGameStateUpdate(event: { targetUserId: string; state: any }): void {
+    // Basic placeholder behavior
+    logger.debug(`[Bot ${this.nickname}] Received game state update.`);
+  }
+}
+
+export class BotManager {
+  private activeBots = new Map<string, BaseBot>();
+
+  constructor(private roomManager: RoomManager) {}
+
+  public addBotsToRoom(roomId: string, count: number, difficulty: number): void {
+    const room = this.roomManager.getRoom(roomId);
+    if (!room) {
+      logger.warn(`Cannot add bots to non-existent room: ${roomId}`);
+      return;
+    }
+
+    const botNames = ["Bot Alpha", "Bot Beta", "Bot Gamma", "Bot Delta", "Bot Epsilon", "Bot Zeta", "Bot Eta", "Bot Theta"];
+    const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#ffffff", "#000000"];
+
+    let addedCount = 0;
+    for (let i = 0; i < count; i++) {
+      const maxPlayers = room.roomRules?.extendedLobby ? 8 : 6;
+      if (room.users.length >= maxPlayers) {
+        logger.warn(`Room ${roomId} is full, cannot add more bots.`);
+        break;
+      }
+
+      // Generate a unique bot nickname
+      const baseNickname = botNames[Math.floor(Math.random() * botNames.length)] || "Bot";
+      const nickname = `${baseNickname} ${Math.floor(Math.random() * 100)}`;
+      const avatarId = Math.floor(Math.random() * 10) + 1;
+      const color = colors[Math.floor(Math.random() * colors.length)] || "#ffffff";
+
+      const botConfig: BotConfig = {
+        difficultyLevel: difficulty,
+        roomId,
+        gameType: room.selectedGame || "uno"
+      };
+
+      let newBot: BaseBot;
+      switch (botConfig.gameType) {
+        case 'uno':
+          newBot = new UnoBot(botConfig, nickname, avatarId, color);
+          break;
+        case 'parchis':
+          newBot = new ParchisBot(botConfig, nickname, avatarId, color);
+          break;
+        default:
+          newBot = new DummyBot(botConfig, nickname, avatarId, color);
+          break;
+      }
+      
+      this.activeBots.set(newBot.userId, newBot);
+
+      // Add to room users
+      room.users.push({
+        socketId: newBot.userId, // use userId as socketId for bots
+        userId: newBot.userId,
+        originalNickname: newBot.nickname,
+        nickname: newBot.nickname,
+        avatarId: newBot.avatarId,
+        color: newBot.color,
+        totalWins: 0,
+        isOffline: false,
+        isBot: true
+      });
+
+      // If game has started, add to gameEngine
+      if (room.gameEngine && ['uno', 'stop', 'parchis'].includes(room.gameType || '')) {
+        room.gameEngine.addPlayer(newBot.userId, newBot.userId, newBot.nickname, newBot.avatarId, newBot.color);
+        newBot.setEngine(room.gameEngine);
+      }
+
+      addedCount++;
+    }
+
+    // Recompute nicknames and broadcast room update
+    this.roomManager.recomputeNicknames(room, roomId);
+    logger.info(`Added ${addedCount} bots to room ${roomId} with difficulty ${difficulty}`);
+  }
+
+  public removeBotsFromRoom(roomId: string): void {
+    for (const [userId, bot] of this.activeBots.entries()) {
+      if (bot.roomId === roomId) {
+        this.activeBots.delete(userId);
+      }
+    }
+  }
+
+  public attachEngineToBots(roomId: string, engine: any): void {
+    for (const bot of this.activeBots.values()) {
+      if (bot.roomId === roomId) {
+        bot.setEngine(engine);
+      }
+    }
+  }
+}

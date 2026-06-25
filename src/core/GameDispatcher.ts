@@ -129,9 +129,9 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
     } else if (data.gameType === 'uno') {
       setupUnoGame(roomId, room, io, data.rules, roomManager);
     } else if (data.gameType === 'stop') {
-      setupStopGame(roomId, room, io, data.rules || {});
+      setupStopGame(roomId, room, io, data.rules || {}, roomManager);
     } else if (data.gameType === 'parchis') {
-      setupParchisGame(roomId, room, io, data.rules || {});
+      setupParchisGame(roomId, room, io, data.rules || {}, roomManager);
     }
   });
 }

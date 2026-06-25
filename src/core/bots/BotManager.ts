@@ -2,6 +2,7 @@ import { BaseBot, BotConfig } from "./BaseBot.js";
 import { UnoBot } from "./uno/UnoBot.js";
 import { ParchisBot } from "./parchis/ParchisBot.js";
 import { StopBot } from "./stop/StopBot.js";
+import { PinturilloBot } from "./pinturillo/PinturilloBot.js";
 import type { RoomManager } from "../RoomManager.js";
 import { logger } from "../Logger.js";
 
@@ -62,6 +63,9 @@ export class BotManager {
           break;
         case 'stop':
           newBot = new StopBot(botConfig, nickname, avatarId, color);
+          break;
+        case 'pinturillo':
+          newBot = new PinturilloBot(botConfig, nickname, avatarId, color);
           break;
         default:
           newBot = new DummyBot(botConfig, nickname, avatarId, color);

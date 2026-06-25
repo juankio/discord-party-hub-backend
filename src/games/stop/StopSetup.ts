@@ -4,7 +4,9 @@ import type { StopRules } from "./StopTypes.js";
 import { handlePlayerWon } from "../../core/WinHandler.js";
 import { logger } from "../../core/Logger.js";
 
-export function setupStopGame(roomId: string, room: any, io: Server, frontendRules: any) {
+import type { RoomManager } from "../../core/RoomManager.js";
+
+export function setupStopGame(roomId: string, room: any, io: Server, frontendRules: any, roomManager: RoomManager) {
   const rules: StopRules = {
     categories: frontendRules.stopCategories || ["NOMBRE", "ANIMAL", "COLOR", "COSA", "FRUTA"],
     rounds: frontendRules.stopRounds || 5,
@@ -36,6 +38,10 @@ export function setupStopGame(roomId: string, room: any, io: Server, frontendRul
   room.users.forEach((u: any) => {
     engine.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
   });
+
+  if (roomManager && roomManager.botManager) {
+    roomManager.botManager.attachEngineToBots(roomId, engine);
+  }
 
   io.to(roomId).emit("game_started", { gameType: "stop" });
   engine.startGame(rules, room.lastWinnerUserId);

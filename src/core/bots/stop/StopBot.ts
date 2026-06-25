@@ -36,11 +36,44 @@ export class StopBot extends BaseBot {
           break;
         }
 
-        // Generate a simple placeholder answer starting with the current letter
-        const answer = `${currentLetter}bot`;
+        // Generate an answer based on category and current letter using a small hardcoded dictionary
+        const dictionary: Record<string, string[]> = {
+          'Nombre': ['lberto', 'lejandro', 'ndres', 'rmando', 'rturo', 'ngel', 'nastasia', 'Alicia', 'manda'],
+          'Animal': ['guila', 'vejorro', 'rdilla', 'rmadillo', 'lbatros', 'beja', 'naconda'],
+          'Cosa': ['rbol', 'rmario', 'nillo', 'lambre', 'ntena', 'utobus', 'rion', 'nsiento'],
+          'Color': ['marillo', 'zul', 'ñil', 'mbar', 'rena', 'rgénteo'],
+          'Fruta/Verdura': ['randano', 'celga', 'lbaricoque', 'gave', 'lmendra', 'nana'],
+          'Pais/Ciudad': ['rgentina', 'lemania', 'ustria', 'fganistan', 'msterdam', 'tenas', 'ndorra'],
+          'Profesion': ['rquitecto', 'ctor', 'bogado', 'stronauta', 'dministrador', 'rtista']
+        };
+
+        let answer = `${currentLetter}bot`; // Fallback
         
-        // Submit the individual answer
-        this.engine.submitAnswer(this.userId, category, answer);
+        // Find best matching category from dictionary
+        const bestCatMatch = Object.keys(dictionary).find(cat => category.toLowerCase().includes(cat.toLowerCase()));
+        
+        if (bestCatMatch) {
+            const possibleAnswers = dictionary[bestCatMatch] || [];
+            if (possibleAnswers.length > 0) {
+                // To support different letters, we cheat a bit for now and just attach the letter to a random suffix
+                // A true dictionary would be indexed by letter, but this is a placeholder
+                const suffix = possibleAnswers[Math.floor(Math.random() * possibleAnswers.length)];
+                // If the letter happens to be A, it sounds natural. If not, it will be funny.
+                answer = currentLetter + suffix.substring(1);
+            }
+        }
+        
+        // Lower difficulty bots might make typos or skip (leave blank)
+        if (this.difficultyLevel <= 4 && Math.random() < 0.2) {
+           answer = ""; // Bot couldn't think of an answer
+        } else if (this.difficultyLevel <= 6 && Math.random() < 0.1) {
+           answer = answer + "x"; // Typo
+        }
+
+        // Submit the individual answer if not blank
+        if (answer !== "") {
+            this.engine.submitAnswer(this.userId, category, answer);
+        }
       }
 
       // Check if the bot finished all categories and the game is still playing

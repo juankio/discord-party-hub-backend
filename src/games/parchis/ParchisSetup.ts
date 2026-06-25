@@ -4,7 +4,9 @@ import type { ParchisRules } from "./ParchisTypes.js";
 import { handlePlayerWon } from "../../core/WinHandler.js";
 import { logger } from "../../core/Logger.js";
 
-export function setupParchisGame(roomId: string, room: any, io: Server, frontendRules: any) {
+import type { RoomManager } from "../../core/RoomManager.js";
+
+export function setupParchisGame(roomId: string, room: any, io: Server, frontendRules: any, roomManager: RoomManager) {
   const rules: Partial<ParchisRules> = {};
   if (frontendRules.diceCount) rules.diceCount = frontendRules.diceCount;
   if (frontendRules.tokensPerPlayer) rules.tokensPerPlayer = frontendRules.tokensPerPlayer;
@@ -39,6 +41,10 @@ export function setupParchisGame(roomId: string, room: any, io: Server, frontend
   room.users.forEach((u: any) => {
     engine.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
   });
+
+  if (roomManager && roomManager.botManager) {
+    roomManager.botManager.attachEngineToBots(roomId, engine);
+  }
 
   io.to(roomId).emit("game_started", { gameType: "parchis" });
   engine.startGame(rules);

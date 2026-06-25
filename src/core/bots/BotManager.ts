@@ -25,8 +25,12 @@ export class BotManager {
       return;
     }
 
-    const botNames = ["Bot Alpha", "Bot Beta", "Bot Gamma", "Bot Delta", "Bot Epsilon", "Bot Zeta", "Bot Eta", "Bot Theta"];
-    const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#ffffff", "#000000"];
+    const botNames = [
+      "ChatGPT", "Claude", "Gemini", "Skynet", "HAL 9000", 
+      "GLaDOS", "Cortana", "Siri", "Alexa", "Bender", 
+      "R2-D2", "C-3PO", "Wall-E", "Terminator", "Jarvis"
+    ];
+    const colors = ["#ef4444", "#22c55e", "#3b82f6", "#eab308", "#d946ef", "#06b6d4", "#f97316", "#8b5cf6"];
 
     let addedCount = 0;
     for (let i = 0; i < count; i++) {

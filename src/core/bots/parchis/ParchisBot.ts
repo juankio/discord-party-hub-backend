@@ -8,6 +8,8 @@ export class ParchisBot extends BaseBot {
   }
 
   protected async onGameStateUpdate(event: { targetUserId: string; state: any }): Promise<void> {
+    if (event.targetUserId && event.targetUserId !== this.userId) return;
+
     const state = event.state as ParchisPublicState;
 
     // Wait slightly to avoid processing events that were triggered before the bot could fully initialize

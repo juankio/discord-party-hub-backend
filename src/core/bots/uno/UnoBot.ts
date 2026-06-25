@@ -9,7 +9,28 @@ export class UnoBot extends BaseBot {
     super(config, nickname, avatarId, color);
   }
 
+  private handlePostPlayAction(chosenColor?: CardColor) {
+    if (!this.engine || this.engine.actionRequiredFrom !== this.userId) return;
+
+    if (this.engine.state === 'CHOOSING_COLOR') {
+      const colors: CardColor[] = ['red', 'blue', 'green', 'yellow'];
+      const finalColor = chosenColor || colors[Math.floor(Math.random() * colors.length)];
+      logger.debug(`[UnoBot ${this.nickname}] Declaring color: ${finalColor}`);
+      this.engine.declareColor(this.userId, finalColor);
+    } else if (this.engine.state === 'CHOOSING_PLAYER') {
+      const rivals = this.engine.players.filter((p: any) => p.userId !== this.userId);
+      rivals.sort((a: any, b: any) => a.hand.length - b.hand.length);
+      if (rivals.length > 0) {
+        const targetId = rivals[0].userId;
+        logger.debug(`[UnoBot ${this.nickname}] Swapping hands with ${rivals[0].nickname}`);
+        this.engine.swapHands(this.userId, targetId);
+      }
+    }
+  }
+
   protected async onGameStateUpdate(event: { targetUserId: string; state: any }): Promise<void> {
+    if (event.targetUserId !== this.userId) return;
+
     const { state } = event;
 
     // We only care about states where the game is active
@@ -21,9 +42,11 @@ export class UnoBot extends BaseBot {
 
     if (!isOurTurn && !actionRequired) return;
 
+    const myHand = state.myHand || this.engine?.players.find((p: any) => p.userId === this.userId)?.hand || [];
+
     // Avoid reacting multiple times to the exact same state for the same turn state
     // We can use a simple hash or just checking hand size + top card + pending status
-    const stateHash = `${state.state}_${state.currentTurnUserId}_${state.actionRequiredFrom}_${state.topCard?.id}_${state.pendingDraws}_${state.hasDrawnThisTurn}`;
+    const stateHash = `${state.state}_${state.currentTurnUserId}_${state.actionRequiredFrom}_${state.topCard?.id}_${state.pendingDraws}_${state.hasDrawnThisTurn}_${myHand.length}`;
     if (this.lastHandledStateHash === stateHash) return;
     this.lastHandledStateHash = stateHash;
 
@@ -47,8 +70,9 @@ export class UnoBot extends BaseBot {
         const colors: CardColor[] = ['red', 'blue', 'green', 'yellow'];
         
         // Simple heuristic: count colors in hand and pick the most abundant
+        const myHand: Card[] = state.myHand || this.engine.players.find((p: any) => p.userId === this.userId)?.hand || [];
         const colorCounts: Record<string, number> = { red: 0, blue: 0, green: 0, yellow: 0 };
-        for (const card of state.myHand) {
+        for (const card of myHand) {
           if (card.color !== 'wild') {
             colorCounts[card.color] = (colorCounts[card.color] || 0) + 1;
           }
@@ -95,6 +119,7 @@ export class UnoBot extends BaseBot {
         if (stackedCard) {
           logger.debug(`[UnoBot ${this.nickname}] Stacking card ${stackedCard.id} to avoid ${pendingDraws} draws`);
           this.engine.playCards(this.userId, [stackedCard.id]);
+          this.handlePostPlayAction();
           return;
         } else {
           logger.debug(`[UnoBot ${this.nickname}] Drawing cards because of pending draws`);
@@ -120,6 +145,7 @@ export class UnoBot extends BaseBot {
             }
           }
           this.engine.playCards(this.userId, [playableCard.id]);
+          this.handlePostPlayAction();
         } else {
           logger.debug(`[UnoBot ${this.nickname}] Passing turn`);
           this.engine.passTurn(this.userId);
@@ -170,11 +196,8 @@ export class UnoBot extends BaseBot {
           this.engine.playCard(this.userId, cardToPlay.id, chosenColor);
         } else {
           this.engine.playCards(this.userId, [cardToPlay.id]);
-          if (chosenColor && this.engine.state === 'CHOOSING_COLOR') {
-             // Engine might transition to CHOOSING_COLOR automatically
-             // If not, we might need to declare it when prompted via actionRequired
-          }
         }
+        this.handlePostPlayAction(chosenColor);
       } else {
         logger.debug(`[UnoBot ${this.nickname}] No playable cards, drawing from deck`);
         this.engine.drawFromDeck(this.userId);

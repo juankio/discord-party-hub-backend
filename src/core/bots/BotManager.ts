@@ -117,11 +117,55 @@ export class BotManager {
     }
   }
 
-  public updateBotDifficulty(userId: string, newDifficulty: number): void {
+  public updateBotConfig(userId: string, roomId: string, data: { difficulty?: number, nickname?: string, avatarId?: number, color?: string }): void {
     const bot = this.activeBots.get(userId);
-    if (bot) {
-      bot.difficultyLevel = newDifficulty;
-      logger.info(`Bot ${bot.nickname} (${userId}) difficulty updated to ${newDifficulty}`);
+    if (!bot || bot.roomId !== roomId) return;
+
+    let updated = false;
+
+    if (data.difficulty !== undefined) {
+      bot.difficultyLevel = data.difficulty;
+      updated = true;
+    }
+
+    if (data.nickname !== undefined) {
+      bot.nickname = data.nickname;
+      updated = true;
+    }
+
+    if (data.avatarId !== undefined) {
+      bot.avatarId = data.avatarId;
+      updated = true;
+    }
+
+    if (data.color !== undefined) {
+      bot.color = data.color;
+      updated = true;
+    }
+
+    if (updated) {
+      const room = this.roomManager.getRoom(roomId);
+      if (room) {
+        const u = room.users.find(user => user.userId === userId);
+        if (u) {
+          if (data.nickname !== undefined) u.originalNickname = data.nickname;
+          if (data.nickname !== undefined) u.nickname = data.nickname;
+          if (data.avatarId !== undefined) u.avatarId = data.avatarId;
+          if (data.color !== undefined) u.color = data.color;
+        }
+
+        if (room.gameEngine && ['uno', 'stop', 'parchis'].includes(room.gameType || '')) {
+          const p = room.gameEngine.players.find((player: any) => player.userId === userId);
+          if (p) {
+            if (data.nickname !== undefined) p.nickname = data.nickname;
+            if (data.avatarId !== undefined) p.avatarId = data.avatarId;
+            if (data.color !== undefined) p.color = data.color;
+          }
+        }
+
+        this.roomManager.recomputeNicknames(room, roomId);
+      }
+      logger.info(`Bot ${bot.nickname} (${userId}) config updated in room ${roomId}`);
     }
   }
 

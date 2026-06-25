@@ -26,7 +26,10 @@ const AddBotsSchema = z.object({
 
 const UpdateBotConfigSchema = z.object({
   botId: z.string().min(1),
-  difficulty: z.number().int().min(1).max(10)
+  difficulty: z.number().int().min(1).max(10).optional(),
+  nickname: z.string().max(30).optional(),
+  avatarId: z.number().int().optional(),
+  color: z.string().max(20).optional()
 });
 
 const KickBotSchema = z.object({
@@ -212,7 +215,7 @@ export class RoomConnectionHandler {
       return;
     }
 
-    const { botId, difficulty } = result.data;
+    const { botId, ...configData } = result.data;
     const roomId = socket.data?.roomId;
     if (!roomId) return;
 
@@ -224,7 +227,7 @@ export class RoomConnectionHandler {
       return;
     }
 
-    this.manager.botManager.updateBotDifficulty(botId, difficulty);
+    this.manager.botManager.updateBotConfig(botId, roomId, configData);
   }
 
   public handleKickBot(socket: Socket, data: any) {

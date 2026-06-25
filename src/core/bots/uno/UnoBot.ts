@@ -110,7 +110,15 @@ export class UnoBot extends BaseBot {
         const playableCard = myHand.find(c => this.isCardPlayable(c, topCard, currentColor));
         if (playableCard) {
           logger.debug(`[UnoBot ${this.nickname}] Playing drawn card ${playableCard.id}`);
-          if (myHand.length === 2) this.engine.yellUno(this.userId); // Before it goes down to 1
+          if (myHand.length === 2) {
+            const isDumb = this.difficultyLevel <= 3;
+            const failYell = isDumb && Math.random() < 0.2;
+            if (!failYell) {
+              this.engine.yellUno(this.userId); // Before it goes down to 1
+            } else {
+              logger.debug(`[UnoBot ${this.nickname}] (Dumb Move) Forgot to yell UNO on draw play!`);
+            }
+          }
           this.engine.playCards(this.userId, [playableCard.id]);
         } else {
           logger.debug(`[UnoBot ${this.nickname}] Passing turn`);
@@ -120,7 +128,13 @@ export class UnoBot extends BaseBot {
       }
 
       // Normal turn logic: find a playable card
-      const playableCards = myHand.filter(c => this.isCardPlayable(c, topCard, currentColor));
+      let playableCards = myHand.filter(c => this.isCardPlayable(c, topCard, currentColor));
+
+      // Dumb move: sometimes act like we don't have a playable card if difficulty is low
+      if (playableCards.length > 0 && this.difficultyLevel <= 3 && Math.random() < 0.2) {
+        logger.debug(`[UnoBot ${this.nickname}] (Dumb Move) Skipping playable cards!`);
+        playableCards = [];
+      }
 
       if (playableCards.length > 0) {
         // Simple strategy: play normal cards first, save wilds for later
@@ -135,7 +149,13 @@ export class UnoBot extends BaseBot {
         
         // Yell UNO if we will have 1 card left
         if (myHand.length === 2) {
-          this.engine.yellUno(this.userId);
+          const isDumb = this.difficultyLevel <= 3;
+          const failYell = isDumb && Math.random() < 0.2;
+          if (!failYell) {
+            this.engine.yellUno(this.userId);
+          } else {
+            logger.debug(`[UnoBot ${this.nickname}] (Dumb Move) Forgot to yell UNO!`);
+          }
         }
 
         // The prompt asks for playCard(userId, cardId, chosenColor) 

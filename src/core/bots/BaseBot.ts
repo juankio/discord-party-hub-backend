@@ -40,12 +40,13 @@ export abstract class BaseBot {
 
   // Utilidad para simular tiempo de reacción ("pensamiento") basado en el ELO
   protected async think(minMs = 500, maxMs = 3000): Promise<void> {
-    const isFast = this.difficultyLevel >= 8;
-    const isSlow = this.difficultyLevel <= 3;
-    
     let baseTime = Math.random() * (maxMs - minMs) + minMs;
-    if (isFast) baseTime *= 0.5;
-    if (isSlow) baseTime *= 1.5;
+    
+    // Scale delay based on difficulty (1 to 10)
+    // Level 1: multiplier ~ 2.0 (slowest)
+    // Level 10: multiplier ~ 0.5 (fastest)
+    const multiplier = 2.0 - ((this.difficultyLevel - 1) * (1.5 / 9));
+    baseTime *= multiplier;
 
     return new Promise(resolve => setTimeout(resolve, baseTime));
   }

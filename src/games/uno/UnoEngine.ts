@@ -102,6 +102,13 @@ export class UnoEngine extends EventEmitter {
 
   public broadcastState() {
     for (const p of this.players) {
+      const myIndex = this.players.findIndex(x => x.userId === p.userId);
+      const orderedRivals = [];
+      for (let i = 1; i < this.players.length; i++) {
+        const rivalIndex = (myIndex + i) % this.players.length;
+        orderedRivals.push(this.players[rivalIndex]);
+      }
+
       this.emit("game_state_update", {
         targetUserId: p.userId,
         state: {
@@ -110,7 +117,7 @@ export class UnoEngine extends EventEmitter {
           pendingDraws: this.pendingDraws, topCard: this.deckManager.getTopDiscard(),
           actionRequiredFrom: this.actionRequiredFrom, winner: this.winner, myHand: p.hand,
           hasDrawnThisTurn: !!p.hasDrawnThisTurn,
-          rivals: this.players.filter(r => r.userId !== p.userId).map(r => ({
+          rivals: orderedRivals.map(r => ({
             userId: r.userId, nickname: r.nickname, avatarId: r.avatarId, color: r.color,
             cardCount: r.hand.length, hasYelledUno: r.hasYelledUno, isOffline: r.isOffline
           }))

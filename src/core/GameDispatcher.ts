@@ -96,6 +96,15 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
     if (!room || room.hostUserId !== socket.data.userId) return;
 
     room.selectedGame = gameId;
+
+    // Si el nuevo juego no soporta bots, los eliminamos
+    if (gameId !== 'uno' && gameId !== 'parchis') {
+      const hasBots = room.users.some(u => u.isBot);
+      if (hasBots) {
+        roomManager.botManager.removeBotsFromRoom(socket.data.roomId);
+      }
+    }
+
     io.to(socket.data.roomId).emit("room_update", {
       users: room.users,
       hostUserId: room.hostUserId,
@@ -122,6 +131,20 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
     if (!room || room.hostUserId !== userId) {
       logger.warn(`[SECURITY] El usuario ${userId} intento iniciar partida sin ser host.`);
       return; 
+    }
+
+    const hasBots = room.users.some(u => u.isBot);
+    if (hasBots && data.gameType !== 'uno' && data.gameType !== 'parchis') {
+      logger.warn(`[SECURITY] El usuario ${userId} intento iniciar partida con bots en un juego no soportado: ${data.gameType}.`);
+      return;
+    }
+
+    if (data.gameType === 'parchis') {
+      const boardSize = data.rules?.parchisBoardSize || 4;
+      if (room.users.length > boardSize) {
+        logger.warn(`[SECURITY] El usuario ${userId} intento iniciar parchis con demasiados jugadores (${room.users.length} > ${boardSize}).`);
+        return;
+      }
     }
 
     if (data.gameType === 'impostor') {

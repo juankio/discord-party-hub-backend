@@ -26,6 +26,12 @@ export class BotManager {
       return;
     }
 
+    const selectedGame = room.selectedGame || 'uno';
+    if (selectedGame !== 'uno' && selectedGame !== 'parchis') {
+      logger.warn(`[SECURITY] Cannot add bots to room ${roomId} because the selected game '${selectedGame}' does not support bots.`);
+      return;
+    }
+
     const botNames = [
       "ChatGPT", "Claude", "Gemini", "Skynet", "HAL 9000", 
       "GLaDOS", "Cortana", "Siri", "Alexa", "Bender", 
@@ -102,9 +108,24 @@ export class BotManager {
   }
 
   public removeBotsFromRoom(roomId: string): void {
+    let removedAny = false;
     for (const [userId, bot] of this.activeBots.entries()) {
       if (bot.roomId === roomId) {
         this.activeBots.delete(userId);
+        removedAny = true;
+      }
+    }
+    
+    if (removedAny) {
+      const room = this.roomManager.getRoom(roomId);
+      if (room) {
+        room.users = room.users.filter(u => !u.isBot);
+        if (room.gameEngine) {
+          // Si el motor soporta eliminar jugadores, podríamos llamarlo aquí,
+          // pero típicamente al cambiar de juego el motor se destruye.
+        }
+        // No llamamos a recomputeNicknames aquí porque usualmente se hace junto con otra actualización,
+        // pero podemos hacerlo si es necesario.
       }
     }
   }

@@ -44,31 +44,30 @@ export class ParchisTurnLogic {
     engine.emit('parchis:dice_rolled', { userId, dice: engine.diceValue });
     
     const allTokensHome = player.tokens.every(t => t.state === 'HOME');
-    const hasFive = engine.rules.diceCount === 1 ? engine.availableMoves.includes(5) : false;
+    const hasFive = engine.availableMoves.includes(5);
 
-    console.log(`--> rollDice by ${userId}: dice=${engine.diceValue}, allTokensHome=${allTokensHome}, isPair=${isPair}`);
+    console.log(`--> rollDice by ${userId}: dice=${engine.diceValue}, allTokensHome=${allTokensHome}, isPair=${isPair}, hasFive=${hasFive}`);
 
-    if (allTokensHome) {
+    if (allTokensHome && !hasFive) {
       if (engine.rules.diceCount === 2 && !isPair) {
         engine.rollAttempts++;
         if (engine.rollAttempts < 3) {
           engine.availableMoves = []; // Must roll again
+          engine.diceValue = [];
           engine.broadcastState();
           return;
         } else {
           engine.broadcastState();
           setTimeout(() => {
             console.log("--> setTimeout firing auto nextTurn after 3 failed attempts...");
-            engine.availableMoves = [];
             ParchisTurnLogic.nextTurn(engine);
           }, 1500);
           return;
         }
-      } else if (engine.rules.diceCount === 1 && !hasFive) {
+      } else if (engine.rules.diceCount === 1) {
         engine.broadcastState();
         setTimeout(() => {
           console.log("--> setTimeout firing auto nextTurn...");
-          engine.availableMoves = [];
           ParchisTurnLogic.nextTurn(engine);
         }, 1500);
         return;

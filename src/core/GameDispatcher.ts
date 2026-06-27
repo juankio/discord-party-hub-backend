@@ -23,6 +23,29 @@ import { setupParchisGame } from "../games/parchis/ParchisSetup.js";
 import { setupImpostorGame } from "../games/impostor/ImpostorSetup.js";
 
 // -- Esquemas de validación ZOD --
+const ParchisRulesPayloadSchema = z.object({
+  diceCount: z.coerce.number().int().min(1).max(2).default(1),
+  tokensPerPlayer: z.coerce.number().int().min(1).max(8).default(4),
+  parchisBoardSize: z.coerce.number().int().min(4).max(8).default(4)
+});
+
+const UnoRulesPayloadSchema = z.object({
+  stackDrawCards: z.boolean().default(false),
+  drawUntilPlayable: z.boolean().default(false),
+  playMultipleSame: z.boolean().default(false),
+  interceptExact: z.boolean().default(false),
+  zeroAndSevenRules: z.boolean().default(false),
+  extendedLobby: z.boolean().default(false)
+});
+
+const StopRulesPayloadSchema = z.object({
+  categories: z.array(z.string().max(50)).max(12).default(["Nombres", "Colores", "Paises", "Animales", "Cosas"]),
+  rounds: z.coerce.number().int().min(1).max(20).default(5),
+  timeLimit: z.coerce.number().int().min(30).max(300).optional(),
+  verificationTime: z.coerce.number().int().min(10).max(60).optional(),
+  bannedLetters: z.array(z.string().length(1)).max(27).optional()
+});
+
 const StartGameSchema = z.object({
   gameType: z.enum(["uno", "parchis", "stop", "pinturillo", "liars", "impostor"]).default("uno"),
   rules: z.any().optional()
@@ -140,7 +163,14 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
     }
 
     if (data.gameType === 'parchis') {
-      const boardSize = data.rules?.parchisBoardSize || 4;
+      const parsedRules = ParchisRulesPayloadSchema.safeParse(data.rules || {});
+      if (!parsedRules.success) {
+        logger.warn(`[SECURITY] El usuario ${userId} intento iniciar parchis con reglas invalidas.`);
+        return;
+      }
+      data.rules = parsedRules.data;
+
+      const boardSize = data.rules.parchisBoardSize;
       if (room.users.length > boardSize) {
         logger.warn(`[SECURITY] El usuario ${userId} intento iniciar parchis con demasiados jugadores (${room.users.length} > ${boardSize}).`);
         return;
@@ -150,9 +180,19 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
     if (data.gameType === 'impostor') {
       setupImpostorGame(roomId, room, io);
     } else if (data.gameType === 'uno') {
-      setupUnoGame(roomId, room, io, data.rules, roomManager);
+      const parsedUnoRules = UnoRulesPayloadSchema.safeParse(data.rules || {});
+      if (!parsedUnoRules.success) {
+        logger.warn(`[SECURITY] El usuario ${userId} intento iniciar uno con reglas invalidas.`);
+        return;
+      }
+      setupUnoGame(roomId, room, io, parsedUnoRules.data, roomManager);
     } else if (data.gameType === 'stop') {
-      setupStopGame(roomId, room, io, data.rules || {}, roomManager);
+      const parsedStopRules = StopRulesPayloadSchema.safeParse(data.rules || {});
+      if (!parsedStopRules.success) {
+        logger.warn(`[SECURITY] El usuario ${userId} intento iniciar stop con reglas invalidas.`);
+        return;
+      }
+      setupStopGame(roomId, room, io, parsedStopRules.data, roomManager);
     } else if (data.gameType === 'parchis') {
       setupParchisGame(roomId, room, io, data.rules || {}, roomManager);
     }

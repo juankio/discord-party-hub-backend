@@ -6,11 +6,12 @@ import { logger } from "../../core/Logger.js";
 
 import type { RoomManager } from "../../core/RoomManager.js";
 
-export function setupParchisGame(roomId: string, room: any, io: Server, frontendRules: any, roomManager: RoomManager) {
-  const rules: Partial<ParchisRules> = {};
-  if (frontendRules.diceCount) rules.diceCount = frontendRules.diceCount;
-  if (frontendRules.tokensPerPlayer) rules.tokensPerPlayer = frontendRules.tokensPerPlayer;
-  if (frontendRules.parchisBoardSize) rules.parchisBoardSize = frontendRules.parchisBoardSize;
+export function setupParchisGame(roomId: string, room: any, io: Server, safeRules: any, roomManager: RoomManager) {
+  const rules: Partial<ParchisRules> = {
+    diceCount: safeRules.diceCount,
+    tokensPerPlayer: safeRules.tokensPerPlayer,
+    parchisBoardSize: safeRules.parchisBoardSize
+  };
 
   room.gameType = "parchis";
   

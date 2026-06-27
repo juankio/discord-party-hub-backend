@@ -21,11 +21,11 @@ export class ParchisBoardLogic {
     if (token.state === 'HOME') {
       const startPos = (playerIndex * 17) + 4;
       if (engine.rules.diceCount === 2) {
-        if (engine.diceValue[0] !== engine.diceValue[1]) return;
+        if (engine.diceValue[0] !== engine.diceValue[1] && diceValue !== 5) return;
         if (ParchisCaptureLogic.isPositionBlocked(engine, startPos)) return;
         token.state = 'BOARD';
         token.position = startPos;
-        if (diceValue === 1 || diceValue === 6) {
+        if (engine.diceValue[0] === engine.diceValue[1] && (diceValue === 1 || diceValue === 6)) {
           player.tokens.forEach(t => { if (t.state === 'HOME') { t.state = 'BOARD'; t.position = startPos; }});
           engine.availableMoves = [];
         } else {

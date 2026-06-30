@@ -64,6 +64,10 @@ export class ParchisEngine extends EventEmitter {
     if (rules) this.rules = { ...this.rules, ...rules };
     if (!this.rules.parchisBoardSize) this.rules.parchisBoardSize = 4;
 
+    if (this.players.length > this.rules.parchisBoardSize) {
+      throw new Error(`Cannot start Parchis: ${this.players.length} players exceeds board size of ${this.rules.parchisBoardSize}.`);
+    }
+
     const safeZones: number[] = [];
     for (let i = 0; i < this.rules.parchisBoardSize; i++) {
       const base = i * 17;
@@ -82,6 +86,7 @@ export class ParchisEngine extends EventEmitter {
     if (this.state !== 'CHOOSING_TOKENS') return;
     const player = this.players.find(p => p.userId === userId);
     if (!player || player.hasChosenFigure) return;
+    if (this.players.some(p => p.selectedFigure === figureId)) return;
 
     player.selectedFigure = figureId;
     player.hasChosenFigure = true;

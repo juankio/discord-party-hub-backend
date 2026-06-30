@@ -84,7 +84,7 @@ export class BotManager {
       room.users.push({
         socketId: newBot.userId, // use userId as socketId for bots
         userId: newBot.userId,
-        originalNickname: newBot.nickname,
+        originalNickname: newBot.originalNickname,
         nickname: newBot.nickname,
         avatarId: newBot.avatarId,
         color: newBot.color,
@@ -130,6 +130,63 @@ export class BotManager {
     }
   }
 
+  public recreateBotsForGame(roomId: string, newGameType: string): void {
+    const room = this.roomManager.getRoom(roomId);
+    if (!room) return;
+
+    let recreatedCount = 0;
+    const botsToRecreate = [];
+
+    // Find bots in the room
+    for (const [userId, bot] of this.activeBots.entries()) {
+      if (bot.roomId === roomId) {
+        botsToRecreate.push({
+          userId: bot.userId,
+          nickname: bot.originalNickname,
+          avatarId: bot.avatarId,
+          color: bot.color,
+          difficultyLevel: bot.difficultyLevel,
+        });
+        this.activeBots.delete(userId);
+      }
+    }
+
+    for (const botData of botsToRecreate) {
+      const botConfig: BotConfig = {
+        difficultyLevel: botData.difficultyLevel,
+        roomId,
+        gameType: newGameType,
+        existingUserId: botData.userId
+      };
+
+      let newBot: BaseBot;
+      switch (newGameType) {
+        case 'uno':
+          newBot = new UnoBot(botConfig, botData.nickname, botData.avatarId, botData.color);
+          break;
+        case 'parchis':
+          newBot = new ParchisBot(botConfig, botData.nickname, botData.avatarId, botData.color);
+          break;
+        case 'stop':
+          newBot = new StopBot(botConfig, botData.nickname, botData.avatarId, botData.color);
+          break;
+        case 'pinturillo':
+          newBot = new PinturilloBot(botConfig, botData.nickname, botData.avatarId, botData.color);
+          break;
+        default:
+          newBot = new DummyBot(botConfig, botData.nickname, botData.avatarId, botData.color);
+          break;
+      }
+      
+      this.activeBots.set(newBot.userId, newBot);
+      recreatedCount++;
+    }
+
+    if (recreatedCount > 0) {
+      logger.info(`Recreated ${recreatedCount} bots in room ${roomId} for game ${newGameType}`);
+    }
+  }
+
   public attachEngineToBots(roomId: string, engine: any): void {
     for (const bot of this.activeBots.values()) {
       if (bot.roomId === roomId) {
@@ -150,6 +207,7 @@ export class BotManager {
     }
 
     if (data.nickname !== undefined) {
+      bot.originalNickname = data.nickname;
       bot.nickname = data.nickname;
       updated = true;
     }

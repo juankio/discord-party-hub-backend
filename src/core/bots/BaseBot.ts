@@ -6,10 +6,12 @@ export interface BotConfig {
   difficultyLevel: number; // 1 to 10
   roomId: string;
   gameType: string;
+  existingUserId?: string;
 }
 
 export abstract class BaseBot {
   public userId: string;
+  public originalNickname: string;
   public nickname: string;
   public avatarId: number;
   public color: string;
@@ -19,10 +21,11 @@ export abstract class BaseBot {
   protected engine: any;
 
   constructor(config: BotConfig, nickname: string, avatarId: number, color: string) {
-    this.userId = `bot_${uuidv4()}`;
+    this.userId = config.existingUserId || `bot_${uuidv4()}`;
     this.difficultyLevel = config.difficultyLevel;
     this.roomId = config.roomId;
     this.gameType = config.gameType;
+    this.originalNickname = nickname;
     this.nickname = nickname;
     this.avatarId = avatarId;
     this.color = color;

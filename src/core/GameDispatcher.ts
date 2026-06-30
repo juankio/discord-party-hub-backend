@@ -121,10 +121,13 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
     room.selectedGame = gameId;
 
     // Si el nuevo juego no soporta bots, los eliminamos
-    if (gameId !== 'uno' && gameId !== 'parchis') {
-      const hasBots = room.users.some(u => u.isBot);
-      if (hasBots) {
+    const hasBots = room.users.some(u => u.isBot);
+    if (hasBots) {
+      if (gameId !== 'uno' && gameId !== 'parchis') {
         roomManager.botManager.removeBotsFromRoom(socket.data.roomId);
+      } else {
+        // Transmutar los bots a la nueva clase del juego
+        roomManager.botManager.recreateBotsForGame(socket.data.roomId, gameId);
       }
     }
 
@@ -170,7 +173,7 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
       }
       data.rules = parsedRules.data;
 
-      const boardSize = data.rules.parchisBoardSize;
+      const boardSize = room.roomRules?.parchisBoardSize || data.rules.parchisBoardSize || 4;
       if (room.users.length > boardSize) {
         logger.warn(`[SECURITY] El usuario ${userId} intento iniciar parchis con demasiados jugadores (${room.users.length} > ${boardSize}).`);
         return;

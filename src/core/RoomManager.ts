@@ -87,10 +87,10 @@ export class RoomManager {
       let count = nameCounts.get(originalName) || 0;
       
       let newName = originalName;
-      if (count > 0) newName = `${originalName} (copión ${count})`;
+      if (room.roomRules?.autoNicknames !== false && count > 0) newName = `${originalName} (copión ${count})`;
       nameCounts.set(originalName, count + 1);
 
-      if ((colorCounts.get(user.color) || 0) > 1) newName += " (novios hp)";
+      if (room.roomRules?.autoNicknames !== false && (colorCounts.get(user.color) || 0) > 1) newName += " (novios hp)";
 
       user.nickname = newName;
 

@@ -28,12 +28,25 @@ export class ParchisBot extends BaseBot {
       if (me && !me.hasChosenFigure && !this.isChoosingFigure) {
         this.isChoosingFigure = true;
         
+        let waitAttempts = 0;
+        
         // Usopp's foolproof loop: Keep trying to pick a figure until successful
         while (this.engine === engineState && !engineState.players.find(p => p.userId === this.userId)?.hasChosenFigure && engineState.state === 'CHOOSING_TOKENS') {
+          
+          const humanPlayers = engineState.players.filter(p => !p.userId.startsWith('bot_'));
+          const allHumansChosen = humanPlayers.every(p => p.hasChosenFigure || p.isOffline);
+
+          // If humans haven't picked yet, give them priority (wait up to ~15-20 seconds before overriding)
+          if (!allHumansChosen && waitAttempts < 10) {
+            await this.think(1500, 2500);
+            waitAttempts++;
+            continue;
+          }
+
           await this.think(500, 1500);
           
           if (engineState.state === 'CHOOSING_TOKENS') {
-            const figureOptions = ['dog', 'car', 'hat', 'boat', 'gem', 'wood'];
+            const figureOptions = ['dog', 'car', 'hat', 'boat', 'gem', 'wood', 'ghost', 'rocket', 'crown', 'sword'];
             const takenFigures = engineState.players.map(p => p.selectedFigure).filter(Boolean);
             const availableFigures = figureOptions.filter(f => !takenFigures.includes(f));
             

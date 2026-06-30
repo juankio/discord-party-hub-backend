@@ -21,7 +21,7 @@ export class ParchisBot extends BaseBot {
       if (me && !me.hasChosenFigure) {
         await this.think(500, 1500);
         if (engineState.state === 'CHOOSING_TOKENS') {
-          const figureOptions = ['0', '1', '2', '3'];
+          const figureOptions = ['dog', 'car', 'hat', 'boat', 'gem', 'wood'];
           const randomFigure = figureOptions[Math.floor(Math.random() * figureOptions.length)];
           engineState.chooseFigure(this.userId, randomFigure);
         }

@@ -160,7 +160,7 @@ export class ParchisEngine extends EventEmitter {
     player.tokens.forEach(t => t.color = newColor);
 
     this.takenSeats.push(actualTargetIndex);
-    (player as any)._seatIndex = actualTargetIndex;
+    player._seatIndex = actualTargetIndex;
 
     this.pickersQueue.shift();
 
@@ -179,12 +179,12 @@ export class ParchisEngine extends EventEmitter {
           offPlayer.color = offColor;
           offPlayer.tokens.forEach(t => t.color = offColor);
           this.takenSeats.push(randomSeatIndex);
-          (offPlayer as any)._seatIndex = randomSeatIndex;
+          offPlayer._seatIndex = randomSeatIndex;
         }
       }
 
-      this.players.sort((a, b) => ((a as any)._seatIndex || 0) - ((b as any)._seatIndex || 0));
-      this.players.forEach(p => delete (p as any)._seatIndex);
+      this.players.sort((a, b) => (a._seatIndex || 0) - (b._seatIndex || 0));
+      this.players.forEach(p => delete p._seatIndex);
 
       this.currentTurnIndex = 0;
       this.state = 'PLAYING';
@@ -202,5 +202,9 @@ export class ParchisEngine extends EventEmitter {
       pickersQueue: this.pickersQueue, takenSeats: this.takenSeats
     };
     this.players.forEach(p => this.emit('game_state_update', { targetUserId: p.userId, state }));
+  }
+
+  public destroy() {
+    this.removeAllListeners();
   }
 }

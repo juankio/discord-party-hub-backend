@@ -83,6 +83,7 @@ export function registerAllGameRoutes(socket: Socket, roomManager: RoomManager) 
     if (!room) return;
     const isFinished = room.gameEngine?.state === 'FINISHED';
     if (isFinished || room.hostUserId === socket.data.userId) {
+      room.gameEngine?.destroy?.();
       room.gameEngine = undefined;
       room.gameType = undefined;
       io.to(socket.data.roomId).emit("return_to_lobby");
@@ -117,6 +118,12 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
     if (!validateSocketContext(socket)) return;
     const room = rooms.get(socket.data.roomId);
     if (!room || room.hostUserId !== socket.data.userId) return;
+
+    if (room.selectedGame !== gameId) {
+      room.gameEngine?.destroy?.();
+      room.gameEngine = undefined;
+      room.gameType = undefined;
+    }
 
     room.selectedGame = gameId;
 

@@ -34,6 +34,7 @@ export interface ParchisPlayer {
   selectedFigure?: string;
   hasChosenFigure?: boolean;
   stats: ParchisPlayerStats;
+  _seatIndex?: number;
 }
 
 export type ParchisGameState = 'LOBBY' | 'CHOOSING_TOKENS' | 'ROLLING_FOR_ORDER' | 'CHOOSING_SEATS' | 'PLAYING' | 'FINISHED';

@@ -1,0 +1,76 @@
+import { z } from "zod";
+import type { RoomManager } from "./RoomManager.js";
+import { setupUnoGame } from "../games/uno/UnoSetup.js";
+import { setupStopGame } from "../games/stop/StopSetup.js";
+import { setupParchisGame } from "../games/parchis/ParchisSetup.js";
+import { setupImpostorGame } from "../games/impostor/ImpostorSetup.js";
+import { logger } from "./Logger.js";
+import type { Server } from "socket.io";
+import type { RoomData } from "./RoomManager.js";
+
+// -- Validation Schemas --
+const ParchisRulesSchema = z.object({
+  diceCount: z.coerce.number().int().min(1).max(2).default(1),
+  tokensPerPlayer: z.coerce.number().int().min(1).max(8).default(4),
+  parchisBoardSize: z.coerce.number().int().min(4).max(8).default(4)
+});
+
+const UnoRulesSchema = z.object({
+  stackDrawCards: z.boolean().default(false),
+  drawUntilPlayable: z.boolean().default(false),
+  playMultipleSame: z.boolean().default(false),
+  interceptExact: z.boolean().default(false),
+  zeroAndSevenRules: z.boolean().default(false),
+  extendedLobby: z.boolean().default(false)
+});
+
+const StopRulesSchema = z.object({
+  categories: z.array(z.string().max(50)).max(12).default(["Nombres", "Colores", "Paises", "Animales", "Cosas"]),
+  rounds: z.coerce.number().int().min(1).max(20).default(5),
+  timeLimit: z.coerce.number().int().min(30).max(300).optional(),
+  verificationTime: z.coerce.number().int().min(10).max(60).optional(),
+  bannedLetters: z.array(z.string().length(1)).max(27).optional()
+});
+
+export const StartGameSchema = z.object({
+  gameType: z.enum(["uno", "parchis", "stop", "pinturillo", "liars", "impostor"]).default("uno"),
+  rules: z.any().optional()
+});
+
+export class GameFactory {
+  public static startGame(gameType: string, roomId: string, room: RoomData, io: Server, rulesPayload: any, roomManager: RoomManager): void {
+    const userId = room.hostUserId;
+
+    switch (gameType) {
+      case 'parchis': {
+        const parsed = ParchisRulesSchema.safeParse(rulesPayload || {});
+        if (!parsed.success) return logger.warn(`[SECURITY] User ${userId} attempted to start parchis with invalid rules.`);
+        
+        const boardSize = Number(room.roomRules?.parchisBoardSize || parsed.data.parchisBoardSize || 4);
+        if (room.users.length > boardSize) {
+          return logger.warn(`[SECURITY] User ${userId} started parchis with too many players (${room.users.length} > ${boardSize}).`);
+        }
+        setupParchisGame(roomId, room, io, parsed.data, roomManager);
+        break;
+      }
+      case 'uno': {
+        const parsed = UnoRulesSchema.safeParse(rulesPayload || {});
+        if (!parsed.success) return logger.warn(`[SECURITY] User ${userId} attempted to start uno with invalid rules.`);
+        setupUnoGame(roomId, room, io, parsed.data, roomManager);
+        break;
+      }
+      case 'stop': {
+        const parsed = StopRulesSchema.safeParse(rulesPayload || {});
+        if (!parsed.success) return logger.warn(`[SECURITY] User ${userId} attempted to start stop with invalid rules.`);
+        setupStopGame(roomId, room, io, parsed.data, roomManager);
+        break;
+      }
+      case 'impostor':
+        setupImpostorGame(roomId, room, io);
+        break;
+      default:
+        logger.warn(`Game type ${gameType} not fully supported via factory yet.`);
+        break;
+    }
+  }
+}

@@ -1,18 +1,7 @@
 import { BaseBot, BotConfig } from "./BaseBot.js";
-import { UnoBot } from "./uno/UnoBot.js";
-import { ParchisBot } from "./parchis/ParchisBot.js";
-import { StopBot } from "./stop/StopBot.js";
-import { PinturilloBot } from "./pinturillo/PinturilloBot.js";
+import { BotFactory } from "./BotFactory.js";
 import type { RoomManager } from "../RoomManager.js";
 import { logger } from "../Logger.js";
-
-// Placeholder DummyBot
-class DummyBot extends BaseBot {
-  protected onGameStateUpdate(event: { targetUserId: string; state: any }): void {
-    // Basic placeholder behavior
-    logger.debug(`[Bot ${this.nickname}] Received game state update.`);
-  }
-}
 
 export class BotManager {
   private activeBots = new Map<string, BaseBot>();
@@ -21,112 +10,53 @@ export class BotManager {
 
   public addBotsToRoom(roomId: string, count: number, difficulty: number): void {
     const room = this.roomManager.getRoom(roomId);
-    if (!room) {
-      logger.warn(`Cannot add bots to non-existent room: ${roomId}`);
-      return;
-    }
+    if (!room) return logger.warn(`Cannot add bots to non-existent room: ${roomId}`);
 
     const selectedGame = room.selectedGame || 'uno';
-    if (selectedGame !== 'uno' && selectedGame !== 'parchis') {
-      logger.warn(`[SECURITY] Cannot add bots to room ${roomId} because the selected game '${selectedGame}' does not support bots.`);
-      return;
+    if (!['uno', 'parchis'].includes(selectedGame)) {
+      return logger.warn(`[SECURITY] Cannot add bots to room ${roomId}, game '${selectedGame}' unsupported.`);
     }
 
-    const botNames = [
-      "ChatGPT", "Claude", "Gemini", "Skynet", "HAL 9000", 
-      "GLaDOS", "Cortana", "Siri", "Alexa", "Bender", 
-      "R2-D2", "C-3PO", "Wall-E", "Terminator", "Jarvis"
-    ];
-    const colors = ["#ef4444", "#22c55e", "#3b82f6", "#eab308", "#d946ef", "#06b6d4", "#f97316", "#8b5cf6"];
+    const botNames = ["ChatGPT", "Claude", "Gemini", "Skynet", "HAL 9000", "GLaDOS", "Bender", "R2-D2"];
+    const colors = ["#ef4444", "#22c55e", "#3b82f6", "#eab308", "#d946ef", "#06b6d4", "#f97316"];
 
     let addedCount = 0;
     for (let i = 0; i < count; i++) {
       const maxPlayers = room.roomRules?.extendedLobby ? 8 : 6;
-      if (room.users.length >= maxPlayers) {
-        logger.warn(`Room ${roomId} is full, cannot add more bots.`);
-        break;
-      }
+      if (room.users.length >= maxPlayers) break;
 
-      // Generate a unique bot nickname
-      const baseNickname = botNames[Math.floor(Math.random() * botNames.length)] || "Bot";
-      const nickname = `${baseNickname} ${Math.floor(Math.random() * 100)}`;
+      const nickname = `${botNames[Math.floor(Math.random() * botNames.length)]} ${Math.floor(Math.random() * 100)}`;
       const avatarId = Math.floor(Math.random() * 10) + 1;
       const color = colors[Math.floor(Math.random() * colors.length)] || "#ffffff";
+      const config: BotConfig = { difficultyLevel: difficulty, roomId, gameType: selectedGame };
 
-      const botConfig: BotConfig = {
-        difficultyLevel: difficulty,
-        roomId,
-        gameType: room.selectedGame || "uno"
-      };
-
-      let newBot: BaseBot;
-      switch (botConfig.gameType) {
-        case 'uno':
-          newBot = new UnoBot(botConfig, nickname, avatarId, color);
-          break;
-        case 'parchis':
-          newBot = new ParchisBot(botConfig, nickname, avatarId, color);
-          break;
-        case 'stop':
-          newBot = new StopBot(botConfig, nickname, avatarId, color);
-          break;
-        case 'pinturillo':
-          newBot = new PinturilloBot(botConfig, nickname, avatarId, color);
-          break;
-        default:
-          newBot = new DummyBot(botConfig, nickname, avatarId, color);
-          break;
-      }
-      
+      const newBot = BotFactory.createBot(selectedGame, config, nickname, avatarId, color);
       this.activeBots.set(newBot.userId, newBot);
 
-      // Add to room users
       room.users.push({
-        socketId: newBot.userId, // use userId as socketId for bots
-        userId: newBot.userId,
-        originalNickname: newBot.originalNickname,
-        nickname: newBot.nickname,
-        avatarId: newBot.avatarId,
-        color: newBot.color,
-        totalWins: 0,
-        isOffline: false,
-        isBot: true
+        socketId: newBot.userId, userId: newBot.userId, originalNickname: newBot.originalNickname,
+        nickname: newBot.nickname, avatarId: newBot.avatarId, color: newBot.color,
+        totalWins: 0, isOffline: false, isBot: true
       });
 
-      // If game has started, add to gameEngine
       if (room.gameEngine && ['uno', 'stop', 'parchis'].includes(room.gameType || '')) {
         room.gameEngine.addPlayer(newBot.userId, newBot.userId, newBot.nickname, newBot.avatarId, newBot.color);
         newBot.setEngine(room.gameEngine);
       }
-
       addedCount++;
     }
 
-    // Recompute nicknames and broadcast room update
     this.roomManager.recomputeNicknames(room, roomId);
-    logger.info(`Added ${addedCount} bots to room ${roomId} with difficulty ${difficulty}`);
+    logger.info(`Added ${addedCount} bots to room ${roomId} (diff: ${difficulty})`);
   }
 
   public removeBotsFromRoom(roomId: string): void {
-    let removedAny = false;
-    for (const [userId, bot] of this.activeBots.entries()) {
-      if (bot.roomId === roomId) {
-        this.activeBots.delete(userId);
-        removedAny = true;
-      }
-    }
+    const botsToRemove = Array.from(this.activeBots.values()).filter(b => b.roomId === roomId);
+    botsToRemove.forEach(b => this.activeBots.delete(b.userId));
     
-    if (removedAny) {
+    if (botsToRemove.length > 0) {
       const room = this.roomManager.getRoom(roomId);
-      if (room) {
-        room.users = room.users.filter(u => !u.isBot);
-        if (room.gameEngine) {
-          // Si el motor soporta eliminar jugadores, podríamos llamarlo aquí,
-          // pero típicamente al cambiar de juego el motor se destruye.
-        }
-        // No llamamos a recomputeNicknames aquí porque usualmente se hace junto con otra actualización,
-        // pero podemos hacerlo si es necesario.
-      }
+      if (room) room.users = room.users.filter(u => !u.isBot);
     }
   }
 
@@ -134,117 +64,50 @@ export class BotManager {
     const room = this.roomManager.getRoom(roomId);
     if (!room) return;
 
-    let recreatedCount = 0;
-    const botsToRecreate = [];
+    const botsData = Array.from(this.activeBots.values())
+      .filter(b => b.roomId === roomId)
+      .map(b => ({ userId: b.userId, nick: b.originalNickname, avatarId: b.avatarId, color: b.color, diff: b.difficultyLevel }));
 
-    // Find bots in the room
-    for (const [userId, bot] of this.activeBots.entries()) {
-      if (bot.roomId === roomId) {
-        botsToRecreate.push({
-          userId: bot.userId,
-          nickname: bot.originalNickname,
-          avatarId: bot.avatarId,
-          color: bot.color,
-          difficultyLevel: bot.difficultyLevel,
-        });
-        this.activeBots.delete(userId);
-      }
-    }
+    botsData.forEach(b => this.activeBots.delete(b.userId));
 
-    for (const botData of botsToRecreate) {
-      const botConfig: BotConfig = {
-        difficultyLevel: botData.difficultyLevel,
-        roomId,
-        gameType: newGameType,
-        existingUserId: botData.userId
-      };
-
-      let newBot: BaseBot;
-      switch (newGameType) {
-        case 'uno':
-          newBot = new UnoBot(botConfig, botData.nickname, botData.avatarId, botData.color);
-          break;
-        case 'parchis':
-          newBot = new ParchisBot(botConfig, botData.nickname, botData.avatarId, botData.color);
-          break;
-        case 'stop':
-          newBot = new StopBot(botConfig, botData.nickname, botData.avatarId, botData.color);
-          break;
-        case 'pinturillo':
-          newBot = new PinturilloBot(botConfig, botData.nickname, botData.avatarId, botData.color);
-          break;
-        default:
-          newBot = new DummyBot(botConfig, botData.nickname, botData.avatarId, botData.color);
-          break;
-      }
-      
+    botsData.forEach(b => {
+      const config: BotConfig = { difficultyLevel: b.diff, roomId, gameType: newGameType, existingUserId: b.userId };
+      const newBot = BotFactory.createBot(newGameType, config, b.nick, b.avatarId, b.color);
       this.activeBots.set(newBot.userId, newBot);
-      recreatedCount++;
-    }
+    });
 
-    if (recreatedCount > 0) {
-      logger.info(`Recreated ${recreatedCount} bots in room ${roomId} for game ${newGameType}`);
-    }
+    if (botsData.length > 0) logger.info(`Recreated ${botsData.length} bots in ${roomId} for ${newGameType}`);
   }
 
   public attachEngineToBots(roomId: string, engine: any): void {
-    for (const bot of this.activeBots.values()) {
-      if (bot.roomId === roomId) {
-        bot.setEngine(engine);
-      }
-    }
+    Array.from(this.activeBots.values())
+      .filter(bot => bot.roomId === roomId)
+      .forEach(bot => bot.setEngine(engine));
   }
 
-  public updateBotConfig(userId: string, roomId: string, data: { difficulty?: number, nickname?: string, avatarId?: number, color?: string }): void {
+  public updateBotConfig(userId: string, roomId: string, data: Partial<{ difficulty: number, nickname: string, avatarId: number, color: string }>): void {
     const bot = this.activeBots.get(userId);
     if (!bot || bot.roomId !== roomId) return;
 
-    let updated = false;
+    if (data.difficulty !== undefined) bot.difficultyLevel = data.difficulty;
+    if (data.nickname !== undefined) { bot.originalNickname = data.nickname; bot.nickname = data.nickname; }
+    if (data.avatarId !== undefined) bot.avatarId = data.avatarId;
+    if (data.color !== undefined) bot.color = data.color;
 
-    if (data.difficulty !== undefined) {
-      bot.difficultyLevel = data.difficulty;
-      updated = true;
-    }
+    const room = this.roomManager.getRoom(roomId);
+    if (room) {
+      const u = room.users.find(u => u.userId === userId);
+      if (u) Object.assign(u, { 
+        ...(data.nickname && { originalNickname: data.nickname, nickname: data.nickname }),
+        ...(data.avatarId && { avatarId: data.avatarId }),
+        ...(data.color && { color: data.color })
+      });
 
-    if (data.nickname !== undefined) {
-      bot.originalNickname = data.nickname;
-      bot.nickname = data.nickname;
-      updated = true;
-    }
-
-    if (data.avatarId !== undefined) {
-      bot.avatarId = data.avatarId;
-      updated = true;
-    }
-
-    if (data.color !== undefined) {
-      bot.color = data.color;
-      updated = true;
-    }
-
-    if (updated) {
-      const room = this.roomManager.getRoom(roomId);
-      if (room) {
-        const u = room.users.find(user => user.userId === userId);
-        if (u) {
-          if (data.nickname !== undefined) u.originalNickname = data.nickname;
-          if (data.nickname !== undefined) u.nickname = data.nickname;
-          if (data.avatarId !== undefined) u.avatarId = data.avatarId;
-          if (data.color !== undefined) u.color = data.color;
-        }
-
-        if (room.gameEngine && ['uno', 'stop', 'parchis'].includes(room.gameType || '')) {
-          const p = room.gameEngine.players.find((player: any) => player.userId === userId);
-          if (p) {
-            if (data.nickname !== undefined) p.nickname = data.nickname;
-            if (data.avatarId !== undefined) p.avatarId = data.avatarId;
-            if (data.color !== undefined) p.color = data.color;
-          }
-        }
-
-        this.roomManager.recomputeNicknames(room, roomId);
+      if (room.gameEngine && ['uno', 'stop', 'parchis'].includes(room.gameType || '')) {
+        const p = room.gameEngine.players.find((p: any) => p.userId === userId);
+        if (p) Object.assign(p, data);
       }
-      logger.info(`Bot ${bot.nickname} (${userId}) config updated in room ${roomId}`);
+      this.roomManager.recomputeNicknames(room, roomId);
     }
   }
 
@@ -253,15 +116,11 @@ export class BotManager {
     if (!bot || bot.roomId !== roomId) return;
 
     this.activeBots.delete(userId);
-
     const room = this.roomManager.getRoom(roomId);
     if (room) {
       room.users = room.users.filter(u => u.userId !== userId);
-      if (room.gameEngine) {
-        room.gameEngine.removePlayer(userId);
-      }
+      room.gameEngine?.removePlayer(userId);
       this.roomManager.recomputeNicknames(room, roomId);
-      logger.info(`Bot ${bot.nickname} (${userId}) removed from room ${roomId}`);
     }
   }
 }

@@ -75,6 +75,7 @@ export class ParchisSetupLogic {
 
   public static chooseSeat(engine: ParchisEngine, userId: string, targetColorIndex: number) {
     if (engine.state !== 'CHOOSING_SEATS') return;
+    if (engine.pickersQueue.length === 0) return;
     if (userId !== engine.firstPickerUserId) return;
     
     const standardColors = ['green', 'yellow', 'blue', 'red'];
@@ -100,8 +101,8 @@ export class ParchisSetupLogic {
     if (engine.pickersQueue.length > 0) {
       engine.firstPickerUserId = engine.pickersQueue[0];
     } else {
-      const offlinePlayers = engine.players.filter(p => p.isOffline);
-      for (const offPlayer of offlinePlayers) {
+      const unseatedPlayers = engine.players.filter(p => p._seatIndex === undefined);
+      for (const p of unseatedPlayers) {
         const availableSeats = [];
         for (let i = 0; i < engine.sides; i++) {
           if (!engine.takenSeats.includes(i)) availableSeats.push(i);
@@ -109,10 +110,10 @@ export class ParchisSetupLogic {
         if (availableSeats.length > 0) {
           const randomSeatIndex = availableSeats[Math.floor(Math.random() * availableSeats.length)];
           const offColor = standardColors[randomSeatIndex] || 'gray';
-          offPlayer.color = offColor;
-          offPlayer.tokens.forEach(t => t.color = offColor);
+          p.color = offColor;
+          p.tokens.forEach(t => t.color = offColor);
           engine.takenSeats.push(randomSeatIndex);
-          offPlayer._seatIndex = randomSeatIndex;
+          p._seatIndex = randomSeatIndex;
         }
       }
 

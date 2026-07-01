@@ -55,6 +55,16 @@ export function registerParchisRoutes(socket: Socket, roomManager: RoomManager, 
     engine.chooseFigure(socket.data.userId, payload.figureId);
   }));
 
+  socket.on("parchis:roll_initiative", () => wrapParchisHandler((engine) => {
+    engine.rollInitiative(socket.data.userId);
+  }));
+
+  socket.on("parchis:choose_seat", (payload: { targetColorIndex: number }) => wrapParchisHandler((engine) => {
+    if (payload && typeof payload.targetColorIndex === 'number') {
+      engine.chooseSeat(socket.data.userId, payload.targetColorIndex);
+    }
+  }));
+
   socket.on("parchis:move_token", (payload: { tokenId: string, diceValue: number }) => wrapParchisHandler((engine) => {
     if (payload && payload.tokenId && typeof payload.diceValue === 'number') {
       engine.moveToken(socket.data.userId, payload.tokenId, payload.diceValue);

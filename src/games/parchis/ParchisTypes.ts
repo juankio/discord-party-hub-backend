@@ -17,6 +17,12 @@ export interface ParchisToken {
   state: 'HOME' | 'BOARD' | 'PATH' | 'META' | 'FINISHED';
 }
 
+export interface ParchisPlayerStats {
+  eaten: number;
+  died: number;
+  crowned: number;
+}
+
 export interface ParchisPlayer {
   userId: string;
   socketId: string;
@@ -27,9 +33,10 @@ export interface ParchisPlayer {
   isOffline: boolean;
   selectedFigure?: string;
   hasChosenFigure?: boolean;
+  stats: ParchisPlayerStats;
 }
 
-export type ParchisGameState = 'LOBBY' | 'CHOOSING_TOKENS' | 'PLAYING' | 'FINISHED';
+export type ParchisGameState = 'LOBBY' | 'CHOOSING_TOKENS' | 'ROLLING_FOR_ORDER' | 'CHOOSING_SEATS' | 'PLAYING' | 'FINISHED';
 
 export interface ParchisPublicState {
   state: ParchisGameState;
@@ -40,4 +47,9 @@ export interface ParchisPublicState {
   availableMoves: number[];
   consecutivePairs: number;
   winner?: string | null;
+  initiativeRolls?: Record<string, number>;
+  firstPickerUserId?: string | null;
+  pickersOrder?: string[];
+  pickersQueue?: string[];
+  takenSeats?: number[];
 }

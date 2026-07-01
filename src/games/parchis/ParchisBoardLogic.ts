@@ -57,6 +57,7 @@ export class ParchisBoardLogic {
         if (metaPos === 8) {
            token.state = 'FINISHED';
            token.position = 0;
+           player.stats.crowned++;
            if (player.tokens.every(t => t.state === 'FINISHED')) {
                engine.winner = player.userId;
                engine.state = 'FINISHED';

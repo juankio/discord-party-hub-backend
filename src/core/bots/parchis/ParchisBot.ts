@@ -62,6 +62,38 @@ export class ParchisBot extends BaseBot {
       return;
     }
 
+    if (state.state === 'ROLLING_FOR_ORDER') {
+      const rolled = engineState.initiativeRolls && engineState.initiativeRolls[this.userId] !== undefined;
+      if (!rolled && !this.isThinkingTurn) {
+        this.isThinkingTurn = true;
+        await this.think(2000, 4000);
+        if (engineState.state === 'ROLLING_FOR_ORDER' && (!engineState.initiativeRolls || engineState.initiativeRolls[this.userId] === undefined)) {
+           engineState.rollInitiative(this.userId);
+        }
+        this.isThinkingTurn = false;
+      }
+      return;
+    }
+
+    if (state.state === 'CHOOSING_SEATS') {
+      if (state.firstPickerUserId === this.userId && !this.isThinkingTurn) {
+        this.isThinkingTurn = true;
+        await this.think(1000, 2500);
+        if (engineState.state === 'CHOOSING_SEATS' && engineState.firstPickerUserId === this.userId) {
+           const availableSeats = [];
+           for (let i = 0; i < engineState.sides; i++) {
+             if (!engineState.takenSeats.includes(i)) availableSeats.push(i);
+           }
+           if (availableSeats.length > 0) {
+             const randomSeatIndex = availableSeats[Math.floor(Math.random() * availableSeats.length)];
+             engineState.chooseSeat(this.userId, randomSeatIndex);
+           }
+        }
+        this.isThinkingTurn = false;
+      }
+      return;
+    }
+
     const isOurTurn = state.players[state.currentTurnIndex]?.userId === this.userId;
 
     if (state.state === 'PLAYING' && isOurTurn && !this.isThinkingTurn) {

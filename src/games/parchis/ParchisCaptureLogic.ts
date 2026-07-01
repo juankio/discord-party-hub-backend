@@ -41,6 +41,7 @@ export class ParchisCaptureLogic {
 
   static applyCaptureIfAny(engine: ParchisEngine, userId: string, pos: number): boolean {
     let enemyCaptured = false;
+    const attacker = engine.players.find(p => p.userId === userId);
     for (const otherPlayer of engine.players) {
       if (otherPlayer.userId === userId) continue;
       for (const otherToken of otherPlayer.tokens) {
@@ -48,6 +49,8 @@ export class ParchisCaptureLogic {
           otherToken.state = 'HOME';
           otherToken.position = -1;
           enemyCaptured = true;
+          otherPlayer.stats.died++;
+          if (attacker) attacker.stats.eaten++;
         }
       }
     }

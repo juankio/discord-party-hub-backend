@@ -15,6 +15,11 @@ export class ParchisEngine extends EventEmitter {
   public consecutivePairs: number = 0;
   public lastMovedTokenId: string | null = null;
   public rollAttempts: number = 0;
+  
+  public initiativeRolls: Record<string, number> = {};
+  public firstPickerUserId: string | null = null;
+  public pickersQueue: string[] = [];
+  public takenSeats: number[] = [];
 
   public get sides() { return this.rules.parchisBoardSize || 4; }
   public get trackLength() { return this.sides * 17; }
@@ -31,7 +36,10 @@ export class ParchisEngine extends EventEmitter {
 
   public addPlayer(userId: string, socketId: string, nickname: string, avatarId: number, color: string) {
     if (this.players.find(p => p.userId === userId)) return;
-    this.players.push({ userId, socketId, nickname, avatarId, color, tokens: [], isOffline: false, hasChosenFigure: false });
+    this.players.push({ 
+      userId, socketId, nickname, avatarId, color, tokens: [], isOffline: false, hasChosenFigure: false,
+      stats: { eaten: 0, died: 0, crowned: 0 }
+    });
   }
 
   public removePlayer(userId: string) {
@@ -78,7 +86,7 @@ export class ParchisEngine extends EventEmitter {
     else this.rules.safeZones = safeZones;
 
     this.players.forEach(p => { p.hasChosenFigure = false; p.selectedFigure = undefined; });
-    Object.assign(this, { state: 'CHOOSING_TOKENS', currentTurnIndex: 0, diceValue: [], availableMoves: [], consecutivePairs: 0, lastMovedTokenId: null, rollAttempts: 0 });
+    Object.assign(this, { state: 'CHOOSING_TOKENS', currentTurnIndex: 0, diceValue: [], availableMoves: [], consecutivePairs: 0, lastMovedTokenId: null, rollAttempts: 0, pickersQueue: [], takenSeats: [] });
     this.broadcastState();
   }
 
@@ -97,7 +105,11 @@ export class ParchisEngine extends EventEmitter {
           id: `${p.userId}-token-${i}`, color: p.color, ownerId: p.userId, position: -1, state: 'HOME'
         }));
       });
-      this.state = 'PLAYING';
+      this.state = 'ROLLING_FOR_ORDER';
+      this.initiativeRolls = {};
+      this.firstPickerUserId = null;
+      this.pickersQueue = [];
+      this.takenSeats = [];
     }
     this.broadcastState();
   }
@@ -106,11 +118,88 @@ export class ParchisEngine extends EventEmitter {
   public moveToken(userId: string, tokenId: string, diceValue: number) { ParchisBoardLogic.moveToken(this, userId, tokenId, diceValue); }
   public nextTurn() { ParchisTurnLogic.nextTurn(this); }
 
+  public rollInitiative(userId: string) {
+    if (this.state !== 'ROLLING_FOR_ORDER') return;
+    const player = this.players.find(p => p.userId === userId);
+    if (!player || player.isOffline) return;
+    if (this.initiativeRolls[userId]) return;
+
+    this.initiativeRolls[userId] = Math.floor(Math.random() * 6) + 1;
+
+    const activePlayers = this.players.filter(p => !p.isOffline);
+    if (activePlayers.every(p => this.initiativeRolls[p.userId])) {
+      const sortedPlayers = [...activePlayers].sort((a, b) => {
+        const diff = this.initiativeRolls[b.userId] - this.initiativeRolls[a.userId];
+        return diff !== 0 ? diff : Math.random() - 0.5;
+      });
+
+      this.pickersQueue = sortedPlayers.map(p => p.userId);
+      this.firstPickerUserId = this.pickersQueue[0] || null;
+      this.state = 'CHOOSING_SEATS';
+    }
+    this.broadcastState();
+  }
+
+  public chooseSeat(userId: string, targetColorIndex: number) {
+    if (this.state !== 'CHOOSING_SEATS') return;
+    if (userId !== this.firstPickerUserId) return;
+    
+    const standardColors = ['green', 'yellow', 'blue', 'red'];
+    if (this.sides === 6) standardColors.push('purple', 'orange');
+    if (this.sides === 8) standardColors.push('purple', 'orange', 'cyan', 'pink');
+
+    const actualTargetIndex = targetColorIndex % this.sides;
+
+    if (this.takenSeats.includes(actualTargetIndex)) return;
+
+    const player = this.players.find(p => p.userId === userId);
+    if (!player) return;
+
+    const newColor = standardColors[actualTargetIndex] || 'gray';
+    player.color = newColor;
+    player.tokens.forEach(t => t.color = newColor);
+
+    this.takenSeats.push(actualTargetIndex);
+    (player as any)._seatIndex = actualTargetIndex;
+
+    this.pickersQueue.shift();
+
+    if (this.pickersQueue.length > 0) {
+      this.firstPickerUserId = this.pickersQueue[0];
+    } else {
+      const offlinePlayers = this.players.filter(p => p.isOffline);
+      for (const offPlayer of offlinePlayers) {
+        const availableSeats = [];
+        for (let i = 0; i < this.sides; i++) {
+          if (!this.takenSeats.includes(i)) availableSeats.push(i);
+        }
+        if (availableSeats.length > 0) {
+          const randomSeatIndex = availableSeats[Math.floor(Math.random() * availableSeats.length)];
+          const offColor = standardColors[randomSeatIndex] || 'gray';
+          offPlayer.color = offColor;
+          offPlayer.tokens.forEach(t => t.color = offColor);
+          this.takenSeats.push(randomSeatIndex);
+          (offPlayer as any)._seatIndex = randomSeatIndex;
+        }
+      }
+
+      this.players.sort((a, b) => ((a as any)._seatIndex || 0) - ((b as any)._seatIndex || 0));
+      this.players.forEach(p => delete (p as any)._seatIndex);
+
+      this.currentTurnIndex = 0;
+      this.state = 'PLAYING';
+    }
+
+    this.broadcastState();
+  }
+
   public broadcastState() {
     const state: ParchisPublicState = {
       state: this.state, players: this.players, currentTurnIndex: this.currentTurnIndex,
       rules: this.rules, diceValue: this.diceValue, availableMoves: this.availableMoves,
-      consecutivePairs: this.consecutivePairs, winner: this.winner
+      consecutivePairs: this.consecutivePairs, winner: this.winner,
+      initiativeRolls: this.initiativeRolls, firstPickerUserId: this.firstPickerUserId,
+      pickersQueue: this.pickersQueue, takenSeats: this.takenSeats
     };
     this.players.forEach(p => this.emit('game_state_update', { targetUserId: p.userId, state }));
   }

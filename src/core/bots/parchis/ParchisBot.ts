@@ -4,6 +4,7 @@ import type { ParchisEngine } from "../../../games/parchis/ParchisEngine.js";
 
 export class ParchisBot extends BaseBot {
   private isChoosingFigure = false;
+  private isChoosingSeat = false;
   private isThinkingTurn = false;
 
   constructor(config: BotConfig, nickname: string, avatarId: number, color: string) {
@@ -13,6 +14,7 @@ export class ParchisBot extends BaseBot {
   public setEngine(engine: any) {
     super.setEngine(engine);
     this.isChoosingFigure = false;
+    this.isChoosingSeat = false;
     this.isThinkingTurn = false;
   }
 
@@ -75,22 +77,35 @@ export class ParchisBot extends BaseBot {
       return;
     }
 
-    if (state.state === 'CHOOSING_SEATS') {
-      if (state.firstPickerUserId === this.userId && !this.isThinkingTurn) {
-        this.isThinkingTurn = true;
-        await this.think(1000, 2500);
-        if (engineState.state === 'CHOOSING_SEATS' && engineState.firstPickerUserId === this.userId) {
-           const availableSeats = [];
-           for (let i = 0; i < engineState.sides; i++) {
-             if (!engineState.takenSeats.includes(i)) availableSeats.push(i);
+        if (state.state === 'CHOOSING_SEATS') {
+      if (state.firstPickerUserId === this.userId && !this.isChoosingSeat) {
+        this.isChoosingSeat = true;
+        
+        // Usopp's foolproof logic for seats
+        let seatAttempts = 0;
+        
+        while (this.engine === engineState && engineState.state === 'CHOOSING_SEATS' && engineState.firstPickerUserId === this.userId) {
+           await this.think(1000, 2000);
+           
+           if (engineState.state === 'CHOOSING_SEATS' && engineState.firstPickerUserId === this.userId) {
+              const availableSeats = [];
+              for (let i = 0; i < engineState.sides; i++) {
+                if (!engineState.takenSeats.includes(i)) availableSeats.push(i);
+              }
+              if (availableSeats.length > 0) {
+                const randomSeatIndex = availableSeats[Math.floor(Math.random() * availableSeats.length)];
+                engineState.chooseSeat(this.userId, randomSeatIndex);
+              }
            }
-           if (availableSeats.length > 0) {
-             const randomSeatIndex = availableSeats[Math.floor(Math.random() * availableSeats.length)];
-             engineState.chooseSeat(this.userId, randomSeatIndex);
-           }
+           
+           seatAttempts++;
+           if (seatAttempts > 10) break; // emergency break
         }
-        this.isThinkingTurn = false;
+        
+        this.isChoosingSeat = false;
       }
+      
+      this.isThinkingTurn = false; // Reset just in case it got stuck
       return;
     }
 

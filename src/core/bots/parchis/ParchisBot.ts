@@ -111,6 +111,11 @@ export class ParchisBot extends BaseBot {
 
     const isOurTurn = state.players[state.currentTurnIndex]?.userId === this.userId;
 
+    // Failsafe: if it's our turn in PLAYING but we are stuck "thinking" with no dice, forcefully reset it.
+    if (state.state === 'PLAYING' && isOurTurn && this.isThinkingTurn && engineState.diceValue.length === 0 && engineState.availableMoves.length === 0) {
+      this.isThinkingTurn = false;
+    }
+
     if (state.state === 'PLAYING' && isOurTurn && !this.isThinkingTurn) {
       this.isThinkingTurn = true;
       if (engineState.diceValue.length === 0 && engineState.availableMoves.length === 0) {

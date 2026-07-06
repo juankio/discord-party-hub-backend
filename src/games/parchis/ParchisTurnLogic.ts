@@ -44,12 +44,12 @@ export class ParchisTurnLogic {
     engine.emit('parchis:dice_rolled', { userId, dice: engine.diceValue });
     
     const allTokensHome = player.tokens.every(t => t.state === 'HOME');
-    const hasFive = engine.availableMoves.includes(5);
+    const canExitHome = engine.rules.diceCount === 2 ? isPair : engine.availableMoves.includes(5);
 
-    console.log(`--> rollDice by ${userId}: dice=${engine.diceValue}, allTokensHome=${allTokensHome}, isPair=${isPair}, hasFive=${hasFive}`);
+    console.log(`--> rollDice by ${userId}: dice=${engine.diceValue}, allTokensHome=${allTokensHome}, isPair=${isPair}, canExitHome=${canExitHome}`);
 
-    if (allTokensHome && !hasFive) {
-      if (engine.rules.diceCount === 2 && !isPair) {
+    if (allTokensHome && !canExitHome) {
+      if (engine.rules.diceCount === 2) {
         engine.rollAttempts++;
         if (engine.rollAttempts < 3) {
           engine.availableMoves = []; // Must roll again
@@ -57,6 +57,7 @@ export class ParchisTurnLogic {
           engine.broadcastState();
           return;
         } else {
+          engine.availableMoves = []; // Limpiar para que el frontend no crea que tiene movimientos válidos
           engine.broadcastState();
           setTimeout(() => {
             console.log("--> setTimeout firing auto nextTurn after 3 failed attempts...");
@@ -65,6 +66,7 @@ export class ParchisTurnLogic {
           return;
         }
       } else if (engine.rules.diceCount === 1) {
+        engine.availableMoves = []; // Limpiar de inmediato
         engine.broadcastState();
         setTimeout(() => {
           console.log("--> setTimeout firing auto nextTurn...");

@@ -15,13 +15,14 @@ export class ParchisBot extends BaseBot {
     super.setEngine(engine);
     this.isChoosingFigure = false;
     this.isChoosingSeat = false;
-    this.isThinkingTurn = false;
+    this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
   }
 
   protected async onGameStateUpdate(event: { targetUserId: string; state: any }): Promise<void> {
     if (event.targetUserId && event.targetUserId !== this.userId) return;
 
     const state = event.state as ParchisPublicState;
+    console.log("[Bot] onGameStateUpdate called. state:", state.state, "user:", this.userId);
     const engineState = this.engine as ParchisEngine;
     if (!engineState) return;
 
@@ -67,12 +68,12 @@ export class ParchisBot extends BaseBot {
     if (state.state === 'ROLLING_FOR_ORDER') {
       const rolled = engineState.initiativeRolls && engineState.initiativeRolls[this.userId] !== undefined;
       if (!rolled && !this.isThinkingTurn) {
-        this.isThinkingTurn = true;
+        this.isThinkingTurn = true; console.log("[Bot] thinking...", this.userId, "state:", state.state);
         await this.think(2000, 4000);
         if (engineState.state === 'ROLLING_FOR_ORDER' && (!engineState.initiativeRolls || engineState.initiativeRolls[this.userId] === undefined)) {
            engineState.rollInitiative(this.userId);
         }
-        this.isThinkingTurn = false;
+        this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
       }
       return;
     }
@@ -105,7 +106,7 @@ export class ParchisBot extends BaseBot {
         this.isChoosingSeat = false;
       }
       
-      this.isThinkingTurn = false; // Reset just in case it got stuck
+      this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId); // Reset just in case it got stuck
       return;
     }
 
@@ -113,25 +114,25 @@ export class ParchisBot extends BaseBot {
 
     // Failsafe: if it's our turn in PLAYING but we are stuck "thinking" with no dice, forcefully reset it.
     if (state.state === 'PLAYING' && isOurTurn && this.isThinkingTurn && engineState.diceValue.length === 0 && engineState.availableMoves.length === 0) {
-      this.isThinkingTurn = false;
+      this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
     }
 
     if (state.state === 'PLAYING' && isOurTurn && !this.isThinkingTurn) {
-      this.isThinkingTurn = true;
+      this.isThinkingTurn = true; console.log("[Bot] thinking...", this.userId, "state:", state.state);
       if (engineState.diceValue.length === 0 && engineState.availableMoves.length === 0) {
         await this.think(1000, 3000);
         
         if (engineState.state !== 'PLAYING') {
-          this.isThinkingTurn = false;
+          this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
           return;
         }
         if (engineState.players[engineState.currentTurnIndex]?.userId !== this.userId) {
-          this.isThinkingTurn = false;
+          this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
           return;
         }
 
-        engineState.rollDice(this.userId);
-        this.isThinkingTurn = false;
+        this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
+        console.log("[Bot] ROLLING DICE"); engineState.rollDice(this.userId);
         return;
       }
 
@@ -139,17 +140,17 @@ export class ParchisBot extends BaseBot {
         await this.think(500, 1500);
 
         if (engineState.state !== 'PLAYING') {
-          this.isThinkingTurn = false;
+          this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
           return;
         }
         if (engineState.players[engineState.currentTurnIndex]?.userId !== this.userId) {
-          this.isThinkingTurn = false;
+          this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
           return;
         }
 
         const me = engineState.players.find(p => p.userId === this.userId);
         if (!me) {
-          this.isThinkingTurn = false;
+          this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
           return;
         }
 
@@ -161,7 +162,7 @@ export class ParchisBot extends BaseBot {
             const oldPos = token.position;
             const oldState = token.state;
             
-            engineState.moveToken(this.userId, token.id, moveValue);
+            console.log("[Bot] MOVING TOKEN", token.id); engineState.moveToken(this.userId, token.id, moveValue);
             
             if (token.position !== oldPos || token.state !== oldState) {
               moved = true;
@@ -177,7 +178,8 @@ export class ParchisBot extends BaseBot {
           engineState.nextTurn();
         }
       }
-      this.isThinkingTurn = false;
+      this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
+      setTimeout(() => engineState.broadcastState(), 100);
     }
   }
 }

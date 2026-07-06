@@ -61,14 +61,22 @@ export class ParchisSetupLogic {
 
     const activePlayers = engine.players.filter(p => !p.isOffline);
     if (activePlayers.every(p => engine.initiativeRolls[p.userId])) {
-      const sortedPlayers = [...activePlayers].sort((a, b) => {
-        const diff = engine.initiativeRolls[b.userId] - engine.initiativeRolls[a.userId];
-        return diff !== 0 ? diff : Math.random() - 0.5;
-      });
+      // Todos han tirado, transmitimos el estado para que se vea el último dado tirado
+      engine.broadcastState();
 
-      engine.pickersQueue = sortedPlayers.map(p => p.userId);
-      engine.firstPickerUserId = engine.pickersQueue[0] || null;
-      engine.state = 'CHOOSING_SEATS';
+      // Esperamos 2.5s antes de cambiar de fase, para que el jugador vea su tirada
+      setTimeout(() => {
+        const sortedPlayers = [...activePlayers].sort((a, b) => {
+          const diff = engine.initiativeRolls[b.userId] - engine.initiativeRolls[a.userId];
+          return diff !== 0 ? diff : Math.random() - 0.5;
+        });
+
+        engine.pickersQueue = sortedPlayers.map(p => p.userId);
+        engine.firstPickerUserId = engine.pickersQueue[0] || null;
+        engine.state = 'CHOOSING_SEATS';
+        engine.broadcastState();
+      }, 2500);
+      return;
     }
     engine.broadcastState();
   }

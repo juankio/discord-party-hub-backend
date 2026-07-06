@@ -21,16 +21,16 @@ export class ParchisBoardLogic {
     if (token.state === 'HOME') {
       const startPos = (playerIndex * 17) + 4;
       if (engine.rules.diceCount === 2) {
-        if (engine.diceValue[0] !== engine.diceValue[1] && diceValue !== 5) return;
+        const isPairRoll = engine.diceValue.length === 2 && engine.diceValue[0] === engine.diceValue[1];
+        const isPairIntact = isPairRoll && engine.availableMoves.filter(m => m === engine.diceValue[0]).length === 2;
+
+        if (!isPairIntact) return;
+        if (diceValue !== engine.diceValue[0]) return;
         if (ParchisCaptureLogic.isPositionBlocked(engine, startPos)) return;
+        
         token.state = 'BOARD';
         token.position = startPos;
-        if (engine.diceValue[0] === engine.diceValue[1] && (diceValue === 1 || diceValue === 6)) {
-          player.tokens.forEach(t => { if (t.state === 'HOME') { t.state = 'BOARD'; t.position = startPos; }});
-          engine.availableMoves = [];
-        } else {
-          engine.availableMoves.splice(moveIndex, 1);
-        }
+        engine.availableMoves.splice(moveIndex, 1);
       } else {
         if (diceValue !== 5) return;
         if (ParchisCaptureLogic.isPositionBlocked(engine, startPos)) return;
@@ -42,11 +42,19 @@ export class ParchisBoardLogic {
       enemyCaptured = ParchisCaptureLogic.applyCaptureIfAny(engine, userId, startPos);
       if (enemyCaptured) engine.availableMoves.push(20);
       engine.lastMovedTokenId = tokenId;
-    } else if (token.state === 'BOARD' || token.state === 'PATH') {
-      const newPos = (token.position + diceValue) % engine.trackLength;
-      const startPos = (playerIndex * 17) + 4;
-      let travelled = token.position - startPos;
-      if (travelled < 0) travelled += engine.trackLength;
+    } else if (token.state === 'BOARD' || token.state === 'PATH' || token.state === 'META') {
+      let newPos = token.position;
+      let travelled = 0;
+      let isMetaMove = false;
+
+      if (token.state === 'META') {
+        isMetaMove = true;
+        travelled = engine.trackLength - 5 + token.position;
+      } else {
+        const startPos = (playerIndex * 17) + 4;
+        travelled = token.position - startPos;
+        if (travelled < 0) travelled += engine.trackLength;
+      }
 
       const newTravelled = travelled + diceValue;
       const maxOnBoard = engine.trackLength - 5;
@@ -68,6 +76,9 @@ export class ParchisBoardLogic {
            token.position = metaPos;
         }
       } else {
+        if (isMetaMove) return;
+        
+        newPos = (token.position + diceValue) % engine.trackLength;
         if (ParchisCaptureLogic.isPositionBlocked(engine, newPos)) return;
         token.position = newPos;
         const safeZone = engine.rules.safeZones.includes(token.position);

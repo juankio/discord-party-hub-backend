@@ -50,7 +50,12 @@ export class GameFactory {
         if (room.users.length > boardSize) {
           return logger.warn(`[SECURITY] User ${userId} started parchis with too many players (${room.users.length} > ${boardSize}).`);
         }
-        setupParchisGame(roomId, room, io, parsed.data, roomManager);
+        const safeRules = {
+          diceCount: parsed.data.diceCount as 1 | 2,
+          tokensPerPlayer: parsed.data.tokensPerPlayer as 3 | 4,
+          parchisBoardSize: boardSize as 4 | 6 | 8
+        };
+        setupParchisGame(roomId, room, io, safeRules, roomManager);
         break;
       }
       case 'uno': {

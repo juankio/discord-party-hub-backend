@@ -22,7 +22,7 @@ export function registerParchisRoutes(socket: Socket, roomManager: RoomManager, 
     }
   };
 
-  socket.on("parchis:join", (payload: any = {}) => {
+  socket.on("parchis:join", (payload: { roomId?: string } = {}) => {
     try {
       const roomId = payload?.roomId || socket.data?.roomId;
       if (!roomId) return;

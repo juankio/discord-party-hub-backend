@@ -1,6 +1,57 @@
 import type { ParchisEngine } from './ParchisEngine.js';
+import type { ParchisPlayer } from './ParchisTypes.js';
+import { ParchisCaptureLogic } from './ParchisCaptureLogic.js';
+
+const AUTO_SKIP_DELAY_MS = 1500;
 
 export class ParchisTurnLogic {
+  static hasAnyValidMove(engine: ParchisEngine, player: ParchisPlayer): boolean {
+    const playerIndex = engine.players.findIndex(p => p.userId === player.userId);
+    const startPos = (playerIndex * 17) + 4;
+    const maxOnBoard = engine.trackLength - 5;
+
+    for (const diceValue of engine.availableMoves) {
+      for (const token of player.tokens) {
+        if (token.state === 'HOME') {
+          if (engine.rules.diceCount === 2) {
+            const isPairRoll = engine.diceValue.length === 2 && engine.diceValue[0] === engine.diceValue[1];
+            const isPairIntact = isPairRoll && engine.availableMoves.filter(m => m === engine.diceValue[0]).length === 2;
+            if (isPairIntact && diceValue === engine.diceValue[0] && !ParchisCaptureLogic.isPositionBlocked(engine, startPos)) {
+              return true;
+            }
+          } else {
+            if (diceValue === 5 && !ParchisCaptureLogic.isPositionBlocked(engine, startPos)) {
+              return true;
+            }
+          }
+        } else if (token.state === 'BOARD' || token.state === 'PATH' || token.state === 'META') {
+          let travelled = 0;
+          let isMetaMove = token.state === 'META';
+
+          if (token.state === 'META') {
+            travelled = maxOnBoard + token.position;
+          } else {
+            travelled = token.position - startPos;
+            if (travelled < 0) travelled += engine.trackLength;
+          }
+
+          const newTravelled = travelled + diceValue;
+          if (newTravelled > maxOnBoard) {
+            const metaPos = newTravelled - maxOnBoard;
+            if (metaPos <= 8) return true; // valid move
+          } else {
+            if (isMetaMove) continue; // cannot move backwards from META
+            const newPos = (token.position + diceValue) % engine.trackLength;
+            if (!ParchisCaptureLogic.isPositionBlocked(engine, newPos)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   static rollDice(engine: ParchisEngine, userId: string) {
     if (engine.state !== 'PLAYING') return;
     const player = engine.players[engine.currentTurnIndex];
@@ -44,53 +95,47 @@ export class ParchisTurnLogic {
     engine.emit('parchis:dice_rolled', { userId, dice: engine.diceValue });
     
     const allTokensHome = player.tokens.every(t => t.state === 'HOME');
-    const canExitHome = engine.rules.diceCount === 2 ? isPair : engine.availableMoves.includes(5);
+    const hasValidMoves = ParchisTurnLogic.hasAnyValidMove(engine, player);
+    const isBot = userId.startsWith('bot_');
 
-    console.log(`--> rollDice by ${userId}: dice=${engine.diceValue}, allTokensHome=${allTokensHome}, isPair=${isPair}, canExitHome=${canExitHome}`);
-
-    if (allTokensHome && !canExitHome) {
-      if (engine.rules.diceCount === 2) {
+    if (!hasValidMoves) {
+      if (engine.rules.diceCount === 2 && allTokensHome && !isPair ) {
         engine.rollAttempts++;
         if (engine.rollAttempts < 3) {
           engine.availableMoves = []; // Must roll again
           engine.diceValue = [];
           engine.broadcastState();
           return;
-        } else {
-          engine.availableMoves = []; // Limpiar para que el frontend no crea que tiene movimientos válidos
-          engine.broadcastState();
-          setTimeout(() => {
-            console.log("--> setTimeout firing auto nextTurn after 3 failed attempts...");
-            ParchisTurnLogic.nextTurn(engine);
-          }, 1500);
-          return;
         }
-      } else if (engine.rules.diceCount === 1) {
-        engine.availableMoves = []; // Limpiar de inmediato
-        engine.broadcastState();
-        setTimeout(() => {
-          console.log("--> setTimeout firing auto nextTurn...");
-          ParchisTurnLogic.nextTurn(engine);
-        }, 1500);
-        return;
       }
+
+      engine.availableMoves = []; // Limpiar para que el frontend no crea que tiene movimientos válidos
+      engine.broadcastState();
+      
+      const expectedTurnIndex = engine.currentTurnIndex;
+      const expectedPlayerId = player.userId;
+      
+      setTimeout(() => {
+        if (engine.state !== 'PLAYING') return;
+        if (engine.currentTurnIndex !== expectedTurnIndex) return;
+        if (engine.players[engine.currentTurnIndex]?.userId !== expectedPlayerId) return;
+        
+        ParchisTurnLogic.nextTurn(engine);
+      }, AUTO_SKIP_DELAY_MS);
+      return;
     }
 
-    console.log("--> waiting for player to move");
     engine.broadcastState();
   }
 
   static nextTurn(engine: ParchisEngine) {
-    console.log("--> nextTurn called! prev currentTurnIndex:", engine.currentTurnIndex);
     engine.availableMoves = [];
     engine.rollAttempts = 0;
     if (engine.rules.diceCount === 2 && engine.consecutivePairs > 0 && engine.consecutivePairs < 3) {
       // Gets another turn
-      console.log("--> player gets another turn due to consecutivePairs:", engine.consecutivePairs);
     } else {
       engine.consecutivePairs = 0;
       engine.currentTurnIndex = (engine.currentTurnIndex + 1) % engine.players.length;
-      console.log("--> new currentTurnIndex:", engine.currentTurnIndex);
     }
     engine.diceValue = [];
     engine.broadcastState();

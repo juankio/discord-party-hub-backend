@@ -1,6 +1,8 @@
 import type { ParchisEngine } from "./ParchisEngine.js";
 import type { ParchisRules } from "./ParchisTypes.js";
 
+const INITIATIVE_REVEAL_DELAY_MS = 2500;
+
 export class ParchisSetupLogic {
   public static startGame(engine: ParchisEngine, rules?: Partial<ParchisRules>) {
     if (rules) engine.rules = { ...engine.rules, ...rules };
@@ -57,7 +59,8 @@ export class ParchisSetupLogic {
     if (!player || player.isOffline) return;
     if (engine.initiativeRolls[userId]) return;
 
-    engine.initiativeRolls[userId] = Math.floor(Math.random() * 6) + 1;
+    // Asignar un nuevo objeto para forzar la reactividad en el frontend (Vue/Pinia)
+    engine.initiativeRolls = { ...engine.initiativeRolls, [userId]: Math.floor(Math.random() * 6) + 1 };
 
     const activePlayers = engine.players.filter(p => !p.isOffline);
     if (activePlayers.every(p => engine.initiativeRolls[p.userId])) {
@@ -66,16 +69,18 @@ export class ParchisSetupLogic {
 
       // Esperamos 2.5s antes de cambiar de fase, para que el jugador vea su tirada
       setTimeout(() => {
+        if (engine.state !== 'ROLLING_FOR_ORDER') return; // Safety check
+        
         const sortedPlayers = [...activePlayers].sort((a, b) => {
           const diff = engine.initiativeRolls[b.userId] - engine.initiativeRolls[a.userId];
           return diff !== 0 ? diff : Math.random() - 0.5;
         });
 
+        engine.state = 'CHOOSING_SEATS'; // Update immediately to prevent race conditions from other timeouts
         engine.pickersQueue = sortedPlayers.map(p => p.userId);
         engine.firstPickerUserId = engine.pickersQueue[0] || null;
-        engine.state = 'CHOOSING_SEATS';
         engine.broadcastState();
-      }, 2500);
+      }, INITIATIVE_REVEAL_DELAY_MS);
       return;
     }
     engine.broadcastState();

@@ -4,9 +4,9 @@ import type { ParchisRules } from "./ParchisTypes.js";
 import { handlePlayerWon } from "../../core/WinHandler.js";
 import { logger } from "../../core/Logger.js";
 
-import type { RoomManager } from "../../core/RoomManager.js";
+import type { RoomManager, RoomData } from "../../core/RoomManager.js";
 
-export function setupParchisGame(roomId: string, room: any, io: Server, safeRules: any, roomManager: RoomManager) {
+export function setupParchisGame(roomId: string, room: RoomData, io: Server, safeRules: Partial<ParchisRules>, roomManager: RoomManager) {
   const rules: Partial<ParchisRules> = {
     diceCount: safeRules.diceCount,
     tokensPerPlayer: safeRules.tokensPerPlayer,
@@ -28,7 +28,7 @@ export function setupParchisGame(roomId: string, room: any, io: Server, safeRule
 
   engine.on("game_state_update", (eventPayload) => {
     try {
-      const targetSocketId = room.users.find((u: any) => u.userId === eventPayload.targetUserId)?.socketId;
+      const targetSocketId = room.users.find((u) => u.userId === eventPayload.targetUserId)?.socketId;
       if (targetSocketId) io.to(targetSocketId).emit("game_state_update", eventPayload.state);
     } catch (e) {
       logger.error(`Error emitiendo evento de juego Parchis (game_state_update): ${e}`);
@@ -39,7 +39,7 @@ export function setupParchisGame(roomId: string, room: any, io: Server, safeRule
     io.to(roomId).emit("parchis:dice_rolled", eventPayload);
   });
 
-  room.users.forEach((u: any) => {
+  room.users.forEach((u) => {
     engine.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
   });
 

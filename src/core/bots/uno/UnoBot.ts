@@ -135,17 +135,19 @@ export class UnoBot extends BaseBot {
         const playableCard = myHand.find(c => this.isCardPlayable(c, topCard, currentColor));
         if (playableCard) {
           logger.debug(`[UnoBot ${this.nickname}] Playing drawn card ${playableCard.id}`);
-          if (myHand.length === 2) {
-            const isDumb = this.difficultyLevel <= 3;
-            const failYell = isDumb && Math.random() < 0.2;
-            if (!failYell) {
-              this.engine.yellUno(this.userId); // Before it goes down to 1
-            } else {
-              logger.debug(`[UnoBot ${this.nickname}] (Dumb Move) Forgot to yell UNO on draw play!`);
-            }
-          }
           this.engine.playCards(this.userId, [playableCard.id]);
           this.handlePostPlayAction();
+
+          if (myHand.length === 2) {
+            const forgotProbability = Math.max(0, (10 - this.difficultyLevel) * 0.1);
+            if (Math.random() >= forgotProbability) {
+              setTimeout(() => {
+                if (this.engine) this.engine.yellUno(this.userId);
+              }, 1000 + Math.random() * 500);
+            } else {
+              logger.debug(`[UnoBot ${this.nickname}] Forgot to yell UNO on draw play!`);
+            }
+          }
         } else {
           logger.debug(`[UnoBot ${this.nickname}] Passing turn`);
           this.engine.passTurn(this.userId);
@@ -173,17 +175,6 @@ export class UnoBot extends BaseBot {
         const cardToPlay = playableCards[0];
         logger.debug(`[UnoBot ${this.nickname}] Playing card ${cardToPlay.id}`);
         
-        // Yell UNO if we will have 1 card left
-        if (myHand.length === 2) {
-          const isDumb = this.difficultyLevel <= 3;
-          const failYell = isDumb && Math.random() < 0.2;
-          if (!failYell) {
-            this.engine.yellUno(this.userId);
-          } else {
-            logger.debug(`[UnoBot ${this.nickname}] (Dumb Move) Forgot to yell UNO!`);
-          }
-        }
-
         // The prompt asks for playCard(userId, cardId, chosenColor) 
         // We will do both or handle safely if the engine signature varies
         let chosenColor: CardColor | undefined = undefined;
@@ -198,6 +189,18 @@ export class UnoBot extends BaseBot {
           this.engine.playCards(this.userId, [cardToPlay.id]);
         }
         this.handlePostPlayAction(chosenColor);
+
+        // Yell UNO if we will have 1 card left
+        if (myHand.length === 2) {
+          const forgotProbability = Math.max(0, (10 - this.difficultyLevel) * 0.1);
+          if (Math.random() >= forgotProbability) {
+            setTimeout(() => {
+              if (this.engine) this.engine.yellUno(this.userId);
+            }, 1000 + Math.random() * 500);
+          } else {
+            logger.debug(`[UnoBot ${this.nickname}] Forgot to yell UNO!`);
+          }
+        }
       } else {
         logger.debug(`[UnoBot ${this.nickname}] No playable cards, drawing from deck`);
         this.engine.drawFromDeck(this.userId);

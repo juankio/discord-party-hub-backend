@@ -15,10 +15,10 @@ export class ParchisSetupLogic {
     const safeZones: number[] = [];
     for (let i = 0; i < engine.rules.parchisBoardSize; i++) {
       const base = i * 17;
-      safeZones.push(base + 4, base + 12, base + 16);
+      safeZones.push(base + 4, base + 8, base + 12);
     }
     
-    if (engine.rules.parchisBoardSize === 4) engine.rules.safeZones = [4, 11, 16, 21, 28, 33, 38, 45, 50, 55, 62, 67];
+    if (engine.rules.parchisBoardSize === 4) engine.rules.safeZones = [4, 8, 12, 21, 25, 29, 38, 42, 46, 55, 59, 63];
     else engine.rules.safeZones = safeZones;
 
     engine.players.forEach(p => { p.hasChosenFigure = false; p.selectedFigure = undefined; });

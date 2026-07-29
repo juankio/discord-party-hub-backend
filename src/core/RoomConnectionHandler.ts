@@ -31,6 +31,10 @@ export class RoomConnectionHandler {
   }
 
   // --- Settings / Bots / Kick Methods ---
+  public handleChangeSeat(socket: Socket, data: any) {
+    this.settingsHandler.handleChangeSeat(socket, data);
+  }
+
   public handleAddBots(socket: Socket, data: any) {
     this.settingsHandler.handleAddBots(socket, data);
   }

@@ -54,9 +54,17 @@ export class RoomJoinHandler {
         this.io.to(socket.id).emit("room_full");
         return;
       }
-      room.users.push({ socketId: socket.id, userId, originalNickname: nickname, nickname, avatarId, color, totalWins, isOffline: false });
+      let freeSeat = 0;
+      for (let i = 0; i < 8; i++) {
+        if (!room.users.some(u => u.seatIndex === i)) {
+          freeSeat = i;
+          break;
+        }
+      }
+      room.users.push({ socketId: socket.id, userId, originalNickname: nickname, nickname, avatarId, color, totalWins, seatIndex: freeSeat, isOffline: false });
     } else {
-      room.users[existingIndex] = { socketId: socket.id, userId, originalNickname: nickname, nickname, avatarId, color, totalWins, isOffline: false };
+      const prevSeat = room.users[existingIndex].seatIndex;
+      room.users[existingIndex] = { socketId: socket.id, userId, originalNickname: nickname, nickname, avatarId, color, totalWins, seatIndex: prevSeat, isOffline: false };
     }
 
     const hostStillExists = room.users.some(u => u.userId === room.hostUserId);

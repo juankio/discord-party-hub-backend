@@ -65,6 +65,7 @@ export function handleImpostorEvents(socket: Socket, roomManager: RoomManager) {
 const UpdateSelectedGameSchema = z.string().min(1).max(50);
 
 export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
+  socket.on("change_seat", (payload: any) => roomManager.handleChangeSeat(socket, payload));
   const io = (roomManager as any).io;
   const rooms = roomManager.getRoomsMap();
 

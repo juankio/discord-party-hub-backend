@@ -33,10 +33,18 @@ export class BotManager {
       const newBot = BotFactory.createBot(selectedGame, config, nickname, avatarId, color);
       this.activeBots.set(newBot.userId, newBot);
 
+      let freeSeat = 0;
+      for (let j = 0; j < 8; j++) {
+        if (!room.users.some(u => u.seatIndex === j)) {
+          freeSeat = j;
+          break;
+        }
+      }
+
       room.users.push({
         socketId: newBot.userId, userId: newBot.userId, originalNickname: newBot.originalNickname,
         nickname: newBot.nickname, avatarId: newBot.avatarId, color: newBot.color,
-        totalWins: 0, isOffline: false, isBot: true
+        totalWins: 0, isOffline: false, isBot: true, seatIndex: freeSeat
       });
 
       if (room.gameEngine && ['uno', 'stop', 'parchis'].includes(room.gameType || '')) {

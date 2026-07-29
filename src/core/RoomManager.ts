@@ -16,6 +16,7 @@ export interface RoomData {
     avatarId: number;
     color: string;
     totalWins: number;
+    seatIndex?: number;
     isOffline?: boolean;
     isBot?: boolean;
   }>;
@@ -139,6 +140,10 @@ export class RoomManager {
     this.connectionHandler.handleDisconnect(socket);
   }
 
+  public handleChangeSeat(socket: Socket, data: any) {
+    this.connectionHandler.handleChangeSeat(socket, data);
+  }
+
   public handleAddBots(socket: Socket, data: any) {
     this.connectionHandler.handleAddBots(socket, data);
   }
@@ -153,6 +158,17 @@ export class RoomManager {
 
   public handleKickPlayer(socket: Socket, data: any) {
     this.connectionHandler.handleKickPlayer(socket, data);
+  }
+
+  public broadcastRoomUpdate(roomId: string) {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+    this.io.to(roomId).emit("room_update", {
+      users: room.users,
+      hostUserId: room.hostUserId,
+      roomRules: room.roomRules,
+      selectedGame: room.selectedGame
+    });
   }
 
   public handleKickBot(socket: Socket, data: any) {

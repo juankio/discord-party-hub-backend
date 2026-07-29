@@ -25,7 +25,11 @@ const KickPlayerSchema = z.object({
   userId: z.string().min(1)
 });
 
-const UpdateRoomRulesSchema = z.record(z.string(), z.boolean());
+const UpdateRoomRulesSchema = z.record(z.string(), z.any());
+
+const ChangeSeatSchema = z.object({
+  targetSeatIndex: z.number().int().min(0).max(7)
+});
 
 export class RoomSettingsHandler {
   constructor(private io: Server, private manager: RoomManager) {}
@@ -127,6 +131,39 @@ export class RoomSettingsHandler {
       room.users = room.users.filter(u => u.userId !== userId);
       if (room.gameEngine) room.gameEngine.removePlayer(userId);
       this.manager.recomputeNicknames(room, roomId);
+    }
+  }
+
+  public handleChangeSeat(socket: Socket, data: any) {
+    if (!socket.data || !socket.data.roomId || !socket.data.userId) {
+      logger.warn(`[SECURITY] Action blocked without auth on socket: ${socket.id}`);
+      return;
+    }
+
+    const result = ChangeSeatSchema.safeParse(data);
+    if (!result.success) {
+      logger.warn(`[SECURITY] Invalid change_seat payload: ${result.error.issues[0]?.message}`);
+      return;
+    }
+
+    const { targetSeatIndex } = result.data;
+    const roomId = socket.data.roomId;
+    const userId = socket.data.userId;
+
+    const room = this.manager.getRoom(roomId);
+    if (!room) return;
+
+    // Check if the target seat is occupied
+    const isOccupied = room.users.some(u => u.seatIndex === targetSeatIndex);
+    if (isOccupied) {
+      logger.warn(`[LOGIC] User ${userId} tried to take occupied seat ${targetSeatIndex} in room ${roomId}`);
+      return;
+    }
+
+    const currentUser = room.users.find(u => u.userId === userId);
+    if (currentUser) {
+      currentUser.seatIndex = targetSeatIndex;
+      this.manager.broadcastRoomUpdate(roomId);
     }
   }
 

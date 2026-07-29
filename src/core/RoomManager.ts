@@ -46,7 +46,11 @@ export class RoomManager {
   public createRoom(hostUserId: string): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let roomId = '';
-    for(let i=0;i<5;i++) roomId+=chars.charAt(Math.floor(Math.random()*chars.length));
+    do {
+      roomId = '';
+      for(let i=0;i<5;i++) roomId+=chars.charAt(Math.floor(Math.random()*chars.length));
+    } while (this.rooms.has(roomId));
+    
     this.rooms.set(roomId, {
       users: [],
       hostUserId,
@@ -63,6 +67,10 @@ export class RoomManager {
   }
 
   public deleteRoom(roomId: string): void {
+    const room = this.rooms.get(roomId);
+    if (room?.gameEngine && typeof room.gameEngine.destroy === 'function') {
+      room.gameEngine.destroy();
+    }
     this.rooms.delete(roomId);
     if (this.botManager) {
       this.botManager.removeBotsFromRoom(roomId);
@@ -137,6 +145,14 @@ export class RoomManager {
 
   public handleUpdateBotConfig(socket: Socket, data: any) {
     this.connectionHandler.handleUpdateBotConfig(socket, data);
+  }
+
+  public handleUpdateRoomRules(socket: Socket, data: any) {
+    this.connectionHandler.handleUpdateRoomRules(socket, data);
+  }
+
+  public handleKickPlayer(socket: Socket, data: any) {
+    this.connectionHandler.handleKickPlayer(socket, data);
   }
 
   public handleKickBot(socket: Socket, data: any) {

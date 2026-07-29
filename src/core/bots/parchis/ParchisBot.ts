@@ -69,10 +69,21 @@ export class ParchisBot extends BaseBot {
       const rolled = engineState.initiativeRolls && engineState.initiativeRolls[this.userId] !== undefined;
       if (!rolled && !this.isThinkingTurn) {
         this.isThinkingTurn = true; console.log("[Bot] thinking...", this.userId, "state:", state.state);
-        await this.think(2000, 4000);
-        if (engineState.state === 'ROLLING_FOR_ORDER' && (!engineState.initiativeRolls || engineState.initiativeRolls[this.userId] === undefined)) {
-           engineState.rollInitiative(this.userId);
+        
+        let rollAttempts = 0;
+        
+        // Usopp's foolproof loop: Keep trying to roll until successful
+        while (this.engine === engineState && engineState.state === 'ROLLING_FOR_ORDER' && (!engineState.initiativeRolls || engineState.initiativeRolls[this.userId] === undefined)) {
+          await this.think(1500, 3000);
+          
+          if (engineState.state === 'ROLLING_FOR_ORDER' && (!engineState.initiativeRolls || engineState.initiativeRolls[this.userId] === undefined)) {
+             engineState.rollInitiative(this.userId);
+          }
+          
+          rollAttempts++;
+          if (rollAttempts > 10) break; // emergency break
         }
+        
         this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
       }
       return;

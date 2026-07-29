@@ -1,4 +1,5 @@
-import { EventEmitter } from 'events';
+import type { Server } from 'socket.io';
+import { BaseGameEngine } from '../../shared/BaseGameEngine.js';
 import type {
   ImpostorGameState,
   ImpostorPlayer,
@@ -14,23 +15,20 @@ export const VOTING_DURATION = 30;
 
 export const MAX_ROUNDS = 3;
 
-export class ImpostorEngine extends EventEmitter {
-  public roomId: string;
-  public players: ImpostorPlayer[] = [];
+export class ImpostorEngine extends BaseGameEngine<ImpostorPlayer> {
   public state: ImpostorGameState = 'WAITING';
 
   public currentRound = 0;
   public maxRounds = MAX_ROUNDS;
   public timeRemaining = 0;
   public roundResults: ImpostorRoundResult[] = [];
-  public winner: 'innocents' | 'impostor' | null = null;
   public impostorUserId: string | null = null;
+  public winner: 'innocents' | 'impostor' | null = null;
 
   public timerInterval: ReturnType<typeof setInterval> | null = null;
 
-  constructor(roomId: string) {
-    super();
-    this.roomId = roomId;
+  constructor(roomId: string, io: Server) {
+    super(roomId, io);
   }
 
   public addPlayer(userId: string, socketId: string, nickname: string, avatarId: number, color: string) {
@@ -51,11 +49,6 @@ export class ImpostorEngine extends EventEmitter {
 
   public removePlayer(userId: string) {
     ImpostorUtils.removePlayer(this, userId);
-  }
-
-  public setPlayerOffline(userId: string, isOffline: boolean) {
-    const player = this.players.find(p => p.userId === userId);
-    if (player) this.broadcastState();
   }
 
   public startGame() {
@@ -102,15 +95,16 @@ export class ImpostorEngine extends EventEmitter {
     }
   }
 
-  public broadcastMessage(msg: string) {
-    this.emit('game_message', { message: msg });
-  }
-
-  public broadcastState() {
+  public override broadcastState() {
     ImpostorUtils.broadcastState(this);
   }
 
   public returnToLobby() {
     ImpostorUtils.returnToLobby(this);
+  }
+
+  public override destroy() {
+    this.stopTimer();
+    super.destroy();
   }
 }

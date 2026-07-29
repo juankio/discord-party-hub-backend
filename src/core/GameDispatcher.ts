@@ -14,6 +14,9 @@ import { registerImpostorRoutes } from "../games/impostor/ImpostorSocketRouter.j
 import { registerStopRoutes } from "../games/stop/StopSocketRouter.js";
 import { registerParchisRoutes } from "../games/parchis/ParchisSocketRouter.js";
 import { StartGameSchema, GameFactory } from "./GameFactory.js";
+import { z } from 'zod';
+import { registerPinturilloRoutes } from "../games/pinturillo/PinturilloSocketRouter.js";
+import { registerLiarsRoutes } from "../games/liars-bar/LiarsSocketRouter.js";
 
 function validateSocketContext(socket: Socket): boolean {
   if (!socket.data || !socket.data.roomId || !socket.data.userId) {
@@ -28,6 +31,8 @@ export function registerAllGameRoutes(socket: Socket, roomManager: RoomManager) 
   const rooms = roomManager.getRoomsMap();
 
   registerUnoRoutes(socket, roomManager, validateSocketContext);
+  registerPinturilloRoutes(socket, roomManager, validateSocketContext);
+  registerLiarsRoutes(socket, roomManager, validateSocketContext);
   registerStopRoutes(socket, roomManager, validateSocketContext);
   registerParchisRoutes(socket, roomManager, validateSocketContext);
 
@@ -57,38 +62,36 @@ export function handleImpostorEvents(socket: Socket, roomManager: RoomManager) {
   registerImpostorRoutes(socket, roomManager, validateSocketContext);
 }
 
+const UpdateSelectedGameSchema = z.string().min(1).max(50);
+
 export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
   const io = (roomManager as any).io;
   const rooms = roomManager.getRoomsMap();
 
-  socket.on("update_room_rules", (payload: any) => {
+  socket.on("update_selected_game", (gameId: any) => {
     if (!validateSocketContext(socket)) return;
+    
+    const result = UpdateSelectedGameSchema.safeParse(gameId);
+    if (!result.success) {
+      return logger.warn(`[ZOD] Invalid update_selected_game payload from ${socket.data.userId}: ${JSON.stringify(result.error)}`);
+    }
+    const validGameId = result.data;
+    
     const room = rooms.get(socket.data.roomId);
     if (!room || room.hostUserId !== socket.data.userId) return;
 
-    room.roomRules = payload;
-    io.to(socket.data.roomId).emit("room_update", {
-      users: room.users, hostUserId: room.hostUserId, roomRules: room.roomRules, selectedGame: room.selectedGame
-    });
-  });
-
-  socket.on("update_selected_game", (gameId: string) => {
-    if (!validateSocketContext(socket)) return;
-    const room = rooms.get(socket.data.roomId);
-    if (!room || room.hostUserId !== socket.data.userId) return;
-
-    if (room.selectedGame !== gameId) {
+    if (room.selectedGame !== validGameId) {
       room.gameEngine?.destroy?.();
       room.gameEngine = undefined;
       room.gameType = undefined;
     }
 
-    room.selectedGame = gameId;
+    room.selectedGame = validGameId;
 
     const hasBots = room.users.some(u => u.isBot);
     if (hasBots) {
-      if (gameId !== 'uno' && gameId !== 'parchis') roomManager.botManager.removeBotsFromRoom(socket.data.roomId);
-      else roomManager.botManager.recreateBotsForGame(socket.data.roomId, gameId);
+      if (validGameId !== 'uno' && validGameId !== 'parchis') roomManager.botManager.removeBotsFromRoom(socket.data.roomId);
+      else roomManager.botManager.recreateBotsForGame(socket.data.roomId, validGameId);
     }
 
     io.to(socket.data.roomId).emit("room_update", {

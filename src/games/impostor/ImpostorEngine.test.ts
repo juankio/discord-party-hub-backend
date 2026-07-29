@@ -5,7 +5,7 @@ describe('ImpostorEngine', () => {
   let engine: ImpostorEngine;
 
   beforeEach(() => {
-    engine = new ImpostorEngine('room1');
+    engine = new ImpostorEngine('room1', {} as any);
   });
 
   it('should instantiate correctly', () => {

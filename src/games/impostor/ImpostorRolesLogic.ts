@@ -9,6 +9,8 @@ export class ImpostorRolesLogic {
   static startGame(engine: ImpostorEngine) {
     if (engine.players.length < MIN_PLAYERS) {
       engine.broadcastMessage(`Se necesitan al menos ${MIN_PLAYERS} jugadores para empezar.`);
+      engine.state = 'WAITING';
+      engine.broadcastState();
       return;
     }
 

@@ -1,12 +1,12 @@
 import type { Server } from "socket.io";
-import { ImpostorEngine } from "./ImpostorEngine.js";
+import { LiarsEngine } from "./LiarsEngine.js";
 import { handlePlayerWon } from "../../core/WinHandler.js";
 import { logger } from "../../core/Logger.js";
 
-export function setupImpostorGame(roomId: string, room: any, io: Server) {
-  room.gameType = "impostor";
+export function setupLiarsGame(roomId: string, room: any, io: Server) {
+  room.gameType = "liars";
   
-  const engine = new ImpostorEngine(roomId, io);
+  const engine = new LiarsEngine(roomId, io);
   room.gameEngine = engine;
 
   engine.on("player_won", async (eventPayload) => {
@@ -15,7 +15,7 @@ export function setupImpostorGame(roomId: string, room: any, io: Server) {
         await handlePlayerWon(roomId, eventPayload, room, io, "");
       }
     } catch (e) {
-      logger.error("Error emitiendo evento de juego Impostor (player_won): " + e);
+      logger.error("Error emitiendo evento de juego Liars (player_won): " + e);
     }
   });
 
@@ -24,7 +24,7 @@ export function setupImpostorGame(roomId: string, room: any, io: Server) {
       const targetSocketId = room.users.find((u: any) => u.userId === eventPayload.targetUserId)?.socketId;
       if (targetSocketId) io.to(targetSocketId).emit("game_state_update", eventPayload.state);
     } catch (e) {
-      logger.error("Error emitiendo evento de juego Impostor (game_state_update): " + e);
+      logger.error("Error emitiendo evento de juego Liars (game_state_update): " + e);
     }
   });
 
@@ -40,7 +40,7 @@ export function setupImpostorGame(roomId: string, room: any, io: Server) {
     engine.addPlayer(u.userId, u.socketId, u.nickname, u.avatarId, u.color);
   });
 
-  io.to(roomId).emit("game_started", { gameType: "impostor" });
+  io.to(roomId).emit("game_started", { gameType: "liars" });
   engine.startGame();
-  logger.info(`Partida de IMPOSTOR iniciada en la sala ${roomId}`);
+  logger.info(`Partida de LIARS BAR iniciada en la sala ${roomId}`);
 }

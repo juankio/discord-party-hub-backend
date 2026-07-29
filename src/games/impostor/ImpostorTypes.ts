@@ -39,7 +39,9 @@ export interface ImpostorPublicState {
   maxRounds: number;
   timeRemaining: number;
   players: Array<{
+    id: string;
     userId: string;
+    name: string;
     nickname: string;
     avatarId: number;
     color: string;

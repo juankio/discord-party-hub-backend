@@ -2,7 +2,7 @@ import type { ImpostorEngine } from './ImpostorEngine.js';
 import { ImpostorVotingLogic } from './ImpostorVotingLogic.js';
 import type { ImpostorPublicState, ImpostorPrivateState } from './ImpostorTypes.js';
 
-export const MIN_PLAYERS = 3;
+export const MIN_PLAYERS = 2;
 
 export class ImpostorUtils {
   static removePlayer(engine: ImpostorEngine, userId: string) {
@@ -27,7 +27,9 @@ export class ImpostorUtils {
       maxRounds: engine.maxRounds,
       timeRemaining: engine.timeRemaining,
       players: engine.players.map(p => ({
+        id: p.userId,
         userId: p.userId,
+        name: p.nickname,
         nickname: p.nickname,
         avatarId: p.avatarId,
         color: p.color,

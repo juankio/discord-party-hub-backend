@@ -73,6 +73,8 @@ io.on("connection", (socket) => {
   socket.on("add_bots", (data: any) => roomManager.handleAddBots(socket, data));
   socket.on("update_bot_config", (data: any) => roomManager.handleUpdateBotConfig(socket, data));
   socket.on("kick_bot", (data: any) => roomManager.handleKickBot(socket, data));
+  socket.on("kick_player", (data: any) => roomManager.handleKickPlayer(socket, data));
+  socket.on("update_room_rules", (data: any) => roomManager.handleUpdateRoomRules(socket, data));
   socket.on("disconnect", () => roomManager.handleDisconnect(socket));
   socket.on("leave_room", () => roomManager.handleExplicitLeave(socket));
 

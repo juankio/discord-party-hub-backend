@@ -1,12 +1,11 @@
-import { EventEmitter } from 'events';
+import type { Server } from 'socket.io';
+import { BaseGameEngine } from '../../shared/BaseGameEngine.js';
 import type { Player, UnoRules, GameState, Card, CardColor } from './UnoTypes.js';
 import { UnoDeckManager } from './UnoDeck.js';
 import { UnoActions } from './UnoActions.js';
 import { UnoGameManager } from './UnoGameManager.js';
 
-export class UnoEngine extends EventEmitter {
-  public roomId: string;
-  public players: Player[] = [];
+export class UnoEngine extends BaseGameEngine<Player> {
   public state: GameState = 'WAITING';
   
   public deckManager = new UnoDeckManager();
@@ -16,7 +15,6 @@ export class UnoEngine extends EventEmitter {
   public currentColor: CardColor | '' = ''; 
   public pendingDraws: number = 0; 
   public actionRequiredFrom: string = ''; 
-  public winner: string | null = null;
   public pendingSkips: number = 0;
   
   public rules: UnoRules = {
@@ -24,9 +22,8 @@ export class UnoEngine extends EventEmitter {
     playMultipleSame: false, interceptExact: false, zeroAndSevenRules: false
   };
 
-  constructor(roomId: string) {
-    super();
-    this.roomId = roomId;
+  constructor(roomId: string, io: Server) {
+    super(roomId, io);
   }
 
   public addPlayer(userId: string, socketId: string, nickname: string, avatarId: number, color: string) {
@@ -43,11 +40,37 @@ export class UnoEngine extends EventEmitter {
     UnoGameManager.removePlayer(this, userId);
   }
 
-  public setPlayerOffline(userId: string, isOffline: boolean) {
-    const player = this.players.find(p => p.userId === userId);
-    if (player) {
-      player.isOffline = isOffline;
-      this.broadcastState();
+  public override autoPlayOfflinePlayer(userId: string) {
+    if (this.state === 'WAITING' || this.state === 'FINISHED') return;
+    
+    if (this.actionRequiredFrom === userId) {
+        if (this.state === 'CHOOSING_COLOR') {
+           this.declareColor(userId, 'red');
+        } else if (this.state === 'CHOOSING_PLAYER') {
+           const rival = this.players.find(p => p.userId !== userId && !p.isOffline) || this.players.find(p => p.userId !== userId);
+           if (rival) this.swapHands(userId, rival.userId);
+        }
+    } else if (this.players[this.currentTurnIndex]?.userId === userId && this.state === 'PLAYING') {
+        const player = this.players[this.currentTurnIndex];
+        
+        if (this.pendingDraws > 0) {
+            this.drawFromDeck(userId);
+        } else {
+            if (!player.hasDrawnThisTurn) {
+                this.drawFromDeck(userId);
+            }
+            
+            // Re-evaluate since drawFromDeck might have advanced the turn
+            if (this.players[this.currentTurnIndex]?.userId === userId) {
+                if (player.hasDrawnThisTurn) {
+                    this.passTurn(userId);
+                } else if (this.rules.drawUntilPlayable) {
+                    // To avoid infinite loops if offline player draws until playable forever:
+                    // We just force an advance if they are offline.
+                    this.advanceTurn(1);
+                }
+            }
+        }
     }
   }
 
@@ -88,19 +111,14 @@ export class UnoEngine extends EventEmitter {
   }
 
   public applyZeroRule() {
-    UnoGameManager.applyZeroRule(this);
+    UnoGameManager.executeZeroRule(this);
   }
 
   public advanceTurn(steps: number) {
     UnoGameManager.advanceTurn(this, steps);
   }
 
-  public broadcastMessage(msg: string) { this.emit("game_message", { message: msg }); }
-  public broadcastAction(action: string, userId: string, payload: any = {}) { 
-    this.emit("game_action", { action, userId, ...payload }); 
-  }
-
-  public broadcastState() {
+  public override broadcastState() {
     for (const p of this.players) {
       const myIndex = this.players.findIndex(x => x.userId === p.userId);
       const orderedRivals = [];

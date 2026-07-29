@@ -11,8 +11,9 @@ export class StopScoringLogic {
     }
     engine.verifyingDeadline = null;
 
-    const activePlayers = engine.players.filter(p => !p.isOffline).length;
-    const threshold = Math.floor(activePlayers / 2);
+    const activePlayers = engine.players.filter(p => !p.isOffline && !p.userId.startsWith('bot_')).length;
+    // To veto, we need more than half of the OTHER players to vote.
+    const threshold = Math.max(0, Math.floor((activePlayers - 1) / 2));
 
     for (const catVerif of engine.verifyingData) {
       const answersMap = new Map<string, AnswerToVerify[]>();

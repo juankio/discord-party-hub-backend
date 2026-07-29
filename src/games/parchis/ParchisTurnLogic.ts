@@ -14,15 +14,18 @@ export class ParchisTurnLogic {
       for (const token of player.tokens) {
         if (token.state === 'HOME') {
           if (engine.rules.diceCount === 2) {
-            const isPairRoll = engine.diceValue.length === 2 && engine.diceValue[0] === engine.diceValue[1];
-            const isPairIntact = isPairRoll && engine.availableMoves.filter(m => m === engine.diceValue[0]).length === 2;
-            if (isPairIntact && diceValue === engine.diceValue[0] && !ParchisCaptureLogic.isPositionBlocked(engine, startPos)) {
-              return true;
-            }
+             const isPairRoll = engine.diceValue.length === 2 && engine.diceValue[0] === engine.diceValue[1];
+             const isPairIntact = isPairRoll && engine.availableMoves.filter(m => m === engine.diceValue[0]).length === 2;
+             
+             if (isPairIntact && diceValue === engine.diceValue[0]) {
+                const enemyBlock = engine.players.some(op => op.userId !== player.userId && op.tokens.filter(ot => op.userId !== player.userId && ot.state === 'BOARD' && ot.position === startPos).length >= 2);
+                if (!(enemyBlock && engine.rules.safeBlocks)) return true;
+             }
           } else {
-            if (diceValue === 5 && !ParchisCaptureLogic.isPositionBlocked(engine, startPos)) {
-              return true;
-            }
+             // Si se juega con 1 solo dado, aplica la regla del 5
+             if (diceValue === 5) {
+                if (!ParchisCaptureLogic.isPositionBlocked(engine, startPos)) return true;
+             }
           }
         } else if (token.state === 'BOARD' || token.state === 'PATH' || token.state === 'META') {
           let travelled = 0;
@@ -59,7 +62,7 @@ export class ParchisTurnLogic {
 
     if (engine.availableMoves.length > 0) return; // Player still has moves left
 
-    engine.diceValue = Array.from({ length: engine.rules.diceCount }, () => Math.floor(Math.random() * 6) + 1);
+    engine.diceValue = Array.from({ length: engine.rules.diceCount }, () => (require('crypto').randomBytes(1)[0] % 6) + 1);
     engine.availableMoves = [...engine.diceValue];
     
     const isPair = engine.rules.diceCount === 2 && engine.diceValue[0] === engine.diceValue[1];
@@ -67,26 +70,22 @@ export class ParchisTurnLogic {
     if (isPair) {
       engine.consecutivePairs++;
       if (engine.consecutivePairs === 3) {
-        if (engine.lastMovedTokenId) {
-          const token = player.tokens.find(t => t.id === engine.lastMovedTokenId);
-          if (token && token.state !== 'META' && token.state !== 'FINISHED') {
-            if (engine.rules.threePairsRule === 'reward') {
-              token.state = 'FINISHED';
-              token.position = 0;
-              if (player.tokens.every(t => t.state === 'FINISHED')) {
-                engine.winner = player.userId;
-                engine.state = 'FINISHED';
-                engine.emit('player_won', engine.winner);
-              }
-            } else {
+        if (engine.rules.threePairsRule === 'reward') {
+          // Si es reward, solo ignoramos el castigo, y lo tratamos como si fuera su primer doble de la racha para que siga tirando.
+          engine.consecutivePairs = 1;
+        } else {
+          // Penalty clásico
+          if (engine.lastMovedTokenId) {
+            const token = player.tokens.find(t => t.id === engine.lastMovedTokenId);
+            if (token && token.state !== 'META' && token.state !== 'FINISHED') {
               token.state = 'HOME';
               token.position = -1;
             }
           }
+          // Turn ends immediately
+          ParchisTurnLogic.nextTurn(engine);
+          return;
         }
-        // Turn ends immediately
-        ParchisTurnLogic.nextTurn(engine);
-        return;
       }
     } else {
       engine.consecutivePairs = 0;
@@ -103,7 +102,7 @@ export class ParchisTurnLogic {
         engine.rollAttempts++;
         if (engine.rollAttempts < 3) {
           engine.availableMoves = []; // Must roll again
-          engine.diceValue = [];
+          // engine.diceValue = []; // Dejar los dados visibles
           engine.broadcastState();
           return;
         }
@@ -137,6 +136,18 @@ export class ParchisTurnLogic {
       engine.consecutivePairs = 0;
       engine.currentTurnIndex = (engine.currentTurnIndex + 1) % engine.players.length;
     }
+    
+    let skips = 0;
+    while (engine.players[engine.currentTurnIndex]?.isOffline && engine.state === 'PLAYING' && skips < engine.players.length) {
+      engine.currentTurnIndex = (engine.currentTurnIndex + 1) % engine.players.length;
+      engine.consecutivePairs = 0;
+      skips++;
+    }
+
+    if (skips >= engine.players.length) {
+        engine.state = 'FINISHED';
+    }
+
     engine.diceValue = [];
     engine.broadcastState();
   }

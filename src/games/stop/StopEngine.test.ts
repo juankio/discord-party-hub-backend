@@ -5,7 +5,7 @@ describe('StopEngine', () => {
   let engine: StopEngine;
 
   beforeEach(() => {
-    engine = new StopEngine('room1');
+    engine = new StopEngine('room1', {} as any);
   });
 
   it('should instantiate correctly', () => {

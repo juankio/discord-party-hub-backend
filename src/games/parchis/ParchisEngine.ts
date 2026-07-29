@@ -1,14 +1,12 @@
-import { EventEmitter } from 'events';
+import type { Server } from 'socket.io';
+import { BaseGameEngine } from '../../shared/BaseGameEngine.js';
 import type { ParchisPlayer, ParchisRules, ParchisGameState, ParchisPublicState } from './ParchisTypes.js';
 import { ParchisTurnLogic } from './ParchisTurnLogic.js';
 import { ParchisBoardLogic } from './ParchisBoardLogic.js';
 import { ParchisSetupLogic } from './ParchisSetupLogic.js';
 
-export class ParchisEngine extends EventEmitter {
-  public roomId: string;
-  public players: ParchisPlayer[] = [];
+export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
   public rules: ParchisRules;
-  public winner: string | null = null;
   public state: ParchisGameState = 'LOBBY';
   public currentTurnIndex: number = 0;
   public diceValue: number[] = [];
@@ -26,9 +24,8 @@ export class ParchisEngine extends EventEmitter {
   public get trackLength() { return this.sides * 17; }
   public get maxPos() { return 105; }
 
-  constructor(roomId: string) {
-    super();
-    this.roomId = roomId;
+  constructor(roomId: string, io: Server) {
+    super(roomId, io);
     this.rules = {
       diceCount: 1, tokensPerPlayer: 4, parchisBoardSize: 4,
       safeZones: [4, 11, 16, 21, 28, 33, 38, 45, 50, 55, 62, 67], exactMeta: true
@@ -64,12 +61,34 @@ export class ParchisEngine extends EventEmitter {
     }
   }
 
-  public setPlayerOffline(userId: string, isOffline: boolean) {
-    const player = this.players.find(p => p.userId === userId);
-    if (player) { player.isOffline = isOffline; this.broadcastState(); }
+  public override autoPlayOfflinePlayer(userId: string) {
+    if (this.state === 'CHOOSING_TOKENS') {
+      const player = this.players.find(p => p.userId === userId);
+      if (player && !player.hasChosenFigure) {
+        const availableFigures = ["1", "2", "3", "4", "5", "6"].filter(f => !this.players.some(p => p.selectedFigure === f));
+        if (availableFigures.length > 0) this.chooseFigure(userId, availableFigures[0]);
+      }
+    } else if (this.state === 'ROLLING_FOR_ORDER') {
+      if (!this.initiativeRolls[userId]) {
+        this.rollInitiative(userId);
+      }
+    } else if (this.state === 'CHOOSING_SEATS') {
+      if (this.firstPickerUserId === userId) {
+        const availableSeats = [];
+        for (let i = 0; i < this.sides; i++) {
+          if (!this.takenSeats.includes(i)) availableSeats.push(i);
+        }
+        if (availableSeats.length > 0) {
+          this.chooseSeat(userId, availableSeats[0]);
+        }
+      }
+    } else if (this.state === 'PLAYING') {
+      if (this.players[this.currentTurnIndex]?.userId === userId) {
+         this.nextTurn();
+      }
+    }
   }
 
-  // Delegated to external modules to keep engine < 150 lines
   public startGame(rules?: Partial<ParchisRules>) { ParchisSetupLogic.startGame(this, rules); }
   public chooseFigure(userId: string, figureId: string) { ParchisSetupLogic.chooseFigure(this, userId, figureId); }
   public rollInitiative(userId: string) { ParchisSetupLogic.rollInitiative(this, userId); }
@@ -79,7 +98,7 @@ export class ParchisEngine extends EventEmitter {
   public moveToken(userId: string, tokenId: string, diceValue: number) { ParchisBoardLogic.moveToken(this, userId, tokenId, diceValue); }
   public nextTurn() { ParchisTurnLogic.nextTurn(this); }
 
-  public broadcastState() {
+  public override broadcastState() {
     const state: ParchisPublicState = {
       state: this.state, players: this.players, currentTurnIndex: this.currentTurnIndex,
       rules: this.rules, diceValue: this.diceValue, availableMoves: this.availableMoves,
@@ -88,9 +107,5 @@ export class ParchisEngine extends EventEmitter {
       pickersQueue: this.pickersQueue, takenSeats: this.takenSeats
     };
     this.players.forEach(p => this.emit('game_state_update', { targetUserId: p.userId, state }));
-  }
-
-  public destroy() {
-    this.removeAllListeners();
   }
 }

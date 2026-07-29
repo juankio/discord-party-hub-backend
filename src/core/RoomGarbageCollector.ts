@@ -20,6 +20,9 @@ export class RoomGarbageCollector {
         const isEmpty = room.users.length === 0;
 
         if (isEmpty || isStale) {
+          if (room.gameEngine && typeof room.gameEngine.destroy === 'function') {
+            room.gameEngine.destroy();
+          }
           this.rooms.delete(roomId);
           logger.info(`🧹 Garbage Collector removed room ${roomId}`);
         }

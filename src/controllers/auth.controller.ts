@@ -1,7 +1,15 @@
 import { Request, Response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
+import { z } from 'zod';
 import { User } from '../models/User.js';
+
+const UpdateProfileSchema = z.object({
+  username: z.string().max(30).optional(),
+  avatarId: z.number().int().min(1).max(24).optional(),
+  color: z.string().max(10).optional(),
+  useGooglePicture: z.boolean().optional(),
+});
 
 const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/$/, '');
 
@@ -102,13 +110,20 @@ export const updateProfile = async (req: Request, res: Response) => {
     return res.status(400).json({ success: false, data: null, message: 'Faltan datos', error: 'MISSING_DATA' });
   }
 
+  const validationResult = UpdateProfileSchema.safeParse(updates);
+  if (!validationResult.success) {
+    return res.status(400).json({ success: false, data: null, message: 'Datos inválidos', error: validationResult.error.issues });
+  }
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as { id: string };
     const updateData: any = {};
-    if (updates.username && typeof updates.username === 'string') updateData.username = updates.username.substring(0, 30);
-    if (updates.avatarId && typeof updates.avatarId === 'number' && updates.avatarId >= 1 && updates.avatarId <= 24) updateData.avatarId = updates.avatarId;
-    if (updates.color && typeof updates.color === 'string') updateData.color = updates.color.substring(0, 10);
-    if (updates.useGooglePicture === false) updateData.picture = '';
+    const validUpdates = validationResult.data;
+
+    if (validUpdates.username) updateData.username = validUpdates.username;
+    if (validUpdates.avatarId) updateData.avatarId = validUpdates.avatarId;
+    if (validUpdates.color) updateData.color = validUpdates.color;
+    if (validUpdates.useGooglePicture === false) updateData.picture = '';
 
     const user = await User.findByIdAndUpdate(decoded.id, updateData, { new: true } as any);
     if (!user) {

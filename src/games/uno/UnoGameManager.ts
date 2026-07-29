@@ -31,6 +31,7 @@ export class UnoGameManager {
     engine.deckManager.reset();
     engine.pendingDraws = 0; 
     engine.playDirection = 1;
+    engine.winner = null;
 
     for (let i = engine.players.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -63,22 +64,42 @@ export class UnoGameManager {
     engine.state = 'PLAYING';
     engine.broadcastState();
     engine.broadcastMessage(`¡La partida ha comenzado!`);
+
+    const firstPlayer = engine.players[engine.currentTurnIndex];
+    if (firstPlayer?.isOffline) {
+       setTimeout(() => {
+         engine.autoPlayOfflinePlayer(firstPlayer.userId);
+       }, 500);
+    }
   }
 
-  static applyZeroRule(engine: UnoEngine) {
-    const hands = engine.players.map(p => p.hand);
-    if (engine.playDirection === 1) hands.unshift(hands.pop()!);
-    else hands.push(hands.shift()!);
-    engine.players.forEach((p, i) => p.hand = hands[i] || []);
+  static executeZeroRule(engine: UnoEngine) {
+    UnoGameManager.applyZeroRule(engine.players, engine.playDirection);
     engine.broadcastAction("action_zero", engine.players[engine.currentTurnIndex]?.userId || '');
+  }
+
+  static applyZeroRule(players: import('./UnoTypes.js').Player[], direction: 1 | -1) {
+    const hands = players.map(p => p.hand);
+    if (direction === 1) hands.unshift(hands.pop()!);
+    else hands.push(hands.shift()!);
+    players.forEach((p, i) => p.hand = hands[i] || []);
   }
 
   static advanceTurn(engine: UnoEngine, steps: number) {
     let rawIndex = engine.currentTurnIndex + (steps * engine.playDirection);
     while (rawIndex < 0) rawIndex += engine.players.length;
     engine.currentTurnIndex = rawIndex % engine.players.length;
+    
     if (engine.players[engine.currentTurnIndex]) {
       engine.players[engine.currentTurnIndex].hasDrawnThisTurn = false;
+    }
+
+    // Auto-play if the new turn lands on an offline player
+    const currentPlayer = engine.players[engine.currentTurnIndex];
+    if (currentPlayer?.isOffline && engine.state === 'PLAYING') {
+       setTimeout(() => {
+         engine.autoPlayOfflinePlayer(currentPlayer.userId);
+       }, 500);
     }
   }
 

@@ -4,12 +4,19 @@ import { StopScoringLogic } from './StopScoringLogic.js';
 
 export class StopValidationLogic {
   static startVerifying(engine: StopEngine) {
+    if (engine.state === 'VERIFYING') return;
     engine.state = 'VERIFYING';
     engine.verifyingData = [];
+
+    if (engine.verifyingTimeout) {
+      clearTimeout(engine.verifyingTimeout);
+      engine.verifyingTimeout = null;
+    }
 
     const timeInSeconds = engine.rules.verificationTime || 30;
     engine.verifyingDeadline = Date.now() + (timeInSeconds * 1000);
     engine.verifyingTimeout = setTimeout(() => {
+      engine.verifyingTimeout = null;
       StopScoringLogic.finishVerifyingAndScore(engine);
     }, timeInSeconds * 1000);
 

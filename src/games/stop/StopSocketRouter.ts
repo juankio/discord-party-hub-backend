@@ -109,6 +109,10 @@ export function registerStopRoutes(socket: Socket, roomManager: RoomManager, val
     const room = roomManager.getRoom(socket.data.roomId);
     if (!room) return;
     if (room.hostUserId === socket.data.userId) {
+      const engine = room.gameEngine as any;
+      if (engine && typeof engine.destroy === 'function') {
+        engine.destroy();
+      }
       room.gameEngine = undefined;
       room.gameType = undefined;
       const io = (roomManager as any).io;

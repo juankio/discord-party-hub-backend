@@ -1,4 +1,5 @@
-import { EventEmitter } from 'events';
+import type { Server } from 'socket.io';
+import { BaseGameEngine } from '../../shared/BaseGameEngine.js';
 import { 
   StopGameState, StopPlayerState, StopRules, StopPublicState, 
   PlayerAnswers, CategoryVerification
@@ -7,10 +8,8 @@ import { StopValidationLogic } from './StopValidationLogic.js';
 import { StopScoringLogic } from './StopScoringLogic.js';
 import { StopUtils } from './StopUtils.js';
 
-export class StopEngine extends EventEmitter {
-  public roomId: string;
+export class StopEngine extends BaseGameEngine<StopPlayerState> {
   public state: StopGameState = 'LOBBY';
-  public players: StopPlayerState[] = [];
   
   public rules: StopRules = { categories: ['Nombre', 'Animal', 'Color', 'Cosa', 'Fruta'], rounds: 5 };
   public currentRound = 0;
@@ -25,9 +24,8 @@ export class StopEngine extends EventEmitter {
   public verifyingDeadline: number | null = null;
   public verifyingTimeout: NodeJS.Timeout | null = null;
 
-  constructor(roomId: string) {
-    super();
-    this.roomId = roomId;
+  constructor(roomId: string, io: Server) {
+    super(roomId, io);
   }
 
   public addPlayer(userId: string, socketId: string, nickname: string, avatarId: number, color: string) {
@@ -49,12 +47,6 @@ export class StopEngine extends EventEmitter {
     this.broadcastState();
   }
 
-  public setPlayerOffline(userId: string, isOffline: boolean) {
-    const p = this.players.find(p => p.userId === userId);
-    if (p) p.isOffline = isOffline;
-    this.broadcastState();
-  }
-
   public startGame(rules: StopRules, lastWinnerId?: string) {
     if (this.players.length < 1) return;
     this.rules = rules;
@@ -63,12 +55,21 @@ export class StopEngine extends EventEmitter {
     if (!this.rules.bannedLetters) this.rules.bannedLetters = [];
     
     this.currentRound = 0;
+    this.winnerId = null;
     this.usedLetters.clear();
     this.players.forEach(p => { p.score = 0; p.invalidatedCount = 0; });
     this.startRound();
   }
 
   public startRound() {
+    if (this.collectingTimeout) {
+      clearTimeout(this.collectingTimeout);
+      this.collectingTimeout = null;
+    }
+    if (this.verifyingTimeout) {
+      clearTimeout(this.verifyingTimeout);
+      this.verifyingTimeout = null;
+    }
     this.currentRound++;
     if (this.currentRound > this.rules.rounds) return StopUtils.endGame(this);
 
@@ -118,7 +119,19 @@ export class StopEngine extends EventEmitter {
     this.startRound();
   }
 
-  public broadcastState() {
+  public override destroy() {
+    if (this.collectingTimeout) {
+      clearTimeout(this.collectingTimeout);
+      this.collectingTimeout = null;
+    }
+    if (this.verifyingTimeout) {
+      clearTimeout(this.verifyingTimeout);
+      this.verifyingTimeout = null;
+    }
+    super.destroy();
+  }
+
+  public override broadcastState() {
     this.emit('game_state_update', { state: StopUtils.getPublicState(this) });
   }
 }

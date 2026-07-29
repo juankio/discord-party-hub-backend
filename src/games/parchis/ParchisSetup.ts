@@ -15,7 +15,7 @@ export function setupParchisGame(roomId: string, room: RoomData, io: Server, saf
 
   room.gameType = "parchis";
   
-  const engine = new ParchisEngine(roomId);
+  const engine = new ParchisEngine(roomId, io);
   room.gameEngine = engine;
 
   engine.on("player_won", async (eventPayload) => {

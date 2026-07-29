@@ -9,7 +9,7 @@ import type { RoomManager } from "../../core/RoomManager.js";
 export function setupUnoGame(roomId: string, room: any, io: Server, rules: UnoRules, roomManager: RoomManager) {
   room.gameType = "uno";
   
-  const engine = new UnoEngine(roomId);
+  const engine = new UnoEngine(roomId, io);
   room.gameEngine = engine;
 
   engine.on("player_won", async (eventPayload) => {

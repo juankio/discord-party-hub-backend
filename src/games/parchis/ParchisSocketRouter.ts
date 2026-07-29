@@ -1,7 +1,25 @@
 import type { Socket } from "socket.io";
+import { z } from "zod";
 import { logger } from "../../core/Logger.js";
 import type { RoomManager } from "../../core/RoomManager.js";
 import type { ParchisEngine } from "./ParchisEngine.js";
+
+const ParchisJoinSchema = z.object({
+  roomId: z.string().optional()
+}).optional().nullable();
+
+const ParchisChooseFigureSchema = z.object({
+  figureId: z.string().max(50)
+});
+
+const ParchisChooseSeatSchema = z.object({
+  targetColorIndex: z.number().min(0).max(10)
+});
+
+const ParchisMoveTokenSchema = z.object({
+  tokenId: z.string().max(50),
+  diceValue: z.number().min(1).max(6)
+});
 
 export function registerParchisRoutes(socket: Socket, roomManager: RoomManager, validate: (s: Socket) => boolean) {
   const getParchisEngine = (): ParchisEngine | undefined => {
@@ -22,9 +40,10 @@ export function registerParchisRoutes(socket: Socket, roomManager: RoomManager, 
     }
   };
 
-  socket.on("parchis:join", (payload: { roomId?: string } = {}) => {
+  socket.on("parchis:join", (payload: any) => {
     try {
-      const roomId = payload?.roomId || socket.data?.roomId;
+      const result = ParchisJoinSchema.safeParse(payload);
+      const roomId = (result.success && result.data?.roomId) ? result.data.roomId : socket.data?.roomId;
       if (!roomId) return;
       
       const room = roomManager.getRoomsMap().get(roomId);
@@ -51,24 +70,35 @@ export function registerParchisRoutes(socket: Socket, roomManager: RoomManager, 
     engine.rollDice(socket.data.userId);
   }));
 
-  socket.on("parchis:choose_figure", (payload: { figureId: string }) => wrapParchisHandler((engine) => {
-    engine.chooseFigure(socket.data.userId, payload.figureId);
+  socket.on("parchis:choose_figure", (payload: any) => wrapParchisHandler((engine) => {
+    const result = ParchisChooseFigureSchema.safeParse(payload);
+    if (!result.success) {
+      logger.warn("[ZOD] Invalid choose_figure from " + socket.data.userId);
+      return;
+    }
+    engine.chooseFigure(socket.data.userId, result.data.figureId);
   }));
 
   socket.on("parchis:roll_initiative", () => wrapParchisHandler((engine) => {
     engine.rollInitiative(socket.data.userId);
   }));
 
-  socket.on("parchis:choose_seat", (payload: { targetColorIndex: number }) => wrapParchisHandler((engine) => {
-    if (payload && typeof payload.targetColorIndex === 'number') {
-      engine.chooseSeat(socket.data.userId, payload.targetColorIndex);
+  socket.on("parchis:choose_seat", (payload: any) => wrapParchisHandler((engine) => {
+    const result = ParchisChooseSeatSchema.safeParse(payload);
+    if (!result.success) {
+      logger.warn("[ZOD] Invalid choose_seat from " + socket.data.userId);
+      return;
     }
+    engine.chooseSeat(socket.data.userId, result.data.targetColorIndex);
   }));
 
-  socket.on("parchis:move_token", (payload: { tokenId: string, diceValue: number }) => wrapParchisHandler((engine) => {
-    if (payload && payload.tokenId && typeof payload.diceValue === 'number') {
-      engine.moveToken(socket.data.userId, payload.tokenId, payload.diceValue);
+  socket.on("parchis:move_token", (payload: any) => wrapParchisHandler((engine) => {
+    const result = ParchisMoveTokenSchema.safeParse(payload);
+    if (!result.success) {
+      logger.warn("[ZOD] Invalid move_token from " + socket.data.userId);
+      return;
     }
+    engine.moveToken(socket.data.userId, result.data.tokenId, result.data.diceValue);
   }));
 
   socket.on("parchis:surrender", () => wrapParchisHandler((engine) => {

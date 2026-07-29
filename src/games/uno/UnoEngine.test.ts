@@ -5,7 +5,7 @@ describe('UnoEngine', () => {
   let engine: UnoEngine;
 
   beforeEach(() => {
-    engine = new UnoEngine('room1');
+    engine = new UnoEngine('room1', {} as any);
   });
 
   it('should instantiate correctly', () => {

@@ -5,7 +5,7 @@ describe('ParchisEngine', () => {
   let engine: ParchisEngine;
 
   beforeEach(() => {
-    engine = new ParchisEngine('room1');
+    engine = new ParchisEngine('room1', {} as any);
   });
 
   it('should instantiate correctly', () => {

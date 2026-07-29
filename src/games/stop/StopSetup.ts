@@ -16,7 +16,7 @@ export function setupStopGame(roomId: string, room: any, io: Server, frontendRul
 
   room.gameType = "stop";
 
-  const engine = new StopEngine(roomId);
+  const engine = new StopEngine(roomId, io);
   room.gameEngine = engine;
 
   engine.on("player_won", async (eventPayload) => {

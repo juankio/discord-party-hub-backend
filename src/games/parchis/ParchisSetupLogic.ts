@@ -24,7 +24,7 @@ export class ParchisSetupLogic {
     engine.players.forEach(p => { p.hasChosenFigure = false; p.selectedFigure = undefined; });
     Object.assign(engine, { 
       state: 'CHOOSING_TOKENS', currentTurnIndex: 0, diceValue: [], availableMoves: [], 
-      consecutivePairs: 0, lastMovedTokenId: null, rollAttempts: 0, pickersQueue: [], takenSeats: [] 
+      consecutivePairs: 0, lastMovedTokenId: null, rollAttempts: 0, pickersQueue: [], takenSeats: [], winner: null
     });
     engine.broadcastState();
   }
@@ -49,6 +49,10 @@ export class ParchisSetupLogic {
       engine.firstPickerUserId = null;
       engine.pickersQueue = [];
       engine.takenSeats = [];
+      
+      setTimeout(() => {
+        engine.players.filter(p => p.isOffline).forEach(p => engine.autoPlayOfflinePlayer(p.userId));
+      }, 500);
     }
     engine.broadcastState();
   }
@@ -60,7 +64,11 @@ export class ParchisSetupLogic {
     if (engine.initiativeRolls[userId]) return;
 
     // Asignar un nuevo objeto para forzar la reactividad en el frontend (Vue/Pinia)
-    engine.initiativeRolls = { ...engine.initiativeRolls, [userId]: Math.floor(Math.random() * 6) + 1 };
+    // Asegurar azar verdadero
+    const crypto = require('crypto');
+    const roll = (crypto.randomBytes(1)[0] % 6) + 1;
+    engine.initiativeRolls = { ...engine.initiativeRolls, [userId]: roll };
+    engine.diceValue = [roll];
 
     const activePlayers = engine.players.filter(p => !p.isOffline);
     if (activePlayers.every(p => engine.initiativeRolls[p.userId])) {
@@ -80,6 +88,15 @@ export class ParchisSetupLogic {
         engine.pickersQueue = sortedPlayers.map(p => p.userId);
         engine.firstPickerUserId = engine.pickersQueue[0] || null;
         engine.broadcastState();
+        
+        if (engine.firstPickerUserId) {
+          const firstPicker = engine.players.find(p => p.userId === engine.firstPickerUserId);
+          if (firstPicker?.isOffline) {
+            setTimeout(() => {
+              engine.autoPlayOfflinePlayer(engine.firstPickerUserId!);
+            }, 500);
+          }
+        }
       }, INITIATIVE_REVEAL_DELAY_MS);
       return;
     }
@@ -113,6 +130,12 @@ export class ParchisSetupLogic {
 
     if (engine.pickersQueue.length > 0) {
       engine.firstPickerUserId = engine.pickersQueue[0];
+      const nextPicker = engine.players.find(p => p.userId === engine.firstPickerUserId);
+      if (nextPicker?.isOffline) {
+        setTimeout(() => {
+          engine.autoPlayOfflinePlayer(engine.firstPickerUserId!);
+        }, 500);
+      }
     } else {
       const unseatedPlayers = engine.players.filter(p => p._seatIndex === undefined);
       for (const p of unseatedPlayers) {
@@ -135,6 +158,15 @@ export class ParchisSetupLogic {
 
       engine.currentTurnIndex = 0;
       engine.state = 'PLAYING';
+
+      let skips = 0;
+      while (engine.players[engine.currentTurnIndex]?.isOffline && engine.state === 'PLAYING' && skips < engine.players.length) {
+        engine.currentTurnIndex = (engine.currentTurnIndex + 1) % engine.players.length;
+        skips++;
+      }
+      if (skips >= engine.players.length) {
+        engine.state = 'FINISHED';
+      }
     }
 
     engine.broadcastState();

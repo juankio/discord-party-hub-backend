@@ -22,7 +22,16 @@ export class StopUtils {
 
     engine.emit('stop_called', { userId: player.userId });
 
-    if (!engine.collectingTimeout) {
+    const humanPlayers = engine.players.filter(p => !p.isOffline && !p.userId.startsWith('bot_'));
+    const allSubmitted = humanPlayers.length === 0 || humanPlayers.every(p => p.submitted);
+
+    if (allSubmitted) {
+      if (engine.collectingTimeout) {
+        clearTimeout(engine.collectingTimeout);
+        engine.collectingTimeout = null;
+      }
+      StopValidationLogic.startVerifying(engine);
+    } else if (!engine.collectingTimeout) {
       engine.collectingTimeout = setTimeout(() => {
         engine.collectingTimeout = null;
         StopValidationLogic.startVerifying(engine);
@@ -38,10 +47,14 @@ export class StopUtils {
     player.currentAnswers = StopUtils.cleanAnswers(engine.rules, answers);
     player.submitted = true;
 
-    const allSubmitted = engine.players.filter(p => !p.isOffline).every(p => p.submitted);
-    if (allSubmitted && engine.collectingTimeout) {
-      clearTimeout(engine.collectingTimeout);
-      engine.collectingTimeout = null;
+    const humanPlayers = engine.players.filter(p => !p.isOffline && !p.userId.startsWith('bot_'));
+    const allSubmitted = humanPlayers.length === 0 || humanPlayers.every(p => p.submitted);
+    
+    if (allSubmitted) {
+      if (engine.collectingTimeout) {
+        clearTimeout(engine.collectingTimeout);
+        engine.collectingTimeout = null;
+      }
       StopValidationLogic.startVerifying(engine);
     }
   }
@@ -70,6 +83,15 @@ export class StopUtils {
 
   static endGame(engine: StopEngine) {
     engine.state = 'FINISHED';
+    
+    if (engine.collectingTimeout) {
+      clearTimeout(engine.collectingTimeout);
+      engine.collectingTimeout = null;
+    }
+    if (engine.verifyingTimeout) {
+      clearTimeout(engine.verifyingTimeout);
+      engine.verifyingTimeout = null;
+    }
     
     let maxScore = -1;
     let winner: StopPlayerState | null = null;

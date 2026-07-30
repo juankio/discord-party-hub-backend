@@ -94,10 +94,9 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
     this.clearTimer();
     this.secretWord = word;
     this.state = PinturilloState.DRAWING;
-    this.roundStartTime = Date.now();
     
     this.emit('chat_message', { isSystem: true, text: `¡El dibujante ha elegido una palabra! Adivinen.` });
-    this.setTimer(this.roundTimeMs, () => this.endRoundEarly("¡Se acabó el tiempo!"));
+    this.setTimer(80000, () => this.endRoundEarly("¡Se acabó el tiempo!"));
     this.broadcastState();
   }
 
@@ -165,6 +164,8 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
 
   private setTimer(ms: number, callback: () => void) {
     this.clearTimer();
+    this.roundStartTime = Date.now();
+    this.roundTimeMs = ms;
     this.stateTimer = setTimeout(callback, ms);
   }
 
@@ -176,10 +177,14 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
   }
 
   public override broadcastState() {
+    const timeRemainingSec = this.stateTimer 
+      ? Math.max(0, Math.floor((this.roundTimeMs - (Date.now() - this.roundStartTime)) / 1000))
+      : 0;
+      
     for (const p of this.players) {
       this.emit('game_state_update', {
         targetUserId: p.userId,
-        state: getPublicState(p.userId, this.state, this.players, this.currentDrawerId, this.secretWord, this.wordChoices, this.round, this.maxRounds, this.drawHistory)
+        state: getPublicState(p.userId, this.state, this.players, this.currentDrawerId, this.secretWord, this.wordChoices, this.round, this.maxRounds, this.drawHistory, timeRemainingSec)
       });
     }
   }

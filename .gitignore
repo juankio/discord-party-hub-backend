@@ -32,3 +32,4 @@ test.js
 test-env.mjs
 test_movement.mjs
 test_movement.cjs
+.logs/

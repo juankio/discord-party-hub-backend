@@ -54,7 +54,8 @@ export function getPublicState(
   wordChoices: string[],
   round: number,
   maxRounds: number,
-  drawHistory: any[]
+  drawHistory: any[],
+  timeRemaining: number
 ) {
   let safeSecretWord = null;
   const player = players.find(p => p.userId === playerId);
@@ -92,6 +93,7 @@ export function getPublicState(
     guessedPlayers: players.filter(p => p.hasGuessed).map(p => p.userId),   // Nuevo
     round,
     maxRounds,
+    timeRemaining,
     drawHistory
   };
 }

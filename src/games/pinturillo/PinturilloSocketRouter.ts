@@ -8,7 +8,9 @@ import type { DrawEvent } from "./PinturilloTypes.js";
 const WordSchema = z.object({
   wordIndex: z.number().int().min(0)
 });
-const ChatSchema = z.string().min(1).max(200);
+const ChatSchema = z.object({
+  text: z.string().min(1).max(200)
+});
 // Draw event has arbitrary structure based on type (line, clear, fill, etc.)
 const DrawEventSchema = z.any();
 
@@ -23,6 +25,13 @@ export function registerPinturilloRoutes(socket: Socket, roomManager: RoomManage
       logger.error(`[ERROR] Unhandled error in Pinturillo Engine for socket ${socket.id}: ${e}`);
     }
   };
+
+  socket.on("request_game_state", () => wrapHandler(() => {
+    const room = rooms.get(socket.data.roomId);
+    if (room?.gameEngine && room.gameType === 'pinturillo') {
+      room.gameEngine.broadcastState();
+    }
+  }));
 
   socket.on("pinturillo:choose_word", (payload: any) => wrapHandler(() => {
     const result = WordSchema.safeParse(payload);
@@ -40,7 +49,7 @@ export function registerPinturilloRoutes(socket: Socket, roomManager: RoomManage
     }
   }));
 
-  socket.on("pinturillo:draw_event", (payload: any) => wrapHandler(() => {
+  socket.on("pinturillo:draw", (payload: any) => wrapHandler(() => {
     const result = DrawEventSchema.safeParse(payload);
     if (!result.success) return;
     
@@ -56,7 +65,7 @@ export function registerPinturilloRoutes(socket: Socket, roomManager: RoomManage
     
     const room = rooms.get(socket.data.roomId);
     if (room?.gameEngine && room.gameType === 'pinturillo') {
-      (room.gameEngine as PinturilloEngine).handleChat(socket.data.userId, result.data);
+      (room.gameEngine as PinturilloEngine).handleChat(socket.data.userId, result.data.text);
     }
   }));
 }

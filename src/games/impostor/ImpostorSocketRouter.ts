@@ -20,6 +20,13 @@ export function registerImpostorRoutes(socket: Socket, roomManager: RoomManager,
     }
   };
 
+  socket.on("request_game_state", () => wrapHandler(() => {
+    const room = rooms.get(socket.data.roomId);
+    if (room?.gameEngine && room.gameType === 'impostor') {
+      room.gameEngine.broadcastState();
+    }
+  }));
+
   socket.on("impostor:vote", (payload: any) => wrapHandler(() => {
     const result = VoteSchema.safeParse(payload);
     if (!result.success) {

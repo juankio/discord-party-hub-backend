@@ -133,6 +133,7 @@ export class LiarsEngine extends BaseGameEngine<LiarsPlayer> {
             this.state = 'FINISHED';
             if (active.length === 1) {
                 this.winner = active[0].userId;
+                this.emit('player_won', this.winner);
                 this.broadcastMessage(`¡${active[0].nickname} ha ganado el juego!`);
             }
             this.broadcastState();

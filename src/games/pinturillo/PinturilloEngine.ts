@@ -117,6 +117,12 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
   private endGame() {
     this.clearTimer();
     this.state = PinturilloState.FINISHED;
+    let winnerId: string | null = null;
+    if (this.players.length > 0) {
+      const sorted = [...this.players].sort((a, b) => b.score - a.score);
+      winnerId = sorted[0].userId;
+    }
+    this.emit('player_won', winnerId);
     this.emit('chat_message', { isSystem: true, text: "¡El juego ha terminado!" });
     this.broadcastState();
   }
@@ -176,6 +182,15 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
     }
   }
 
+  public sendFullStateToPlayer(socketId: string, userId: string) {
+    const timeRemainingSec = this.stateTimer 
+      ? Math.max(0, Math.floor((this.roundTimeMs - (Date.now() - this.roundStartTime)) / 1000))
+      : 0;
+    const state = getPublicState(userId, this.state, this.players, this.currentDrawerId, this.secretWord, this.wordChoices, this.round, this.maxRounds, timeRemainingSec);
+    this.io.to(socketId).emit("game_state_update", state);
+    this.io.to(socketId).emit("draw_history_sync", this.drawHistory);
+  }
+
   public override broadcastState() {
     const timeRemainingSec = this.stateTimer 
       ? Math.max(0, Math.floor((this.roundTimeMs - (Date.now() - this.roundStartTime)) / 1000))
@@ -184,7 +199,7 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
     for (const p of this.players) {
       this.emit('game_state_update', {
         targetUserId: p.userId,
-        state: getPublicState(p.userId, this.state, this.players, this.currentDrawerId, this.secretWord, this.wordChoices, this.round, this.maxRounds, this.drawHistory, timeRemainingSec)
+        state: getPublicState(p.userId, this.state, this.players, this.currentDrawerId, this.secretWord, this.wordChoices, this.round, this.maxRounds, timeRemainingSec)
       });
     }
   }

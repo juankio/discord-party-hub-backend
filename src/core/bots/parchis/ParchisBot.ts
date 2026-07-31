@@ -19,7 +19,7 @@ export class ParchisBot extends BaseBot {
   }
 
   protected async onGameStateUpdate(event: { targetUserId: string; state: any }): Promise<void> {
-    if (event.targetUserId && event.targetUserId !== this.userId) return;
+    if (event.targetUserId !== this.userId) return;
 
     const state = event.state as ParchisPublicState;
     console.log("[Bot] onGameStateUpdate called. state:", state.state, "user:", this.userId);
@@ -167,6 +167,9 @@ export class ParchisBot extends BaseBot {
 
         let moved = false;
         const movesToTry = [...engineState.availableMoves];
+        
+        // Yield the event loop before trying moves
+        await new Promise(resolve => setImmediate(resolve));
         
         for (const moveValue of movesToTry) {
           for (const token of me.tokens) {

@@ -29,7 +29,8 @@ export function registerPinturilloRoutes(socket: Socket, roomManager: RoomManage
   socket.on("request_game_state", () => wrapHandler(() => {
     const room = rooms.get(socket.data.roomId);
     if (room?.gameEngine && room.gameType === 'pinturillo') {
-      room.gameEngine.broadcastState();
+      const engine = room.gameEngine as PinturilloEngine;
+      engine.sendFullStateToPlayer(socket.id, socket.data.userId);
     }
   }));
 

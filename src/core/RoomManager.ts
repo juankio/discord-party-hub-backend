@@ -23,7 +23,7 @@ export interface RoomData {
   hostUserId: string;
   gameEngine?: UnoEngine | ImpostorEngine | StopEngine | any;
   gameType?: string;
-  roomRules?: Record<string, boolean>;
+  roomRules?: Record<string, any>;
   selectedGame?: string;
   lastWinnerUserId?: string;
   lastActive: number;

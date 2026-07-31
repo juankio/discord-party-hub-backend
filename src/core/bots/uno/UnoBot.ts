@@ -10,7 +10,7 @@ export class UnoBot extends BaseBot {
     super(config, nickname, avatarId, color);
   }
 
-  private handlePostPlayAction(chosenColor?: CardColor) {
+  private async handlePostPlayAction(chosenColor?: CardColor) {
     if (!this.engine || this.engine.actionRequiredFrom !== this.userId) return;
 
     if (this.engine.state === 'CHOOSING_COLOR') {
@@ -20,6 +20,10 @@ export class UnoBot extends BaseBot {
       this.engine.declareColor(this.userId, finalColor);
     } else if (this.engine.state === 'CHOOSING_PLAYER') {
       const rivals = this.engine.players.filter((p: any) => p.userId !== this.userId);
+      
+      // Yield the event loop before calculation
+      await new Promise(resolve => setImmediate(resolve));
+      
       const targetId = UnoBotStrategy.getBestPlayerToSwap(rivals);
       if (targetId) {
         logger.debug(`[UnoBot ${this.nickname}] Swapping hands with ${targetId}`);
@@ -64,12 +68,20 @@ export class UnoBot extends BaseBot {
     if (stillActionRequired) {
       if (this.engine.state === 'CHOOSING_COLOR') {
         const hand: Card[] = state.myHand || this.engine.players.find((p: any) => p.userId === this.userId)?.hand || [];
+        
+        // Yield the event loop before calculation
+        await new Promise(resolve => setImmediate(resolve));
+        
         const chosenColor = UnoBotStrategy.getBestColorToDeclare(hand);
         
         logger.debug(`[UnoBot ${this.nickname}] Choosing color: ${chosenColor}`);
         this.engine.declareColor(this.userId, chosenColor);
       } else if (this.engine.state === 'CHOOSING_PLAYER') {
         const rivals = state.rivals || [];
+        
+        // Yield the event loop before calculation
+        await new Promise(resolve => setImmediate(resolve));
+        
         const targetId = UnoBotStrategy.getBestPlayerToSwap(rivals);
         if (targetId) {
           logger.debug(`[UnoBot ${this.nickname}] Swapping hands with target ${targetId}`);
@@ -87,12 +99,16 @@ export class UnoBot extends BaseBot {
 
       if (pendingDraws > 0) {
         const canStack = this.engine.rules.stackDrawCards;
+
+        // Yield the event loop before calculation
+        await new Promise(resolve => setImmediate(resolve));
+        
         const stackedCard = canStack ? UnoBotStrategy.getCardToStack(hand, topCard) : undefined;
 
         if (stackedCard) {
           logger.debug(`[UnoBot ${this.nickname}] Stacking card ${stackedCard.id} to avoid ${pendingDraws} draws`);
           this.engine.playCards(this.userId, [stackedCard.id]);
-          this.handlePostPlayAction();
+          await this.handlePostPlayAction();
         } else {
           logger.debug(`[UnoBot ${this.nickname}] Drawing cards because of pending draws`);
           this.engine.drawFromDeck(this.userId);
@@ -101,11 +117,14 @@ export class UnoBot extends BaseBot {
       }
 
       if (state.hasDrawnThisTurn) {
+        // Yield the event loop before calculation
+        await new Promise(resolve => setImmediate(resolve));
+        
         const playableCard = hand.find(c => UnoBotStrategy.isCardPlayable(c, topCard, currentColor));
         if (playableCard) {
           logger.debug(`[UnoBot ${this.nickname}] Playing drawn card ${playableCard.id}`);
           this.engine.playCards(this.userId, [playableCard.id]);
-          this.handlePostPlayAction();
+          await this.handlePostPlayAction();
           this.checkAndYellUno(hand);
         } else {
           logger.debug(`[UnoBot ${this.nickname}] Passing turn`);
@@ -113,6 +132,9 @@ export class UnoBot extends BaseBot {
         }
         return;
       }
+
+      // Yield the event loop before heavy calculation
+      await new Promise(resolve => setImmediate(resolve));
 
       const cardToPlay = UnoBotStrategy.evaluateBestCardToPlay(hand, topCard, currentColor, this.difficultyLevel);
 
@@ -130,7 +152,7 @@ export class UnoBot extends BaseBot {
         } else {
           this.engine.playCards(this.userId, [cardToPlay.id]);
         }
-        this.handlePostPlayAction(chosenColor);
+        await this.handlePostPlayAction(chosenColor);
         this.checkAndYellUno(hand);
       } else {
         logger.debug(`[UnoBot ${this.nickname}] No playable cards, drawing from deck`);

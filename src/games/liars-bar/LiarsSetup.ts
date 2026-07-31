@@ -2,8 +2,9 @@ import type { Server } from "socket.io";
 import { LiarsEngine } from "./LiarsEngine.js";
 import { handlePlayerWon } from "../../core/WinHandler.js";
 import { logger } from "../../core/Logger.js";
+import type { RoomManager } from "../../core/RoomManager.js";
 
-export function setupLiarsGame(roomId: string, room: any, io: Server) {
+export function setupLiarsGame(roomId: string, room: any, io: Server, roomManager: RoomManager) {
   room.gameType = "liars";
   
   const engine = new LiarsEngine(roomId, io);
@@ -41,6 +42,11 @@ export function setupLiarsGame(roomId: string, room: any, io: Server) {
   });
 
   io.to(roomId).emit("game_started", { gameType: "liars" });
+  
+  if (roomManager && roomManager.botManager) {
+    roomManager.botManager.attachEngineToBots(roomId, engine);
+  }
+
   engine.startGame();
   logger.info(`Partida de LIARS BAR iniciada en la sala ${roomId}`);
 }

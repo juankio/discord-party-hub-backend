@@ -25,7 +25,22 @@ const KickPlayerSchema = z.object({
   userId: z.string().min(1)
 });
 
-const UpdateRoomRulesSchema = z.record(z.string(), z.any());
+const UpdateRoomRulesSchema = z.object({
+  stackDrawCards: z.boolean().optional(),
+  playMultipleSame: z.boolean().optional(),
+  zeroAndSevenRules: z.boolean().optional(),
+  drawUntilPlayable: z.boolean().optional(),
+  interceptExact: z.boolean().optional(),
+  parchisBoardSize: z.number().int().min(4).max(8).optional(),
+  threePairsRule: z.enum(['penalty', 'reward']).optional(),
+  safeBlocks: z.boolean().optional(),
+  autoSoplar: z.boolean().optional(),
+  extendedLobby: z.boolean().optional(),
+  autoNicknames: z.boolean().optional(),
+  stopCategories: z.array(z.string().max(30)).max(15).optional(),
+  stopRounds: z.number().int().min(1).max(20).optional(),
+  bannedLetters: z.array(z.string().length(1)).max(27).optional(),
+}).passthrough(); // passhthrough por si agregamos reglas nuevas rápido, pero validando las pesadas
 
 const ChangeSeatSchema = z.object({
   targetSeatIndex: z.number().int().min(0).max(7)

@@ -91,7 +91,7 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
 
     const hasBots = room.users.some(u => u.isBot);
     if (hasBots) {
-      if (validGameId !== 'uno' && validGameId !== 'parchis') roomManager.botManager.removeBotsFromRoom(socket.data.roomId);
+      if (validGameId !== 'uno' && validGameId !== 'parchis' && validGameId !== 'liars') roomManager.botManager.removeBotsFromRoom(socket.data.roomId);
       else roomManager.botManager.recreateBotsForGame(socket.data.roomId, validGameId);
     }
 
@@ -118,7 +118,7 @@ export function startGameDispatcher(socket: Socket, roomManager: RoomManager) {
     }
 
     const hasBots = room.users.some(u => u.isBot);
-    if (hasBots && !['uno', 'parchis'].includes(gameType)) {
+    if (hasBots && !['uno', 'parchis', 'liars'].includes(gameType)) {
       return logger.warn(`[SECURITY] User ${userId} started game with bots in unsupported game: ${gameType}.`);
     }
 

@@ -10,6 +10,8 @@ export class PinturilloBot extends BaseBot {
   }
 
   protected async onGameStateUpdate(event: { targetUserId: string; state: any }): Promise<void> {
+    if (event.targetUserId !== this.userId) return;
+
     const state = event.state;
     
     if (state.state !== 'PLAYING') return;

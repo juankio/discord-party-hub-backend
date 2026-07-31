@@ -54,7 +54,6 @@ export function getPublicState(
   wordChoices: string[],
   round: number,
   maxRounds: number,
-  drawHistory: any[],
   timeRemaining: number
 ) {
   let safeSecretWord = null;
@@ -93,8 +92,7 @@ export function getPublicState(
     guessedPlayers: players.filter(p => p.hasGuessed).map(p => p.userId),   // Nuevo
     round,
     maxRounds,
-    timeRemaining,
-    drawHistory
+    timeRemaining
   };
 }
 

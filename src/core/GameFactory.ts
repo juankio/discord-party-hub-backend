@@ -79,7 +79,7 @@ export class GameFactory {
         setupImpostorGame(roomId, room, io);
         break;
       case 'liars':
-        setupLiarsGame(roomId, room, io);
+        setupLiarsGame(roomId, room, io, roomManager);
         break;
       case 'pinturillo':
         setupPinturilloGame(roomId, room, io);

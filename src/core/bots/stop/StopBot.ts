@@ -10,6 +10,8 @@ export class StopBot extends BaseBot {
   }
 
   protected async onGameStateUpdate(event: { targetUserId: string; state: any }): Promise<void> {
+    if (event.targetUserId !== this.userId) return;
+
     const state = event.state;
     
     // We want to trigger answer generation only when entering PLAYING state for a new round

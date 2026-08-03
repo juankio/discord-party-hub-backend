@@ -13,7 +13,7 @@ export class BotManager {
     if (!room) return logger.warn(`Cannot add bots to non-existent room: ${roomId}`);
 
     const selectedGame = room.selectedGame || 'uno';
-    if (!['uno', 'parchis'].includes(selectedGame)) {
+    if (!['uno', 'parchis', 'liars'].includes(selectedGame)) {
       return logger.warn(`[SECURITY] Cannot add bots to room ${roomId}, game '${selectedGame}' unsupported.`);
     }
 
@@ -22,7 +22,11 @@ export class BotManager {
 
     let addedCount = 0;
     for (let i = 0; i < count; i++) {
-      const maxPlayers = room.roomRules?.extendedLobby ? 8 : 6;
+      let maxPlayers = room.roomRules?.extendedLobby ? 8 : 6;
+      if (selectedGame === 'parchis') {
+        maxPlayers = room.roomRules?.parchisBoardSize || 4;
+      }
+      
       if (room.users.length >= maxPlayers) break;
 
       const nickname = `${botNames[Math.floor(Math.random() * botNames.length)]} ${Math.floor(Math.random() * 100)}`;
@@ -34,7 +38,7 @@ export class BotManager {
       this.activeBots.set(newBot.userId, newBot);
 
       let freeSeat = 0;
-      for (let j = 0; j < 8; j++) {
+      for (let j = 0; j < maxPlayers; j++) {
         if (!room.users.some(u => u.seatIndex === j)) {
           freeSeat = j;
           break;
@@ -72,19 +76,46 @@ export class BotManager {
     const room = this.roomManager.getRoom(roomId);
     if (!room) return;
 
+    let maxPlayers = room.roomRules?.extendedLobby ? 8 : 6;
+    if (newGameType === 'parchis') maxPlayers = room.roomRules?.parchisBoardSize || 4;
+
+    const botsInRoom = room.users.filter(u => u.isBot);
+    const humanCount = room.users.length - botsInRoom.length;
+    const allowedBotsCount = Math.max(0, maxPlayers - humanCount);
+
     const botsData = Array.from(this.activeBots.values())
       .filter(b => b.roomId === roomId)
       .map(b => ({ userId: b.userId, nick: b.originalNickname, avatarId: b.avatarId, color: b.color, diff: b.difficultyLevel }));
 
+    // Remove ALL bots first
     botsData.forEach(b => this.activeBots.delete(b.userId));
+    room.users = room.users.filter(u => !u.isBot);
 
-    botsData.forEach(b => {
+    // Recreate only up to allowed capacity
+    const botsToRecreate = botsData.slice(0, allowedBotsCount);
+
+    botsToRecreate.forEach(b => {
       const config: BotConfig = { difficultyLevel: b.diff, roomId, gameType: newGameType, existingUserId: b.userId };
       const newBot = BotFactory.createBot(newGameType, config, b.nick, b.avatarId, b.color);
       this.activeBots.set(newBot.userId, newBot);
+
+      // Re-seat them in the room
+      let freeSeat = 0;
+      for (let j = 0; j < maxPlayers; j++) {
+        if (!room.users.some(u => u.seatIndex === j)) {
+          freeSeat = j;
+          break;
+        }
+      }
+
+      room.users.push({
+        socketId: newBot.userId, userId: newBot.userId, originalNickname: newBot.originalNickname,
+        nickname: newBot.nickname, avatarId: newBot.avatarId, color: newBot.color,
+        totalWins: 0, isOffline: false, isBot: true, seatIndex: freeSeat
+      });
     });
 
-    if (botsData.length > 0) logger.info(`Recreated ${botsData.length} bots in ${roomId} for ${newGameType}`);
+    if (botsToRecreate.length > 0) logger.info(`Recreated ${botsToRecreate.length} bots in ${roomId} for ${newGameType}`);
   }
 
   public attachEngineToBots(roomId: string, engine: any): void {

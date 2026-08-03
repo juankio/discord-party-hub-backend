@@ -199,6 +199,32 @@ export class RoomSettingsHandler {
     if (!room || room.hostUserId !== socket.data.userId) return;
 
     room.roomRules = result.data;
+
+    let maxPlayers = room.roomRules?.extendedLobby ? 8 : 6;
+    if (room.selectedGame === 'parchis') maxPlayers = room.roomRules?.parchisBoardSize || 4;
+
+    const usersToKick = room.users.filter(u => u.seatIndex !== undefined && u.seatIndex >= maxPlayers);
+    usersToKick.forEach(u => {
+      if (u.isBot) {
+        this.manager.botManager.removeBot(u.userId, roomId);
+      } else if (u.userId !== room.hostUserId) {
+        this.io.to(u.socketId).emit("kicked_from_room");
+        this.io.sockets.sockets.get(u.socketId)?.leave(roomId);
+        room.users = room.users.filter(user => user.userId !== u.userId);
+        if (room.gameEngine) room.gameEngine.removePlayer(u.userId);
+      } else {
+        // Move host to a valid seat if possible
+        for (let j = 0; j < maxPlayers; j++) {
+          if (!room.users.some(user => user.seatIndex === j && user.userId !== u.userId)) {
+            u.seatIndex = j;
+            break;
+          }
+        }
+      }
+    });
+
+    this.manager.recomputeNicknames(room, roomId);
+
     this.io.to(roomId).emit("room_update", {
       users: room.users, hostUserId: room.hostUserId, roomRules: room.roomRules, selectedGame: room.selectedGame
     });

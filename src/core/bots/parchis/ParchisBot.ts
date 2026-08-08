@@ -122,15 +122,30 @@ export class ParchisBot extends BaseBot {
     }
 
     const isOurTurn = state.players[state.currentTurnIndex]?.userId === this.userId;
+    const me = engineState.players.find(p => p.userId === this.userId);
 
     // Failsafe: if it's our turn in PLAYING but we are stuck "thinking" with no dice, forcefully reset it.
-    if (state.state === 'PLAYING' && isOurTurn && this.isThinkingTurn && engineState.diceValue.length === 0 && engineState.availableMoves.length === 0) {
-      this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
+    if (state.state === 'PLAYING' && isOurTurn && this.isThinkingTurn) {
+      const allTokensHome = me?.tokens.every(t => t.state === 'HOME');
+      const canRollAgain = engineState.rules.diceCount === 2 && allTokensHome && engineState.rollAttempts > 0 && engineState.rollAttempts < 3;
+      
+      if ((engineState.diceValue.length === 0 && engineState.availableMoves.length === 0) || (engineState.availableMoves.length === 0 && canRollAgain)) {
+        this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
+      }
     }
 
     if (state.state === 'PLAYING' && isOurTurn && !this.isThinkingTurn) {
       this.isThinkingTurn = true; console.log("[Bot] thinking...", this.userId, "state:", state.state);
-      if (engineState.diceValue.length === 0 && engineState.availableMoves.length === 0) {
+      
+      if (!me) {
+        this.isThinkingTurn = false; console.log("[Bot] finished thinking", this.userId);
+        return;
+      }
+
+      const allTokensHome = me.tokens.every(t => t.state === 'HOME');
+      const canRollAgain = engineState.rules.diceCount === 2 && allTokensHome && engineState.rollAttempts > 0 && engineState.rollAttempts < 3;
+
+      if ((engineState.diceValue.length === 0 && engineState.availableMoves.length === 0) || (engineState.availableMoves.length === 0 && canRollAgain)) {
         await this.think(1000, 3000);
         
         if (engineState.state !== 'PLAYING') {

@@ -32,6 +32,7 @@ const UpdateRoomRulesSchema = z.object({
   drawUntilPlayable: z.boolean().optional(),
   interceptExact: z.boolean().optional(),
   parchisBoardSize: z.number().int().min(4).max(8).optional(),
+  diceCount: z.number().int().min(1).max(2).optional(),
   threePairsRule: z.enum(['penalty', 'reward']).optional(),
   safeBlocks: z.boolean().optional(),
   autoSoplar: z.boolean().optional(),

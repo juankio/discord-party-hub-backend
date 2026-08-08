@@ -24,35 +24,65 @@ export class ParchisBoardLogic {
       if (engine.rules.diceCount === 2) {
         const isPairRoll = engine.diceValue.length === 2 && engine.diceValue[0] === engine.diceValue[1];
         const isPairIntact = isPairRoll && engine.availableMoves.filter(m => m === engine.diceValue[0]).length === 2;
+        const tokensInHome = player.tokens.filter(t => t.state === 'HOME');
+
+        let exitedWithPair = false;
 
         if (isPairRoll && isPairIntact && diceValue === engine.diceValue[0]) {
-          // REGLA COLOMBIANA PARA PARES
           const val = engine.diceValue[0];
-          const tokensInHome = player.tokens.filter(t => t.state === 'HOME');
           
-          let tokensToExit = 2;
-          if (val === 1 || val === 6) {
-             tokensToExit = tokensInHome.length; // 1-1 o 6-6 sacan TODAS
-          }
-          
-          let exitedCount = 0;
-          for (const t of tokensInHome) {
-             if (exitedCount >= tokensToExit) break;
-             const enemyBlock = engine.players.some(op => op.userId !== userId && op.tokens.filter(ot => op.userId !== userId && ot.state === 'BOARD' && ot.position === startPos).length >= 2);
-             if (enemyBlock && engine.rules.safeBlocks) break; 
-             t.state = 'BOARD';
-             t.position = startPos;
-             exitedCount++;
-          }
-          
-          if (exitedCount > 0) {
-             engine.availableMoves = []; // Consume el par completo
-             enemyCaptured = ParchisCaptureLogic.applyCaptureIfAny(engine, userId, startPos);
-             if (enemyCaptured) engine.availableMoves.push(20);
-             engine.lastMovedTokenId = tokenId;
+          if (!(val === 5 && tokensInHome.length === 1)) {
+            // REGLA COLOMBIANA PARA PARES
+            let tokensToExit = 2;
+            if (val === 1 || val === 6) {
+               tokensToExit = tokensInHome.length; // 1-1 o 6-6 sacan TODAS
+            }
+            
+            let exitedCount = 0;
+            for (const t of tokensInHome) {
+               if (exitedCount >= tokensToExit) break;
+               const enemyBlock = engine.players.some(op => op.userId !== userId && op.tokens.filter(ot => op.userId !== userId && ot.state === 'BOARD' && ot.position === startPos).length >= 2);
+               if (enemyBlock && engine.rules.safeBlocks) break; 
+               t.state = 'BOARD';
+               t.position = startPos;
+               exitedCount++;
+            }
+            
+            if (exitedCount > 0) {
+               engine.availableMoves = []; // Consume el par completo
+               enemyCaptured = ParchisCaptureLogic.applyCaptureIfAny(engine, userId, startPos);
+               if (enemyCaptured) engine.availableMoves.push(20);
+               engine.lastMovedTokenId = tokenId;
+            }
+            exitedWithPair = true;
           }
         }
-        return; // En modo 2 dados, la ÚNICA forma de salir es con pares. El 5 se ignora para salir.
+        
+        if (!exitedWithPair) {
+            const hasSumFive = engine.availableMoves.length === 2 && engine.availableMoves[0] + engine.availableMoves[1] === 5;
+            
+            if (diceValue === 5) {
+                if (ParchisCaptureLogic.isPositionBlocked(engine, startPos)) return;
+                token.state = 'BOARD';
+                token.position = startPos;
+                engine.availableMoves.splice(moveIndex, 1);
+                
+                enemyCaptured = ParchisCaptureLogic.applyCaptureIfAny(engine, userId, startPos);
+                if (enemyCaptured) engine.availableMoves.push(20);
+                engine.lastMovedTokenId = tokenId;
+            } else if (hasSumFive && (diceValue === engine.availableMoves[0] || diceValue === engine.availableMoves[1])) {
+                if (ParchisCaptureLogic.isPositionBlocked(engine, startPos)) return;
+                token.state = 'BOARD';
+                token.position = startPos;
+                engine.availableMoves = []; // Consume both since they sum to 5
+                
+                enemyCaptured = ParchisCaptureLogic.applyCaptureIfAny(engine, userId, startPos);
+                if (enemyCaptured) engine.availableMoves.push(20);
+                engine.lastMovedTokenId = tokenId;
+            } else {
+                return;
+            }
+        }
       } else {
         // Regla de salida normal (con un 5) PARA CUANDO SE JUEGA CON 1 DADO
         if (diceValue !== 5) return;
@@ -119,7 +149,19 @@ export class ParchisBoardLogic {
       tokensThatCouldCapture.forEach(t => { t.state = 'HOME'; t.position = -1; });
     }
 
-    if (engine.availableMoves.length === 0) ParchisTurnLogic.nextTurn(engine);
-    else engine.broadcastState();
+    if (engine.availableMoves.length === 0) {
+      ParchisTurnLogic.nextTurn(engine);
+    } else {
+      if (!ParchisTurnLogic.hasAnyValidMove(engine, player)) {
+        engine.availableMoves = [];
+        setTimeout(() => {
+          if (engine.state !== 'PLAYING') return;
+          ParchisTurnLogic.nextTurn(engine);
+        }, 1000); // Pequeño delay para que se vea el movimiento antes de cambiar de turno
+        engine.broadcastState();
+      } else {
+        engine.broadcastState();
+      }
+    }
   }
 }

@@ -28,6 +28,13 @@ export function registerLiarsRoutes(socket: Socket, roomManager: RoomManager, va
     }
   }));
 
+  socket.on("liars:join", () => wrapHandler(() => {
+    const room = rooms.get(socket.data.roomId);
+    if (room?.gameEngine && room.gameType === 'liars') {
+      (room.gameEngine as LiarsEngine).broadcastState();
+    }
+  }));
+
   socket.on("liars:place_bid", (payload: any) => wrapHandler(() => {
     const result = BidSchema.safeParse(payload);
     if (!result.success) return logger.warn(`[ZOD] Invalid place_bid from ${socket.data.userId}`);

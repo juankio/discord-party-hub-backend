@@ -74,8 +74,10 @@ export class RoomJoinHandler {
       logger.info(`Host migrated to ${room.hostUserId} in room ${roomId}`);
     }
 
-    if (room.gameEngine && ['uno', 'stop', 'parchis'].includes(room.gameType || '')) {
-      room.gameEngine.setPlayerOffline(userId, false);
+    if (room.gameEngine && ['uno', 'stop', 'parchis', 'liars'].includes(room.gameType || '')) {
+      if (typeof room.gameEngine.setPlayerOffline === 'function') {
+        room.gameEngine.setPlayerOffline(userId, false);
+      }
       room.gameEngine.addPlayer(userId, socket.id, nickname, avatarId, color);
       this.io.to(socket.id).emit("game_started", { gameType: room.gameType });
       if (room.gameType !== 'stop') {
@@ -108,7 +110,7 @@ export class RoomJoinHandler {
     socket.data.avatarId = avatarId;
     socket.data.color = color;
 
-    if (room.gameEngine && ['uno', 'stop', 'parchis'].includes(room.gameType || '')) {
+    if (room.gameEngine && ['uno', 'stop', 'parchis', 'liars'].includes(room.gameType || '')) {
       const p = room.gameEngine.players.find((player: any) => player.userId === userId);
       if (p) {
         p.avatarId = avatarId;

@@ -12,7 +12,7 @@ import type { RoomData } from "./RoomManager.js";
 
 // -- Validation Schemas --
 const ParchisRulesSchema = z.object({
-  diceCount: z.coerce.number().int().min(1).max(2).default(1),
+  diceCount: z.coerce.number().int().min(1).max(2).default(2),
   tokensPerPlayer: z.coerce.number().int().min(1).max(8).default(4),
   parchisBoardSize: z.coerce.number().int().min(4).max(8).default(4)
 });

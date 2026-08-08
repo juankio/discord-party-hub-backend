@@ -96,7 +96,7 @@ export class LiarsPlayLogic {
             state,
             currentTurnId: currentTurnUserId,
             currentTurnUserId,
-            currentBid,
+            currentBet: currentBid,
             winner,
             roundWinner,
             roundLoser,

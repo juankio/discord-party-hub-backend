@@ -27,7 +27,7 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
   constructor(roomId: string, io: Server) {
     super(roomId, io);
     this.rules = {
-      diceCount: 1, tokensPerPlayer: 4, parchisBoardSize: 4,
+      diceCount: 2, tokensPerPlayer: 4, parchisBoardSize: 4,
       safeZones: [4, 11, 16, 21, 28, 33, 38, 45, 50, 55, 62, 67], exactMeta: true
     };
   }

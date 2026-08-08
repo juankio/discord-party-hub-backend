@@ -10,6 +10,8 @@ export class ParchisTurnLogic {
     const startPos = (playerIndex * 17) + 4;
     const maxOnBoard = engine.trackLength - 5;
 
+    const hasSumFive = engine.availableMoves.length === 2 && engine.availableMoves[0] + engine.availableMoves[1] === 5;
+
     for (const diceValue of engine.availableMoves) {
       for (const token of player.tokens) {
         if (token.state === 'HOME') {
@@ -20,6 +22,10 @@ export class ParchisTurnLogic {
              if (isPairIntact && diceValue === engine.diceValue[0]) {
                 const enemyBlock = engine.players.some(op => op.userId !== player.userId && op.tokens.filter(ot => op.userId !== player.userId && ot.state === 'BOARD' && ot.position === startPos).length >= 2);
                 if (!(enemyBlock && engine.rules.safeBlocks)) return true;
+             }
+             
+             if (diceValue === 5 || hasSumFive) {
+                if (!ParchisCaptureLogic.isPositionBlocked(engine, startPos)) return true;
              }
           } else {
              // Si se juega con 1 solo dado, aplica la regla del 5

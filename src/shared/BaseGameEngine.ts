@@ -15,6 +15,7 @@ export abstract class BaseGameEngine<TPlayer extends BasePlayer> extends EventEm
   public io: Server;
   public players: TPlayer[] = [];
   public winner: string | null = null; // Can be overridden/casted by games if needed
+  public hasActivityListener?: boolean;
 
   constructor(roomId: string, io: Server) {
     super();
@@ -56,6 +57,13 @@ export abstract class BaseGameEngine<TPlayer extends BasePlayer> extends EventEm
 
   public destroy(): void {
     this.removeAllListeners();
+  }
+
+  public emit(eventName: string | symbol, ...args: any[]): boolean {
+    if (eventName !== 'activity' && eventName !== 'newListener' && eventName !== 'removeListener') {
+      super.emit('activity');
+    }
+    return super.emit(eventName, ...args);
   }
 
   public abstract broadcastState(): void;

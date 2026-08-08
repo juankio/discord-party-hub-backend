@@ -21,6 +21,13 @@ export function registerUnoRoutes(socket: Socket, roomManager: RoomManager, vali
     }
   };
 
+  socket.on("uno:join", () => wrapHandler(() => {
+    const room = rooms.get(socket.data.roomId);
+    if (room?.gameEngine && room.gameType === 'uno') {
+      (room.gameEngine as UnoEngine).broadcastState();
+    }
+  }));
+
   socket.on("uno:play_cards", (payload: any) => wrapHandler(() => {
     const result = UnoPlayCardsSchema.safeParse(payload);
     if (!result.success) {

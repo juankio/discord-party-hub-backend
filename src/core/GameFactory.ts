@@ -88,5 +88,12 @@ export class GameFactory {
         logger.warn(`Game type ${gameType} not fully supported via factory yet.`);
         break;
     }
+
+    if (room.gameEngine && !room.gameEngine.hasActivityListener) {
+      room.gameEngine.on('activity', () => {
+        room.lastActive = Date.now();
+      });
+      room.gameEngine.hasActivityListener = true;
+    }
   }
 }

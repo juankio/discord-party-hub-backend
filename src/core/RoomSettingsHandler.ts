@@ -40,7 +40,7 @@ const UpdateRoomRulesSchema = z.object({
   stopCategories: z.array(z.string().max(30)).max(15).optional(),
   stopRounds: z.number().int().min(1).max(20).optional(),
   bannedLetters: z.array(z.string().length(1)).max(27).optional(),
-}).passthrough(); // passhthrough por si agregamos reglas nuevas rápido, pero validando las pesadas
+}).strip(); // strip para evitar payloads gigantes de reglas no validadas
 
 const ChangeSeatSchema = z.object({
   targetSeatIndex: z.number().int().min(0).max(7)

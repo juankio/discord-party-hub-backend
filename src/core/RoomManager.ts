@@ -73,6 +73,11 @@ export class RoomManager {
       room.gameEngine.destroy();
     }
     this.rooms.delete(roomId);
+    
+    if (this.connectionHandler) {
+      this.connectionHandler.clearTimersForRoom(roomId);
+    }
+
     if (this.botManager) {
       this.botManager.removeBotsFromRoom(roomId);
     }

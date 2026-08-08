@@ -30,6 +30,15 @@ export class RoomConnectionHandler {
     this.joinHandler.handleDisconnect(socket);
   }
 
+  public clearTimersForRoom(roomId: string) {
+    for (const [key, timerId] of this.disconnectTimers.entries()) {
+      if (key.startsWith(`${roomId}_`)) {
+        clearTimeout(timerId);
+        this.disconnectTimers.delete(key);
+      }
+    }
+  }
+
   // --- Settings / Bots / Kick Methods ---
   public handleChangeSeat(socket: Socket, data: any) {
     this.settingsHandler.handleChangeSeat(socket, data);

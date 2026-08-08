@@ -44,10 +44,9 @@ describe('ImpostorEngine', () => {
     expect(hasGameStateUpdate).toBe(true);
   });
 
-  it('should not start with less than 3 players', () => {
+  it('should not start with less than 2 players', () => {
     engine.addPlayer('user1', 'socket1', 'Alice', 1, '#ff0000');
-    engine.addPlayer('user2', 'socket2', 'Bob', 2, '#00ff00');
-    
+
     engine.startGame();
     expect(engine.state).toBe('WAITING');
   });

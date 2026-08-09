@@ -6,8 +6,8 @@ const AUTO_SKIP_DELAY_MS = 1500;
 
 export class ParchisTurnLogic {
   static hasAnyValidMove(engine: ParchisEngine, player: ParchisPlayer): boolean {
-    const playerIndex = engine.players.findIndex(p => p.userId === player.userId);
-    const startPos = (playerIndex * 17) + 4;
+    const colorIndex = engine.getPlayerColorIndex(player.userId);
+    const startPos = (colorIndex * 17) + 4;
     const maxOnBoard = engine.trackLength - 5;
 
     for (const diceValue of engine.availableMoves) {

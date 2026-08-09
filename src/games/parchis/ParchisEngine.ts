@@ -24,6 +24,14 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
   public get trackLength() { return this.sides * 17; }
   public get maxPos() { return 105; }
 
+  public getPlayerColorIndex(userId: string): number {
+    const player = this.players.find(p => p.userId === userId);
+    if (!player) return 0;
+    const colorNames = ['yellow', 'blue', 'red', 'green', 'purple', 'orange', 'pink', 'cyan'];
+    const idx = colorNames.indexOf(player.color?.toLowerCase());
+    return idx !== -1 ? idx : this.players.findIndex(p => p.userId === userId);
+  }
+
   constructor(roomId: string, io: Server) {
     super(roomId, io);
     this.rules = {

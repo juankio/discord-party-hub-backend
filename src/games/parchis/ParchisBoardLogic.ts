@@ -15,11 +15,12 @@ export class ParchisBoardLogic {
     if (!token) return;
 
     const playerIndex = engine.players.findIndex(p => p.userId === userId);
+    const colorIndex = engine.getPlayerColorIndex(userId);
     const tokensThatCouldCapture = ParchisCaptureLogic.getTokensThatCouldCapture(engine, playerIndex, userId, tokenId, diceValue);
     let enemyCaptured = false;
 
     if (token.state === 'HOME') {
-      const startPos = (playerIndex * 17) + 4;
+      const startPos = (colorIndex * 17) + 4;
       
       if (engine.rules.diceCount === 2) {
         const isPairRoll = engine.diceValue.length === 2 && engine.diceValue[0] === engine.diceValue[1];
@@ -74,7 +75,7 @@ export class ParchisBoardLogic {
         isMetaMove = true;
         travelled = engine.trackLength - 5 + 1 + token.position;
       } else {
-        const startPos = (playerIndex * 17) + 4;
+        const startPos = (colorIndex * 17) + 4;
         travelled = token.position - startPos;
         if (travelled < 0) travelled += engine.trackLength;
       }

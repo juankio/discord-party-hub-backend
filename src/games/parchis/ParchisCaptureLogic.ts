@@ -11,7 +11,8 @@ export class ParchisCaptureLogic {
       if (t.id === tokenId) return false;
       if (t.state !== 'BOARD') return false;
       
-      const startPosForT = (playerIndex * 17) + 4;
+      const colorIndex = engine.getPlayerColorIndex(userId);
+      const startPosForT = (colorIndex * 17) + 4;
       let travelled = t.position - startPosForT;
       if (travelled < 0) travelled += engine.trackLength;
       

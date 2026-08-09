@@ -4,15 +4,28 @@ import { ParchisCaptureLogic } from './ParchisCaptureLogic.js';
 
 export class ParchisBoardLogic {
   static moveToken(engine: ParchisEngine, userId: string, tokenId: string, diceValue: number) {
-    if (engine.state !== 'PLAYING') return;
+    console.log(`[ParchisBoardLogic] moveToken requested: userId=${userId}, tokenId=${tokenId}, diceValue=${diceValue}`);
+    if (engine.state !== 'PLAYING') {
+      console.log(`[ParchisBoardLogic] rejected: not playing`);
+      return;
+    }
     const player = engine.players[engine.currentTurnIndex];
-    if (player?.userId !== userId) return;
+    if (player?.userId !== userId) {
+      console.log(`[ParchisBoardLogic] rejected: not player's turn (current is ${player?.userId})`);
+      return;
+    }
 
     const moveIndex = engine.availableMoves.indexOf(diceValue);
-    if (moveIndex === -1) return;
+    if (moveIndex === -1) {
+      console.log(`[ParchisBoardLogic] rejected: moveIndex is -1. availableMoves:`, engine.availableMoves);
+      return;
+    }
 
     const token = player.tokens.find(t => t.id === tokenId);
-    if (!token) return;
+    if (!token) {
+      console.log(`[ParchisBoardLogic] rejected: token not found`);
+      return;
+    }
 
     const playerIndex = engine.players.findIndex(p => p.userId === userId);
     const colorIndex = engine.getPlayerColorIndex(userId);
@@ -39,8 +52,11 @@ export class ParchisBoardLogic {
           let exitedCount = 0;
           for (const t of tokensInHome) {
              if (exitedCount >= tokensToExit) break;
-             const enemyBlock = engine.players.some(op => op.userId !== userId && op.tokens.filter(ot => op.userId !== userId && ot.state === 'BOARD' && ot.position === startPos).length >= 2);
-             if (enemyBlock && engine.rules.safeBlocks) break; 
+             const enemyBlock = engine.players.some(op => op.userId !== userId && op.tokens.filter(ot => ot.state === 'BOARD' && ot.position === startPos).length >= 2);
+             if (enemyBlock && engine.rules.safeBlocks) {
+                 console.log(`[ParchisBoardLogic] enemy block at startPos ${startPos}`);
+                 break; 
+             }
              t.state = 'BOARD';
              t.position = startPos;
              exitedCount++;

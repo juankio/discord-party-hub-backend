@@ -108,7 +108,7 @@ export class ParchisSetupLogic {
     if (engine.pickersQueue.length === 0) return;
     if (userId !== engine.firstPickerUserId) return;
     
-    const standardColors = ['yellow', 'blue', 'red', 'green'];
+    const standardColors = ['blue', 'red', 'green', 'yellow'];
     if (engine.sides === 6) standardColors.push('purple', 'orange');
     if (engine.sides === 8) standardColors.push('purple', 'orange', 'pink', 'cyan');
 

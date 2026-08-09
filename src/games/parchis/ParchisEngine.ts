@@ -27,7 +27,7 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
   public getPlayerColorIndex(userId: string): number {
     const player = this.players.find(p => p.userId === userId);
     if (!player) return 0;
-    const colorNames = ['yellow', 'blue', 'red', 'green', 'purple', 'orange', 'pink', 'cyan'];
+    const colorNames = ['blue', 'red', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan'];
     const idx = colorNames.indexOf(player.color?.toLowerCase());
     return idx !== -1 ? idx : this.players.findIndex(p => p.userId === userId);
   }
@@ -41,7 +41,17 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
   }
 
   public addPlayer(userId: string, socketId: string, nickname: string, avatarId: number, color: string) {
-    if (this.players.find(p => p.userId === userId)) return;
+    const existing = this.players.find(p => p.userId === userId);
+    if (existing) {
+      existing.socketId = socketId;
+      existing.nickname = nickname;
+      existing.avatarId = avatarId;
+      if (this.state === 'LOBBY' || this.state === 'CHOOSING_TOKENS' || this.state === 'ROLLING_FOR_ORDER') {
+        existing.color = color;
+      }
+      existing.isOffline = false;
+      return;
+    }
     this.players.push({ 
       userId, socketId, nickname, avatarId, color, tokens: [], isOffline: false, hasChosenFigure: false,
       stats: { eaten: 0, died: 0, crowned: 0 }

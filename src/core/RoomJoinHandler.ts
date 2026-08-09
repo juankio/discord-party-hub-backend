@@ -114,7 +114,14 @@ export class RoomJoinHandler {
       const p = room.gameEngine.players.find((player: any) => player.userId === userId);
       if (p) {
         p.avatarId = avatarId;
-        p.color = color;
+        // Do not overwrite color in Parchis if seats have been chosen
+        if (room.gameType === 'parchis') {
+          if (room.gameEngine.state === 'WAITING' || room.gameEngine.state === 'CHOOSING_TOKENS' || room.gameEngine.state === 'ROLLING_FOR_ORDER') {
+            p.color = color;
+          }
+        } else {
+          p.color = color;
+        }
       }
     }
     this.manager.recomputeNicknames(room, roomId);

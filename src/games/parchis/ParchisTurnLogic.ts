@@ -18,7 +18,7 @@ export class ParchisTurnLogic {
              const isPairIntact = isPairRoll && engine.availableMoves.filter(m => m === engine.diceValue[0]).length === 2;
              
              if (isPairIntact && diceValue === engine.diceValue[0]) {
-                const enemyBlock = engine.players.some(op => op.userId !== player.userId && op.tokens.filter(ot => op.userId !== player.userId && ot.state === 'BOARD' && ot.position === startPos).length >= 2);
+                const enemyBlock = engine.players.some(op => op.userId !== player.userId && op.tokens.filter(ot => ot.ownerId !== player.userId && ot.state === 'BOARD' && ot.position === startPos).length >= 2);
                 if (!(enemyBlock && engine.rules.safeBlocks)) return true;
              }
           } else {

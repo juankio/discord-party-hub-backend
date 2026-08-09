@@ -67,9 +67,12 @@ export class ParchisBoardLogic {
              enemyCaptured = ParchisCaptureLogic.applyCaptureIfAny(engine, userId, startPos);
              if (enemyCaptured) engine.availableMoves.push(20);
              engine.lastMovedTokenId = tokenId;
+          } else {
+             return;
           }
+        } else {
+          return; // No se puede salir con 5 o suma 5 en 2 dados, solo con pares
         }
-        return; // No se puede salir con 5 o suma 5 en 2 dados, solo con pares
       } else {
         // Regla de salida normal (con un 5) PARA CUANDO SE JUEGA CON 1 DADO
         if (diceValue !== 5) return;

@@ -158,6 +158,10 @@ export class ParchisSetupLogic {
 
       engine.currentTurnIndex = 0;
       engine.state = 'PLAYING';
+      engine.diceValue = [];
+      engine.availableMoves = [];
+      engine.rollAttempts = 0;
+      engine.consecutivePairs = 0;
 
       let skips = 0;
       while (engine.players[engine.currentTurnIndex]?.isOffline && engine.state === 'PLAYING' && skips < engine.players.length) {

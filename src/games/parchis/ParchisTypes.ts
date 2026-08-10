@@ -7,6 +7,8 @@ export interface ParchisRules {
   threePairsRule?: 'penalty' | 'reward';
   safeBlocks?: boolean;
   autoSoplar?: boolean;
+  captureReward: number;
+  crownReward: number;
 }
 
 export interface ParchisToken {

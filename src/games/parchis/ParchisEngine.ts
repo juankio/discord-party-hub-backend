@@ -36,7 +36,8 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
     super(roomId, io);
     this.rules = {
       diceCount: 2, tokensPerPlayer: 4, parchisBoardSize: 4,
-      safeZones: Array.from({length: 4}).flatMap((_, p) => [p*17+3, p*17+8, p*17+9, p*17+13]), exactMeta: true
+      safeZones: Array.from({length: 4}).flatMap((_, p) => [p*17+3, p*17+8, p*17+9, p*17+13]), exactMeta: true,
+      captureReward: 0, crownReward: 0
     };
   }
 

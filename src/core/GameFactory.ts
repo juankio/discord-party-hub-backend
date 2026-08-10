@@ -14,7 +14,9 @@ import type { RoomData } from "./RoomManager.js";
 const ParchisRulesSchema = z.object({
   diceCount: z.coerce.number().int().min(1).max(2).default(2),
   tokensPerPlayer: z.coerce.number().int().min(1).max(8).default(4),
-  parchisBoardSize: z.coerce.number().int().min(4).max(8).default(4)
+  parchisBoardSize: z.coerce.number().int().min(4).max(8).default(4),
+  captureReward: z.coerce.number().int().min(0).max(50).default(0),
+  crownReward: z.coerce.number().int().min(0).max(50).default(0)
 });
 
 const UnoRulesSchema = z.object({
@@ -56,7 +58,9 @@ export class GameFactory {
         const safeRules = {
           diceCount: parsed.data.diceCount as 1 | 2,
           tokensPerPlayer: parsed.data.tokensPerPlayer as 3 | 4,
-          parchisBoardSize: boardSize as 4 | 6 | 8
+          parchisBoardSize: boardSize as 4 | 6 | 8,
+          captureReward: parsed.data.captureReward,
+          crownReward: parsed.data.crownReward
         };
         setupParchisGame(roomId, room, io, safeRules, roomManager);
         break;

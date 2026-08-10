@@ -65,7 +65,9 @@ export class ParchisBoardLogic {
           if (exitedCount > 0) {
              engine.availableMoves = []; // Consume el par completo
              enemyCaptured = ParchisCaptureLogic.applyCaptureIfAny(engine, userId, startPos);
-             if (enemyCaptured) engine.availableMoves.push(20);
+             if (enemyCaptured && engine.rules.captureReward > 0) {
+                 engine.availableMoves.push(engine.rules.captureReward);
+             }
              engine.lastMovedTokenId = tokenId;
           } else {
              return;
@@ -82,7 +84,9 @@ export class ParchisBoardLogic {
         engine.availableMoves.splice(moveIndex, 1);
         
         enemyCaptured = ParchisCaptureLogic.applyCaptureIfAny(engine, userId, startPos);
-        if (enemyCaptured) engine.availableMoves.push(20);
+        if (enemyCaptured && engine.rules.captureReward > 0) {
+            engine.availableMoves.push(engine.rules.captureReward);
+        }
         engine.lastMovedTokenId = tokenId;
       }
     } else if (token.state === 'BOARD' || token.state === 'PATH' || token.state === 'META') {
@@ -109,6 +113,9 @@ export class ParchisBoardLogic {
            token.state = 'FINISHED';
            token.position = 0;
            player.stats.crowned++;
+           if (engine.rules.crownReward > 0) {
+             engine.availableMoves.push(engine.rules.crownReward);
+           }
            if (player.tokens.every(t => t.state === 'FINISHED')) {
                engine.winner = player.userId;
                engine.state = 'FINISHED';
@@ -127,7 +134,9 @@ export class ParchisBoardLogic {
         const safeZone = engine.rules.safeZones.includes(token.position);
         if (!safeZone) {
           enemyCaptured = ParchisCaptureLogic.applyCaptureIfAny(engine, userId, token.position);
-          if (enemyCaptured) engine.availableMoves.push(20);
+          if (enemyCaptured && engine.rules.captureReward > 0) {
+              engine.availableMoves.push(engine.rules.captureReward);
+          }
         }
       }
 

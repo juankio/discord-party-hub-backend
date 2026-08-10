@@ -10,7 +10,9 @@ export function setupParchisGame(roomId: string, room: RoomData, io: Server, saf
   const rules: Partial<ParchisRules> = {
     diceCount: safeRules.diceCount,
     tokensPerPlayer: safeRules.tokensPerPlayer,
-    parchisBoardSize: safeRules.parchisBoardSize
+    parchisBoardSize: safeRules.parchisBoardSize,
+    captureReward: safeRules.captureReward,
+    crownReward: safeRules.crownReward
   };
 
   room.gameType = "parchis";

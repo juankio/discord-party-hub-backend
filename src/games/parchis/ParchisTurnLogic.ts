@@ -7,8 +7,8 @@ const AUTO_SKIP_DELAY_MS = 1500;
 export class ParchisTurnLogic {
   static hasAnyValidMove(engine: ParchisEngine, player: ParchisPlayer): boolean {
     const colorIndex = engine.getPlayerColorIndex(player.userId);
-    const startPos = (colorIndex * 17) + 9;
-    const maxOnBoard = engine.trackLength - 1;
+    const startPos = (colorIndex * 17) + 4;
+    const maxOnBoard = engine.trackLength - 5;
 
     for (const diceValue of engine.availableMoves) {
       for (const token of player.tokens) {
@@ -40,7 +40,7 @@ export class ParchisTurnLogic {
 
           const newTravelled = travelled + diceValue;
           if (newTravelled > maxOnBoard) {
-            const metaPos = newTravelled - maxOnBoard - 1;
+            const metaPos = newTravelled - maxOnBoard;
             if (metaPos <= 8) return true; // valid move
           } else {
             if (isMetaMove) continue; // cannot move backwards from META

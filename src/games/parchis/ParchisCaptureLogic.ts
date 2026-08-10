@@ -12,12 +12,12 @@ export class ParchisCaptureLogic {
       if (t.state !== 'BOARD') return false;
       
       const colorIndex = engine.getPlayerColorIndex(userId);
-      const startPosForT = (colorIndex * 17) + 9;
+      const startPosForT = (colorIndex * 17) + 4;
       let travelled = t.position - startPosForT;
       if (travelled < 0) travelled += engine.trackLength;
       
       const newTravelled = travelled + diceValue;
-      const maxOnBoard = engine.trackLength - 1;
+      const maxOnBoard = engine.trackLength - 5;
       if (newTravelled > maxOnBoard) return false; 
 
       const testPos = (t.position + diceValue) % engine.trackLength;

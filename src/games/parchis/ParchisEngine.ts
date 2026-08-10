@@ -27,7 +27,7 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
   public getPlayerColorIndex(userId: string): number {
     const player = this.players.find(p => p.userId === userId);
     if (!player) return 0;
-    const colorNames = ['blue', 'yellow', 'green', 'red', 'purple', 'orange', 'pink', 'cyan'];
+    const colorNames = ['yellow', 'green', 'red', 'blue', 'purple', 'orange', 'pink', 'cyan'];
     const idx = colorNames.indexOf(player.color?.toLowerCase());
     return idx !== -1 ? idx : this.players.findIndex(p => p.userId === userId);
   }

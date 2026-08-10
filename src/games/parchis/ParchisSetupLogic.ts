@@ -15,10 +15,10 @@ export class ParchisSetupLogic {
     const safeZones: number[] = [];
     for (let i = 0; i < engine.rules.parchisBoardSize; i++) {
       const base = i * 17;
-      safeZones.push(base + 4, base + 8, base + 12);
+      safeZones.push(base, base + 5, base + 16);
     }
     
-    if (engine.rules.parchisBoardSize === 4) engine.rules.safeZones = [4, 8, 12, 21, 25, 29, 38, 42, 46, 55, 59, 63];
+    if (engine.rules.parchisBoardSize === 4) engine.rules.safeZones = [0, 5, 16, 17, 22, 33, 34, 39, 50, 51, 56, 67];
     else engine.rules.safeZones = safeZones;
 
     engine.players.forEach(p => { p.hasChosenFigure = false; p.selectedFigure = undefined; });
@@ -108,7 +108,7 @@ export class ParchisSetupLogic {
     if (engine.pickersQueue.length === 0) return;
     if (userId !== engine.firstPickerUserId) return;
     
-    const standardColors = ['yellow', 'blue', 'red', 'green'];
+    const standardColors = ['yellow', 'green', 'red', 'blue'];
     if (engine.sides === 6) standardColors.push('purple', 'orange');
     if (engine.sides === 8) standardColors.push('purple', 'orange', 'pink', 'cyan');
 

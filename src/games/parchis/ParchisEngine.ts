@@ -27,7 +27,7 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
   public getPlayerColorIndex(userId: string): number {
     const player = this.players.find(p => p.userId === userId);
     if (!player) return 0;
-    const colorNames = ['yellow', 'green', 'red', 'blue', 'purple', 'orange', 'pink', 'cyan'];
+    const colorNames = ['blue', 'yellow', 'green', 'red', 'purple', 'orange', 'pink', 'cyan'];
     const idx = colorNames.indexOf(player.color?.toLowerCase());
     return idx !== -1 ? idx : this.players.findIndex(p => p.userId === userId);
   }
@@ -36,7 +36,7 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
     super(roomId, io);
     this.rules = {
       diceCount: 2, tokensPerPlayer: 4, parchisBoardSize: 4,
-      safeZones: [4, 16, 21, 33, 38, 50, 55, 67], exactMeta: true,
+      safeZones: [3, 12, 20, 29, 37, 46, 54, 63], exactMeta: true,
       captureReward: 0, crownReward: 0
     };
   }

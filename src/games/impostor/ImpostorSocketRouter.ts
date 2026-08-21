@@ -40,6 +40,14 @@ export function registerImpostorRoutes(socket: Socket, roomManager: RoomManager,
     }
   }));
 
+  socket.on("impostor:start_voting", () => wrapHandler(() => {
+    const room = rooms.get(socket.data.roomId);
+    if (!room || room.gameType !== 'impostor') return;
+    if (room.hostUserId === socket.data.userId && room.gameEngine && (room.gameEngine as ImpostorEngine).state === 'DISCUSSION') {
+      (room.gameEngine as ImpostorEngine).transitionToVoting();
+    }
+  }));
+
   socket.on("impostor:return_to_lobby", () => wrapHandler(() => {
     const room = rooms.get(socket.data.roomId);
     if (!room || room.gameType !== 'impostor') return;

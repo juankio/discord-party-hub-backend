@@ -15,7 +15,7 @@ export class ParchisSetupLogic {
     const safeZones: number[] = [];
     for (let i = 0; i < engine.rules.parchisBoardSize; i++) {
       const base = i * 17;
-      safeZones.push(base + 3, base + 12);
+      safeZones.push(base + 4, base + 8, base + 12);
     }
     
     engine.rules.safeZones = safeZones;
@@ -107,9 +107,7 @@ export class ParchisSetupLogic {
     if (engine.pickersQueue.length === 0) return;
     if (userId !== engine.firstPickerUserId) return;
     
-    const standardColors = ['blue', 'yellow', 'green', 'red'];
-    if (engine.sides === 6) standardColors.push('purple', 'orange');
-    if (engine.sides === 8) standardColors.push('purple', 'orange', 'pink', 'cyan');
+    const standardColors = ['yellow', 'blue', 'red', 'green', 'purple', 'orange', 'pink', 'cyan'];
 
     const actualTargetIndex = targetColorIndex % engine.sides;
 

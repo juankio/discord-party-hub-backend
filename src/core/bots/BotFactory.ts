@@ -4,6 +4,7 @@ import { ParchisBot } from "./parchis/ParchisBot.js";
 import { StopBot } from "./stop/StopBot.js";
 import { PinturilloBot } from "./pinturillo/PinturilloBot.js";
 import { LiarsBot } from "./liars/LiarsBot.js";
+import { ImpostorBot } from "./impostor/ImpostorBot.js";
 import { logger } from "../Logger.js";
 
 class DummyBot extends BaseBot {
@@ -20,6 +21,7 @@ export class BotFactory {
       case 'stop': return new StopBot(config, nickname, avatarId, color);
       case 'pinturillo': return new PinturilloBot(config, nickname, avatarId, color);
       case 'liars': return new LiarsBot(config, nickname, avatarId, color);
+      case 'impostor': return new ImpostorBot(config, nickname, avatarId, color);
       default: return new DummyBot(config, nickname, avatarId, color);
     }
   }

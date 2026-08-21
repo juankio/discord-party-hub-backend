@@ -55,4 +55,5 @@ export interface ParchisPublicState {
   pickersOrder?: string[];
   pickersQueue?: string[];
   takenSeats?: number[];
+  rollAttempts?: number;
 }

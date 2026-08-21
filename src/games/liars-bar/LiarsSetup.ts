@@ -29,6 +29,10 @@ export function setupLiarsGame(roomId: string, room: any, io: Server, roomManage
     }
   });
 
+  engine.on("game_action", (eventPayload) => {
+    io.to(roomId).emit("game_action", eventPayload);
+  });
+
   engine.on("game_message", (eventPayload) => {
     io.to(roomId).emit("game_message", eventPayload);
   });

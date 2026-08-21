@@ -13,7 +13,7 @@ export class BotManager {
     if (!room) return logger.warn(`Cannot add bots to non-existent room: ${roomId}`);
 
     const selectedGame = room.selectedGame || 'uno';
-    if (!['uno', 'parchis', 'liars'].includes(selectedGame)) {
+    if (!['uno', 'parchis', 'liars', 'stop', 'impostor', 'pinturillo'].includes(selectedGame)) {
       return logger.warn(`[SECURITY] Cannot add bots to room ${roomId}, game '${selectedGame}' unsupported.`);
     }
 
@@ -51,7 +51,7 @@ export class BotManager {
         totalWins: 0, isOffline: false, isBot: true, seatIndex: freeSeat
       });
 
-      if (room.gameEngine && ['uno', 'stop', 'parchis'].includes(room.gameType || '')) {
+      if (room.gameEngine) {
         room.gameEngine.addPlayer(newBot.userId, newBot.userId, newBot.nickname, newBot.avatarId, newBot.color);
         newBot.setEngine(room.gameEngine);
       }

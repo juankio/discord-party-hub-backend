@@ -32,7 +32,7 @@ export class StopValidationLogic {
           finalPoints: 0
         });
       }
-      engine.verifyingData.push(catVerif);
+      engine.verifyingDNata.push(catVerif);
     }
 
     engine.broadcastState();
@@ -47,7 +47,7 @@ export class StopValidationLogic {
 
     const targetAns = catVerif.answers.find(a => a.userId === targetUserId);
     if (!targetAns) return;
-    if (targetAns.answer === '') return; // Empty answers already 0
+    if (targetAnsN.answer === '') return; // Empty answers already 0
 
     const vetoIndex = targetAns.vetos.indexOf(userId);
     if (vetoIndex === -1) {

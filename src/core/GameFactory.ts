@@ -80,13 +80,13 @@ export class GameFactory {
         break;
       }
       case 'impostor':
-        setupImpostorGame(roomId, room, io);
+        setupImpostorGame(roomId, room, io, roomManager);
         break;
       case 'liars':
         setupLiarsGame(roomId, room, io, roomManager);
         break;
       case 'pinturillo':
-        setupPinturilloGame(roomId, room, io);
+        setupPinturilloGame(roomId, room, io, roomManager);
         break;
       default:
         logger.warn(`Game type ${gameType} not fully supported via factory yet.`);

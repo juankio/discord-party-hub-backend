@@ -74,14 +74,19 @@ export class RoomJoinHandler {
       logger.info(`Host migrated to ${room.hostUserId} in room ${roomId}`);
     }
 
-    if (room.gameEngine && ['uno', 'stop', 'parchis', 'liars'].includes(room.gameType || '')) {
+    if (room.gameEngine && ['uno', 'stop', 'parchis', 'liars', 'impostor', 'pinturillo'].includes(room.gameType || '')) {
       if (typeof room.gameEngine.setPlayerOffline === 'function') {
         room.gameEngine.setPlayerOffline(userId, false);
       }
-      room.gameEngine.addPlayer(userId, socket.id, nickname, avatarId, color);
+      if (typeof room.gameEngine.addPlayer === 'function') {
+        room.gameEngine.addPlayer(userId, socket.id, nickname, avatarId, color);
+      }
       this.io.to(socket.id).emit("game_started", { gameType: room.gameType });
-      if (room.gameType !== 'stop') {
-          room.gameEngine.broadcastState();
+      if (typeof (room.gameEngine as any).sendFullStateToPlayer === 'function') {
+        (room.gameEngine as any).sendFullStateToPlayer(socket.id, userId);
+      }
+      if (typeof room.gameEngine.broadcastState === 'function') {
+        room.gameEngine.broadcastState();
       }
     } else {
       this.io.to(socket.id).emit("return_to_lobby");
@@ -110,7 +115,7 @@ export class RoomJoinHandler {
     socket.data.avatarId = avatarId;
     socket.data.color = color;
 
-    if (room.gameEngine && ['uno', 'stop', 'parchis', 'liars'].includes(room.gameType || '')) {
+    if (room.gameEngine && ['uno', 'stop', 'parchis', 'liars', 'impostor', 'pinturillo'].includes(room.gameType || '')) {
       const p = room.gameEngine.players.find((player: any) => player.userId === userId);
       if (p) {
         p.avatarId = avatarId;

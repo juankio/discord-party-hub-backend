@@ -27,7 +27,7 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
   public getPlayerColorIndex(userId: string): number {
     const player = this.players.find(p => p.userId === userId);
     if (!player) return 0;
-    const colorNames = ['blue', 'yellow', 'green', 'red', 'purple', 'orange', 'pink', 'cyan'];
+    const colorNames = ['yellow', 'blue', 'red', 'green', 'purple', 'orange', 'pink', 'cyan'];
     const idx = colorNames.indexOf(player.color?.toLowerCase());
     return idx !== -1 ? idx : this.players.findIndex(p => p.userId === userId);
   }
@@ -36,7 +36,7 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
     super(roomId, io);
     this.rules = {
       diceCount: 2, tokensPerPlayer: 4, parchisBoardSize: 4,
-      safeZones: [3, 12, 20, 29, 37, 46, 54, 63], exactMeta: true,
+      safeZones: [4, 8, 12, 21, 25, 29, 38, 42, 46, 55, 59, 63], exactMeta: true,
       captureReward: 0, crownReward: 0
     };
   }
@@ -123,7 +123,7 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
       rules: this.rules, diceValue: this.diceValue, availableMoves: this.availableMoves,
       consecutivePairs: this.consecutivePairs, winner: this.winner,
       initiativeRolls: this.initiativeRolls, firstPickerUserId: this.firstPickerUserId,
-      pickersQueue: this.pickersQueue, takenSeats: this.takenSeats
+      pickersQueue: this.pickersQueue, takenSeats: this.takenSeats, rollAttempts: this.rollAttempts
     };
     this.players.forEach(p => this.emit('game_state_update', { targetUserId: p.userId, state }));
   }

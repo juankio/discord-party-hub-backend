@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, mock } from 'bun:test';
 import { StopEngine } from './StopEngine.js';
+import { StopValidationLogic } from './StopValidationLogic.js';
 
 describe('StopEngine', () => {
   let engine: StopEngine;
@@ -37,5 +38,37 @@ describe('StopEngine', () => {
     const emitCalls = emitSpy.mock.calls;
     const hasGameStateUpdate = emitCalls.some(call => (call as any)[0] === 'game_state_update');
     expect(hasGameStateUpdate).toBe(true);
+  });
+
+  it('should verify and handle vetos properly', () => {
+    engine.addPlayer('user1', 'socket1', 'Alice', 1, '#ff0000');
+    engine.addPlayer('user2', 'socket2', 'Bob', 2, '#00ff00');
+    engine.rules = { categories: ['Nombre', 'Cosa'], rounds: 3, timeLimit: 60, verificationTime: 30 };
+    engine.emit = mock(() => true);
+
+    engine.players[0].currentAnswers = { Nombre: 'Ana', Cosa: 'Auto' };
+    engine.players[1].currentAnswers = { Nombre: 'Andres', Cosa: '' };
+
+    StopValidationLogic.startVerifying(engine);
+
+    expect(engine.state).toBe('VERIFYING');
+    expect(engine.verifyingData.length).toBe(2);
+
+    const nombreCat = engine.verifyingData.find(c => c.category === 'Nombre');
+    expect(nombreCat?.answers.length).toBe(2);
+
+    // user2 vetos user1's 'Nombre'
+    StopValidationLogic.voteVeto(engine, 'user2', 'Nombre', 'user1');
+    const user1Answer = nombreCat?.answers.find(a => a.userId === 'user1');
+    expect(user1Answer?.vetos).toContain('user2');
+
+    // toggle veto (user2 un-vetos)
+    StopValidationLogic.voteVeto(engine, 'user2', 'Nombre', 'user1');
+    expect(user1Answer?.vetos).not.toContain('user2');
+
+    if (engine.verifyingTimeout) {
+      clearTimeout(engine.verifyingTimeout);
+      engine.verifyingTimeout = null;
+    }
   });
 });

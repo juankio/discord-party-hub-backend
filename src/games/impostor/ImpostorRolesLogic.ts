@@ -41,11 +41,16 @@ export class ImpostorRolesLogic {
     }
 
     const alivePlayers = engine.players.filter(p => p.isAlive);
-    const randomIndex = Math.floor(Math.random() * alivePlayers.length);
-    const impostor = alivePlayers[randomIndex];
-    if (!impostor) return;
+    let impostor = engine.impostorUserId
+      ? alivePlayers.find(p => p.userId === engine.impostorUserId)
+      : undefined;
 
-    engine.impostorUserId = impostor.userId;
+    if (!impostor) {
+      const randomIndex = Math.floor(Math.random() * alivePlayers.length);
+      impostor = alivePlayers[randomIndex];
+      if (!impostor) return;
+      engine.impostorUserId = impostor.userId;
+    }
 
     engine.players.forEach(p => {
       p.hasVoted = false;

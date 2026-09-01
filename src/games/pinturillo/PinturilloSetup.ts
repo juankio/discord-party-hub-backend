@@ -37,9 +37,36 @@ export function setupPinturilloGame(roomId: string, room: any, io: Server, roomM
     io.to(roomId).emit("chat_message", eventPayload);
   });
 
+  engine.on("ghost_chat", (eventPayload: { playerId: string; playerName: string; text: string }) => {
+    try {
+      const allowedUserIds = new Set<string>();
+      if (engine.currentDrawerId) {
+        allowedUserIds.add(engine.currentDrawerId);
+      }
+      for (const p of engine.players) {
+        if (p.hasGuessed) {
+          allowedUserIds.add(p.userId);
+        }
+      }
+      if (eventPayload.playerId) {
+        allowedUserIds.add(eventPayload.playerId);
+      }
+
+      for (const userId of allowedUserIds) {
+        const user = room.users.find((u: any) => u.userId === userId);
+        if (user && user.socketId) {
+          io.to(user.socketId).emit("ghost_chat", eventPayload);
+        }
+      }
+    } catch (e) {
+      logger.error("Error emitiendo evento ghost_chat en Pinturillo: " + e);
+    }
+  });
+
   engine.on("private_message", (eventPayload) => {
     try {
-      const targetSocketId = room.users.find((u: any) => u.userId === eventPayload.targetUserId)?.socketId;
+      const targetUserId = eventPayload.targetUserId || eventPayload.targetId;
+      const targetSocketId = room.users.find((u: any) => u.userId === targetUserId)?.socketId;
       if (targetSocketId) io.to(targetSocketId).emit("game_message", eventPayload.message);
     } catch (e) {
       logger.error("Error emitiendo private_message: " + e);

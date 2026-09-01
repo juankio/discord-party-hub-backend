@@ -1,32 +1,31 @@
-import { Server } from 'socket.io';
 import { logger } from './Logger.js';
-import type { RoomData } from './RoomManager.js';
+import type { RoomManager } from './RoomManager.js';
 
 export class RoomGarbageCollector {
-  private rooms: Map<string, RoomData>;
-  private io: Server;
+  private manager: RoomManager;
   private intervalId?: NodeJS.Timeout;
 
-  constructor(rooms: Map<string, RoomData>, io: Server) {
-    this.rooms = rooms;
-    this.io = io;
+  constructor(manager: RoomManager) {
+    this.manager = manager;
+  }
+
+  public collect(): void {
+    const now = Date.now();
+    const rooms = this.manager.getRoomsMap();
+    for (const [roomId, room] of rooms.entries()) {
+      const isStale = (now - room.lastActive) > 1000 * 60 * 60; // 1 hour completely stale
+      const isEmpty = room.users.length === 0;
+
+      if (isEmpty || isStale) {
+        this.manager.deleteRoom(roomId);
+        logger.info(`🧹 Garbage Collector removed room ${roomId}`);
+      }
+    }
   }
 
   public start() {
     this.intervalId = setInterval(() => {
-      const now = Date.now();
-      for (const [roomId, room] of this.rooms.entries()) {
-        const isStale = (now - room.lastActive) > 1000 * 60 * 60; // 1 hour completely stale
-        const isEmpty = room.users.length === 0;
-
-        if (isEmpty || isStale) {
-          if (room.gameEngine && typeof room.gameEngine.destroy === 'function') {
-            room.gameEngine.destroy();
-          }
-          this.rooms.delete(roomId);
-          logger.info(`🧹 Garbage Collector removed room ${roomId}`);
-        }
-      }
+      this.collect();
     }, 1000 * 60 * 5); // Run every 5 minutes
   }
 

@@ -29,12 +29,14 @@ const UnoRulesSchema = z.object({
 });
 
 const StopRulesSchema = z.object({
-  categories: z.array(z.string().max(50)).max(12).default(["Nombres", "Colores", "Paises", "Animales", "Cosas"]),
-  rounds: z.coerce.number().int().min(1).max(20).default(5),
-  timeLimit: z.coerce.number().int().min(30).max(300).optional(),
-  verificationTime: z.coerce.number().int().min(10).max(60).optional(),
+  categories: z.array(z.string().max(50)).max(12).optional(),
+  stopCategories: z.array(z.string().max(50)).max(12).optional(),
+  rounds: z.coerce.number().int().min(1).max(20).optional(),
+  stopRounds: z.coerce.number().int().min(1).max(20).optional(),
+  timeLimit: z.coerce.number().int().min(10).max(300).optional(),
+  verificationTime: z.coerce.number().int().min(5).max(60).optional(),
   bannedLetters: z.array(z.string().length(1)).max(27).optional()
-});
+}).passthrough();
 
 export const StartGameSchema = z.object({
   gameType: z.enum(["uno", "parchis", "stop", "pinturillo", "liars", "impostor"]).default("uno"),

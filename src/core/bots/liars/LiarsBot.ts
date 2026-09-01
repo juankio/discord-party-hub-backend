@@ -1,5 +1,6 @@
 import { BaseBot, BotConfig } from "../BaseBot.js";
 import type { LiarsEngine } from "../../../games/liars-bar/LiarsEngine.js";
+import { LiarsPlayLogic } from "../../../games/liars-bar/LiarsPlayLogic.js";
 import { logger } from "../../Logger.js";
 
 export class LiarsBot extends BaseBot {
@@ -15,7 +16,8 @@ export class LiarsBot extends BaseBot {
 
         // "You cannot cook a fine meal with muddy vegetables." 
         // Validate that it's our turn and the game is waiting for a bet.
-        if (state.state !== 'BETTING' || state.currentTurnId !== this.userId) {
+        const currentTurn = state.currentTurnId || state.currentTurnUserId;
+        if (state.state !== 'BETTING' || currentTurn !== this.userId) {
             return;
         }
 
@@ -27,7 +29,7 @@ export class LiarsBot extends BaseBot {
             const liarsEngine = this.engine as LiarsEngine;
             const myDice: number[] = state.myDice || [];
             const totalDiceCount: number = state.totalDiceCount || 0;
-            const currentBid = state.currentBid;
+            const currentBid = state.currentBet || state.currentBid;
             const rules = state.rules || { onesAreWild: true };
             const onesAreWild = rules.onesAreWild;
 
@@ -47,7 +49,10 @@ export class LiarsBot extends BaseBot {
                 }
             }
             // Fallback if we somehow only have 1s or bestFace wasn't updated
-            if (maxCount === 0) bestFace = 2;
+            if (maxCount <= 0) {
+                maxCount = myDice.length > 0 ? 1 : 1;
+                bestFace = 2;
+            }
 
             if (!currentBid) {
                 // "No bets yet? Let me plate the first dish."
@@ -60,7 +65,7 @@ export class LiarsBot extends BaseBot {
 
             // "There's a dish on the table... let's see if it's rotten!"
             const currentFace = currentBid.face;
-            const currentCount = currentBid.count;
+            const currentCount = currentBid.count ?? currentBid.amount;
             
             const myRelevantDice = countMyFace(currentFace);
             
@@ -72,26 +77,30 @@ export class LiarsBot extends BaseBot {
             const expectedTotal = baseExpected + myRelevantDice;
 
             // "If the bet is widely overcooked, we call them a liar! A swift Diable Jambe!"
-            // Si la apuesta actual (currentBid.count) supera ampliamente (totalDiceCount / 3) + misDadosQueAportan
-            // Usamos un pequeño margen para "ampliamente"
+            // Si la apuesta actual supera ampliamente (totalDiceCount / 3) + misDadosQueAportan o excede el total de dados
             const margin = 1; 
             
-            if (currentCount > expectedTotal + margin) {
+            if (currentCount > expectedTotal + margin || currentCount >= totalDiceCount) {
                 logger.debug(`[Sanji-Bot ${this.nickname}] Called Liar! Bid: ${currentCount}, Expected: ${expectedTotal.toFixed(2)}`);
                 liarsEngine.callLiar(this.userId);
             } else {
                 // "The ingredients look fresh enough. Let's spice it up!"
                 // We raise the bid.
-                // We can either increase the count of the same face, or switch to our best face if we can.
                 let nextFace = currentFace;
                 let nextCount = currentCount;
 
                 if (bestFace > currentFace && maxCount >= currentCount) {
-                    // Raise face, same count (if rules allow, usually higher face same count is valid)
+                    // Raise face, same count
                     nextFace = bestFace;
                     nextCount = currentCount;
                 } else {
                     // Just raise the count
+                    nextFace = currentFace;
+                    nextCount = currentCount + 1;
+                }
+
+                // Ensure the constructed bid is strictly valid
+                if (!LiarsPlayLogic.isValidBid(currentBid, nextCount, nextFace)) {
                     nextFace = currentFace;
                     nextCount = currentCount + 1;
                 }

@@ -97,22 +97,22 @@ export class ImpostorVotingLogic {
     engine.broadcastState();
 
     if (wasImpostor) {
-      engine.timerInterval = setTimeout(() => ImpostorVotingLogic.endGame(engine, 'innocents'), RESULTS_DURATION * 1000);
+      engine.startTimer(RESULTS_DURATION, () => ImpostorVotingLogic.endGame(engine, 'innocents'));
       return;
     }
 
     if (engine.currentRound >= engine.maxRounds) {
-      engine.timerInterval = setTimeout(() => ImpostorVotingLogic.endGame(engine, 'impostor'), RESULTS_DURATION * 1000);
+      engine.startTimer(RESULTS_DURATION, () => ImpostorVotingLogic.endGame(engine, 'impostor'));
       return;
     }
 
     const aliveAfter = engine.players.filter(p => p.isAlive);
     if (aliveAfter.length < MIN_PLAYERS - 1) {
-      engine.timerInterval = setTimeout(() => ImpostorVotingLogic.endGame(engine, 'innocents'), RESULTS_DURATION * 1000);
+      engine.startTimer(RESULTS_DURATION, () => ImpostorVotingLogic.endGame(engine, 'innocents'));
       return;
     }
 
-    engine.timerInterval = setTimeout(() => ImpostorRolesLogic.startNewRound(engine), RESULTS_DURATION * 1000);
+    engine.startTimer(RESULTS_DURATION, () => ImpostorRolesLogic.startNewRound(engine));
   }
 
   static endGame(engine: ImpostorEngine, winner: 'innocents' | 'impostor') {

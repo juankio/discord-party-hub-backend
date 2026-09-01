@@ -38,10 +38,10 @@ export class RoomManager {
 
   constructor(io: Server) {
     this.io = io;
-    this.gc = new RoomGarbageCollector(this.rooms, this.io);
-    this.gc.start();
     this.connectionHandler = new RoomConnectionHandler(this.io, this);
     this.botManager = new BotManager(this);
+    this.gc = new RoomGarbageCollector(this);
+    this.gc.start();
   }
 
   public createRoom(hostUserId: string): string {

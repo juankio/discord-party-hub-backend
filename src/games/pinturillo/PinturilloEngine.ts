@@ -144,7 +144,7 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
       case 'drawer_warning':
       case 'private_warning':
         if (action.type === 'private_warning') this.emit('chat_message', { playerId, playerName: player.nickname, text, isSystem: false });
-        this.emit('private_message', { targetId: playerId, message: { text: action.message, isSystem: true } });
+        this.emit('private_message', { targetUserId: playerId, targetId: playerId, message: { text: action.message, isSystem: true } });
         break;
       case 'broadcast_chat':
         this.emit('chat_message', { playerId, playerName: player.nickname, text, isSystem: false });

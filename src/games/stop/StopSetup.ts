@@ -8,10 +8,11 @@ import type { RoomManager } from "../../core/RoomManager.js";
 
 export function setupStopGame(roomId: string, room: any, io: Server, frontendRules: any, roomManager: RoomManager) {
   const rules: StopRules = {
-    categories: frontendRules.stopCategories || ["NOMBRE", "ANIMAL", "COLOR", "COSA", "FRUTA"],
-    rounds: frontendRules.stopRounds || 5,
-    verificationTime: frontendRules.verificationTime,
-    bannedLetters: frontendRules.bannedLetters || []
+    categories: frontendRules?.categories || frontendRules?.stopCategories || ["NOMBRE", "ANIMAL", "COLOR", "COSA", "FRUTA"],
+    rounds: frontendRules?.rounds || frontendRules?.stopRounds || 5,
+    verificationTime: frontendRules?.verificationTime || 30,
+    timeLimit: frontendRules?.timeLimit || 60,
+    bannedLetters: frontendRules?.bannedLetters || []
   };
 
   room.gameType = "stop";

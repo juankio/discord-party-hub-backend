@@ -41,6 +41,7 @@ export class StopValidationLogic {
   static voteVeto(engine: StopEngine, userId: string, category: string, targetUserId: string) {
     if (engine.state !== 'VERIFYING') return;
     if (userId === targetUserId) return; // Cant veto yourself
+    if (!engine.players.some(p => p.userId === userId && !p.isOffline)) return;
     
     const catVerif = engine.verifyingData.find(c => c.category === category);
     if (!catVerif) return;

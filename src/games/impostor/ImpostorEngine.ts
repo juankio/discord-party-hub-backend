@@ -75,8 +75,18 @@ export class ImpostorEngine extends BaseGameEngine<ImpostorPlayer> {
     ImpostorVotingLogic.vote(this, voterId, targetId);
   }
 
-  public startTimer(onComplete: () => void) {
+  public startTimer(durationOrOnComplete?: number | (() => void), maybeOnComplete?: () => void) {
     this.stopTimer();
+    let onComplete: () => void;
+    if (typeof durationOrOnComplete === 'number') {
+      this.timeRemaining = durationOrOnComplete;
+      onComplete = maybeOnComplete || (() => {});
+    } else if (typeof durationOrOnComplete === 'function') {
+      onComplete = durationOrOnComplete;
+    } else {
+      onComplete = () => {};
+    }
+
     this.timerInterval = setInterval(() => {
       this.timeRemaining--;
       if (this.timeRemaining <= 0) {

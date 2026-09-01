@@ -5,8 +5,10 @@ export class LiarsPlayLogic {
         if (newCount <= 0) return false;
         if (newFace < 1 || newFace > 6) return false;
         if (!currentBid) return true;
-        if (newCount > currentBid.count) return true;
-        else if (newCount === currentBid.count) return newFace > currentBid.face;
+        const currentCount = currentBid.count ?? (currentBid as any).amount;
+        const currentFace = currentBid.face;
+        if (newCount > currentCount) return true;
+        else if (newCount === currentCount) return newFace > currentFace;
         return false;
     }
 
@@ -42,15 +44,17 @@ export class LiarsPlayLogic {
         let winnerId: string;
         let message: string;
         
-        const bidder = players.find(p => p.userId === currentBid.userId);
+        const bidderUserId = currentBid.userId || (currentBid as any).playerId;
+        const bidder = players.find(p => p.userId === bidderUserId);
         const caller = players.find(p => p.userId === callerId);
+        const bidCount = currentBid.count ?? (currentBid as any).amount;
 
-        if (totalFound >= currentBid.count) {
+        if (totalFound >= bidCount) {
             loserId = callerId;
-            winnerId = currentBid.userId;
-            message = `¡Hay ${totalFound} dados! ${caller?.nickname} (quien dudó) pierde un dado.`;
+            winnerId = bidderUserId;
+            message = `¡Hay ${totalFound} dados! ${caller?.nickname || 'Quien dudó'} (quien dudó) pierde un dado.`;
         } else {
-            loserId = currentBid.userId;
+            loserId = bidderUserId;
             winnerId = callerId;
             message = `¡Solo hay ${totalFound} dados! ${bidder?.nickname || 'El mentiroso'} pierde un dado.`;
         }
@@ -64,7 +68,7 @@ export class LiarsPlayLogic {
             }
         }
 
-        return { winnerId, loserId, message, totalFound };
+        return { winnerId, loserId, winner: winnerId, loser: loserId, roundWinner: winnerId, roundLoser: loserId, message, totalFound };
     }
 
     static getPublicState(playerId: string, state: LiarsGameState, players: LiarsPlayer[], currentTurnUserId: string, currentBid: Bid | null, winner: string | null, roundWinner: string | null, roundLoser: string | null, rules: LiarsRules) {
@@ -91,15 +95,29 @@ export class LiarsPlayLogic {
 
         const totalDiceCount = players.filter(p => !p.isEliminated).reduce((acc, p) => acc + p.diceCount, 0);
 
+        const formattedBet = currentBid ? {
+            ...currentBid,
+            userId: currentBid.userId || (currentBid as any).playerId,
+            playerId: currentBid.userId || (currentBid as any).playerId,
+            count: currentBid.count ?? (currentBid as any).amount,
+            amount: currentBid.count ?? (currentBid as any).amount,
+            face: currentBid.face
+        } : null;
+
         return {
             totalDiceCount,
             state,
             currentTurnId: currentTurnUserId,
             currentTurnUserId,
-            currentBet: currentBid,
+            currentBet: formattedBet,
+            currentBid: formattedBet,
             winner,
+            winnerId: winner,
             roundWinner,
+            roundWinnerId: roundWinner,
             roundLoser,
+            loserId: roundLoser,
+            roundLoserId: roundLoser,
             myDice: p?.dice || [],
             myDiceCount: p?.diceCount || 0,
             isEliminated: p?.isEliminated || false,

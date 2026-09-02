@@ -129,7 +129,11 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
 
   public handleDrawEvent(playerId: string, event: DrawEvent) {
     if (this.state !== PinturilloState.DRAWING || this.currentDrawerId !== playerId) return;
-    event.type === 'clear' ? (this.drawHistory = []) : this.drawHistory.push(event);
+    if (event.type === 'clear') {
+      this.drawHistory = [];
+    } else if (this.drawHistory.length < 2500) {
+      this.drawHistory.push(event);
+    }
     this.emit('draw_broadcast', { senderId: playerId, event });
   }
 

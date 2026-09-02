@@ -28,9 +28,12 @@ export class RoomJoinHandler {
       return;
     }
 
-    const { roomId, userId, nickname, avatarId, color, totalWins } = result.data;
+    let { roomId, userId, nickname, avatarId, color, totalWins } = result.data;
+    if (socket.data?.authenticatedUserId) {
+      userId = socket.data.authenticatedUserId;
+    }
     socket.join(roomId);
-    socket.data = { userId, nickname, avatarId, color, roomId, totalWins };
+    socket.data = { ...socket.data, userId, nickname, avatarId, color, roomId, totalWins };
 
     const timeoutKey = `${roomId}_${userId}`;
     const existingTimer = this.disconnectTimers.get(timeoutKey);

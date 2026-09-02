@@ -57,6 +57,7 @@ export class ParchisTurnLogic {
 
   static rollDice(engine: ParchisEngine, userId: string) {
     if (engine.state !== 'PLAYING') return;
+    if ((engine as any).isTurnTransitioning) return;
     const player = engine.players[engine.currentTurnIndex];
     if (player?.userId !== userId) return;
 
@@ -114,12 +115,17 @@ export class ParchisTurnLogic {
       const expectedTurnIndex = engine.currentTurnIndex;
       const expectedPlayerId = player.userId;
       
+      (engine as any).isTurnTransitioning = true;
       setTimeout(() => {
-        if (engine.state !== 'PLAYING') return;
-        if (engine.currentTurnIndex !== expectedTurnIndex) return;
-        if (engine.players[engine.currentTurnIndex]?.userId !== expectedPlayerId) return;
-        
-        ParchisTurnLogic.nextTurn(engine);
+        try {
+          if (engine.state !== 'PLAYING') return;
+          if (engine.currentTurnIndex !== expectedTurnIndex) return;
+          if (engine.players[engine.currentTurnIndex]?.userId !== expectedPlayerId) return;
+          
+          ParchisTurnLogic.nextTurn(engine);
+        } finally {
+          (engine as any).isTurnTransitioning = false;
+        }
       }, AUTO_SKIP_DELAY_MS);
       return;
     }
@@ -128,6 +134,7 @@ export class ParchisTurnLogic {
   }
 
   static nextTurn(engine: ParchisEngine) {
+    (engine as any).isTurnTransitioning = false;
     engine.availableMoves = [];
     engine.rollAttempts = 0;
     if (engine.rules.diceCount === 2 && engine.consecutivePairs > 0 && engine.consecutivePairs < 3) {

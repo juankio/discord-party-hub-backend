@@ -14,6 +14,7 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
   public consecutivePairs: number = 0;
   public lastMovedTokenId: string | null = null;
   public rollAttempts: number = 0;
+  public isTurnTransitioning: boolean = false;
   
   public initiativeRolls: Record<string, number> = {};
   public firstPickerUserId: string | null = null;

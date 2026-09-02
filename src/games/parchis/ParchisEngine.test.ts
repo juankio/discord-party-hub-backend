@@ -36,4 +36,20 @@ describe('ParchisEngine', () => {
     const hasGameStateUpdate = emitCalls.some(call => (call as any)[0] === 'game_state_update');
     expect(hasGameStateUpdate).toBe(true);
   });
+
+  it('should block rollDice when isTurnTransitioning is true', () => {
+    engine.addPlayer('user1', 'socket1', 'Alice', 1, '#ff0000');
+    engine.addPlayer('user2', 'socket2', 'Bob', 2, '#00ff00');
+    engine.state = 'PLAYING';
+    engine.currentTurnIndex = 0;
+    engine.availableMoves = [];
+    engine.diceValue = [];
+
+    engine.isTurnTransitioning = true;
+    engine.rollDice('user1');
+
+    // Dice should NOT have been rolled because isTurnTransitioning is true
+    expect(engine.diceValue.length).toBe(0);
+    expect(engine.availableMoves.length).toBe(0);
+  });
 });

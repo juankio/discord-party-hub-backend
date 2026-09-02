@@ -111,4 +111,36 @@ describe('PinturilloEngine & Setup Tests', () => {
     // sock-g2 (who hasn't guessed) should NOT receive ghost_chat
     expect(emittedToSockets['sock-g2']).toBeUndefined();
   });
+
+  it('should cap drawHistory at 2500 events to prevent Heap OOM', () => {
+    engine.addPlayer('drawer-1', 'sock-drawer', 'Drawer', 1, '#ff0000');
+    engine.state = PinturilloState.DRAWING;
+    engine.currentDrawerId = 'drawer-1';
+
+    for (let i = 0; i < 3000; i++) {
+      engine.handleDrawEvent('drawer-1', {
+        type: 'stroke',
+        data: { x0: i, y0: i, x1: i + 1, y1: i + 1, color: '#000000', thickness: 2 }
+      });
+    }
+
+    let syncedHistory: any = null;
+    const mockIo: any = {
+      to: () => ({
+        emit: (event: string, data: any) => {
+          if (event === 'draw_history_sync') syncedHistory = data;
+        }
+      })
+    };
+    (engine as any).io = mockIo;
+    engine.sendFullStateToPlayer('sock-drawer', 'drawer-1');
+
+    expect(syncedHistory).not.toBeNull();
+    expect(syncedHistory.length).toBe(2500);
+
+    // Test clear
+    engine.handleDrawEvent('drawer-1', { type: 'clear' });
+    engine.sendFullStateToPlayer('sock-drawer', 'drawer-1');
+    expect(syncedHistory.length).toBe(0);
+  });
 });

@@ -11,8 +11,27 @@ const WordSchema = z.object({
 const ChatSchema = z.object({
   text: z.string().min(1).max(200)
 });
-// Draw event has arbitrary structure based on type (line, clear, fill, etc.)
-const DrawEventSchema = z.any();
+
+const DrawDataSchema = z.object({
+  x0: z.number().optional(),
+  y0: z.number().optional(),
+  x1: z.number().optional(),
+  y1: z.number().optional(),
+  x: z.number().optional(),
+  y: z.number().optional(),
+  points: z.array(z.object({
+    x: z.number(),
+    y: z.number()
+  })).max(500).optional(),
+  color: z.string().max(30).optional(),
+  thickness: z.number().min(0.1).max(200).optional(),
+  size: z.number().min(0.1).max(200).optional()
+}).passthrough().optional();
+
+const DrawEventSchema = z.object({
+  type: z.enum(['stroke', 'clear', 'undo', 'fill', 'line']),
+  data: DrawDataSchema
+});
 
 export function registerPinturilloRoutes(socket: Socket, roomManager: RoomManager, validateContext: (socket: Socket) => boolean) {
   const rooms = roomManager.getRoomsMap();

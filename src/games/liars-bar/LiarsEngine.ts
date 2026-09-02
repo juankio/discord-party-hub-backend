@@ -142,12 +142,12 @@ export class LiarsEngine extends BaseGameEngine<LiarsPlayer> {
         return false;
     }
 
-    private setTimer(ms: number, cb: () => void) {
+    protected setTimer(ms: number, cb: () => void) {
         this.clearTimers();
         this.stateTimeout = setTimeout(cb, ms);
     }
 
-    private clearTimers() {
+    protected clearTimers() {
         if (this.stateTimeout) clearTimeout(this.stateTimeout);
         this.stateTimeout = null;
     }

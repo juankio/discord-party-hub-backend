@@ -2,6 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from "socket.io";
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
 import { logger } from "./core/Logger.js";
 import { RoomManager } from "./core/RoomManager.js";
 import { startGameDispatcher, handleImpostorEvents, registerAllGameRoutes } from "./core/GameDispatcher.js";
@@ -60,13 +61,60 @@ app.post('/api/rooms/create', (req, res) => {
 
 // Implementar Seguridad en Sockets (Zero-Trust)
 io.use((socket, next) => {
-  // Aquí podríamos validar el JWT si viene en socket.handshake.auth.token
-  // Por ahora lo dejamos pasar, pero la arquitectura ya permite el middleware
+  const auth = socket.handshake.auth || {};
+  const token = auth.token;
+  const guestId = auth.guestId;
+
+  if (token && typeof token === 'string') {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as any;
+      const verifiedId = decoded?.id || decoded?.userId || decoded?.sub;
+      if (verifiedId && typeof verifiedId === 'string') {
+        socket.data.authenticatedUserId = verifiedId;
+        return next();
+      } else {
+        logger.warn(`[AUTH] Invalid token payload for socket ${socket.id}`);
+        return next(new Error('Invalid token payload'));
+      }
+    } catch (err: any) {
+      logger.warn(`[AUTH] Socket JWT verification failed for socket ${socket.id}: ${err.message}`);
+      return next(new Error('Authentication error'));
+    }
+  } else if (guestId && typeof guestId === 'string') {
+    const GUEST_ID_REGEX = /^[a-zA-Z0-9_-]{1,64}$/;
+    if (GUEST_ID_REGEX.test(guestId)) {
+      socket.data.authenticatedUserId = guestId;
+      return next();
+    } else {
+      logger.warn(`[AUTH] Invalid guestId format for socket ${socket.id}`);
+      return next(new Error('Invalid guestId format'));
+    }
+  }
+
   next();
 });
 
 io.on("connection", (socket) => {
   logger.info(`Nuevo usuario conectado: ${socket.id}`);
+
+  // Rate Limiting por Socket: Descartar ráfagas abusivas (>50 eventos/segundo por socket)
+  let eventCount = 0;
+  let windowStart = Date.now();
+  const MAX_EVENTS_PER_SECOND = 50;
+
+  socket.use(([event, ...args], next) => {
+    const now = Date.now();
+    if (now - windowStart > 1000) {
+      windowStart = now;
+      eventCount = 0;
+    }
+    eventCount++;
+    if (eventCount > MAX_EVENTS_PER_SECOND) {
+      logger.warn(`[SECURITY] Rate limit exceeded (>50 events/s) on event '${event}' for socket ${socket.id}`);
+      return next(new Error('Rate limit exceeded'));
+    }
+    next();
+  });
 
   socket.on("join_room", (data: any) => roomManager.handleJoin(socket, data));
   socket.on("update_profile", (data: any) => roomManager.handleUpdateProfile(socket, data));

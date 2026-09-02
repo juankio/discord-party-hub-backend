@@ -32,7 +32,7 @@ export class ParchisTurnLogic {
           let isMetaMove = token.state === 'META';
 
           if (token.state === 'META') {
-            travelled = maxOnBoard + token.position;
+            travelled = engine.trackLength + token.position;
           } else {
             travelled = token.position - startPos;
             if (travelled < 0) travelled += engine.trackLength;
@@ -40,7 +40,7 @@ export class ParchisTurnLogic {
 
           const newTravelled = travelled + diceValue;
           if (newTravelled > maxOnBoard) {
-            const metaPos = newTravelled - maxOnBoard;
+            const metaPos = newTravelled - maxOnBoard - 1;
             if (metaPos <= 8) return true; // valid move
           } else {
             if (isMetaMove) continue; // cannot move backwards from META

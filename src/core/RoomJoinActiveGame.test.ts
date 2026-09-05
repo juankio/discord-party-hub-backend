@@ -959,4 +959,136 @@ describe('RoomJoinHandler - Active Game Join & Reconnection Flows', () => {
       globalThis.setTimeout = originalSetTimeout;
     }
   });
+
+  // =========================================================================
+  // 9. NOTIFICACIONES DE ESTADO (Desconexión, Reconexión y Expulsión)
+  // =========================================================================
+
+  it('9. Emite player_status_change y broadcastMessage en desconexión, reconexión y expulsión tras 30s', () => {
+    const roomId = manager.createRoom('host-id');
+    const room = manager.getRoom(roomId)!;
+
+    const mockGameEngine: any = {
+      players: [
+        { userId: 'host-id', nickname: 'HostPlayer', isOffline: false },
+        { userId: 'player-chef', nickname: 'Sanji', isOffline: false }
+      ],
+      removePlayer: mock((userId: string) => {
+        mockGameEngine.players = mockGameEngine.players.filter((p: any) => p.userId !== userId);
+      }),
+      setPlayerOffline: mock((userId: string, isOffline: boolean) => {
+        const p = mockGameEngine.players.find((pl: any) => pl.userId === userId);
+        if (p) p.isOffline = isOffline;
+      }),
+      addPlayer: mock((userId: string, socketId: string, nickname: string, avatarId: number, color: string) => {}),
+      sendFullStateToPlayer: mock((socketId: string, userId: string) => {}),
+      broadcastState: mock(() => {}),
+      broadcastMessage: mock((msg: string) => {})
+    };
+
+    room.gameType = 'uno';
+    room.gameEngine = mockGameEngine;
+
+    room.users = [
+      { socketId: 'sock-host-1', userId: 'host-id', nickname: 'HostPlayer', originalNickname: 'HostPlayer', avatarId: 1, color: '#ff0000', totalWins: 5, seatIndex: 0, isOffline: false },
+      { socketId: 'sock-sanji-1', userId: 'player-chef', nickname: 'Sanji', originalNickname: 'Sanji', avatarId: 2, color: '#0000ff', totalWins: 10, seatIndex: 1, isOffline: false }
+    ];
+
+    const socketSanji: any = {
+      id: 'sock-sanji-1',
+      data: { roomId, userId: 'player-chef' }
+    };
+
+    let disconnectTimerCb: (() => void) | null = null;
+    const originalSetTimeout = globalThis.setTimeout;
+    globalThis.setTimeout = ((cb: any, ms: number) => {
+      if (ms === 30000) {
+        disconnectTimerCb = cb;
+        return originalSetTimeout(() => {}, 9999999);
+      }
+      return originalSetTimeout(cb, ms);
+    }) as any;
+
+    try {
+      // 1. DESCONEXIÓN:
+      handler.handleDisconnect(socketSanji);
+
+      // Verificar evento emitido a la sala
+      const disconnectStatusEvent = emitted.find(e => e.target === roomId && e.event === 'player_status_change' && e.data?.isOffline === true);
+      expect(disconnectStatusEvent).toBeDefined();
+      expect(disconnectStatusEvent?.data).toEqual({
+        userId: 'player-chef',
+        nickname: 'Sanji',
+        isOffline: true,
+        gracePeriodSec: 30
+      });
+
+      // Verificar aviso en chat de partida
+      expect(mockGameEngine.broadcastMessage).toHaveBeenCalledWith(
+        '⚠️ Sanji se ha desconectado. Esperando reconexión (30s)...'
+      );
+
+      // 2. RECONEXIÓN DENTRO DEL TIEMPO DE GRACIA:
+      emitted.length = 0;
+      mockGameEngine.broadcastMessage.mockClear();
+
+      const socketSanjiReconnect: any = {
+        id: 'sock-sanji-2',
+        join: mock(() => {}),
+        data: {}
+      };
+
+      handler.handleJoin(socketSanjiReconnect, {
+        roomId,
+        userId: 'player-chef',
+        nickname: 'Sanji',
+        avatarId: 2,
+        color: '#0000ff',
+        totalWins: 10
+      });
+
+      // Verificar evento emitido a la sala por reconexión
+      const reconnectStatusEvent = emitted.find(e => e.target === roomId && e.event === 'player_status_change' && e.data?.isOffline === false);
+      expect(reconnectStatusEvent).toBeDefined();
+      expect(reconnectStatusEvent?.data).toEqual({
+        userId: 'player-chef',
+        nickname: 'Sanji',
+        isOffline: false
+      });
+
+      // Verificar aviso al chat de partida
+      expect(mockGameEngine.broadcastMessage).toHaveBeenCalledWith(
+        '🟢 ¡Sanji se ha reconectado a la partida!'
+      );
+
+      // 3. SE VUELVE A DESCONECTAR Y EXPIRAN LOS 30 SEGUNDOS (EXPULSIÓN):
+      emitted.length = 0;
+      mockGameEngine.broadcastMessage.mockClear();
+
+      const socketSanjiAgain: any = {
+        id: 'sock-sanji-2',
+        data: { roomId, userId: 'player-chef' }
+      };
+
+      handler.handleDisconnect(socketSanjiAgain);
+      expect(disconnectTimerCb).not.toBeNull();
+      disconnectTimerCb!();
+
+      // Verificar evento emitido a la sala por expulsión
+      const evictedStatusEvent = emitted.find(e => e.target === roomId && e.event === 'player_status_change' && e.data?.wasEvicted === true);
+      expect(evictedStatusEvent).toBeDefined();
+      expect(evictedStatusEvent?.data).toEqual({
+        userId: 'player-chef',
+        nickname: 'Sanji',
+        wasEvicted: true
+      });
+
+      // Verificar aviso de expulsión al chat de partida
+      expect(mockGameEngine.broadcastMessage).toHaveBeenCalledWith(
+        '🚪 Sanji no regresó a tiempo y fue retirado de la partida.'
+      );
+    } finally {
+      globalThis.setTimeout = originalSetTimeout;
+    }
+  });
 });

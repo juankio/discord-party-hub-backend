@@ -94,6 +94,14 @@ export class RoomJoinHandler {
       if (typeof room.gameEngine.broadcastState === 'function') {
         room.gameEngine.broadcastState();
       }
+      this.io.to(roomId).emit("player_status_change", {
+        userId,
+        nickname,
+        isOffline: false
+      });
+      if (typeof room.gameEngine?.broadcastMessage === 'function') {
+        room.gameEngine.broadcastMessage(`🟢 ¡${nickname} se ha reconectado a la partida!`);
+      }
     } else if (isGameActive && !isPlayerInActiveGame) {
       this.io.to(socket.id).emit("return_to_lobby");
       this.io.to(socket.id).emit("game_in_progress", {
@@ -197,6 +205,17 @@ export class RoomJoinHandler {
       currentUser.isOffline = true;
       if (room.gameEngine) room.gameEngine.setPlayerOffline(userId, true);
       this.manager.recomputeNicknames(room, roomId);
+
+      this.io.to(roomId).emit("player_status_change", {
+        userId,
+        nickname: currentUser.nickname,
+        isOffline: true,
+        gracePeriodSec: 30
+      });
+
+      if (typeof room.gameEngine?.broadcastMessage === 'function') {
+        room.gameEngine.broadcastMessage(`⚠️ ${currentUser.nickname} se ha desconectado. Esperando reconexión (30s)...`);
+      }
     }
 
     const timeoutKey = `${roomId}_${userId}`;
@@ -206,6 +225,15 @@ export class RoomJoinHandler {
       if (!currentRoom) return;
       const u = currentRoom.users.find(x => x.userId === userId);
       if (u && u.socketId === socket.id) {
+        this.io.to(roomId).emit("player_status_change", {
+          userId,
+          nickname: u.nickname,
+          wasEvicted: true
+        });
+        if (typeof currentRoom.gameEngine?.broadcastMessage === 'function') {
+          currentRoom.gameEngine.broadcastMessage(`🚪 ${u.nickname} no regresó a tiempo y fue retirado de la partida.`);
+        }
+
         currentRoom.users = currentRoom.users.filter(x => x.userId !== userId);
         if (currentRoom.gameEngine) currentRoom.gameEngine.removePlayer(userId);
 

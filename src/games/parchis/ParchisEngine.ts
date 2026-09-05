@@ -61,7 +61,16 @@ export class ParchisEngine extends BaseGameEngine<ParchisPlayer> {
   }
 
   public removePlayer(userId: string) {
+    const idx = this.players.findIndex(p => p.userId === userId);
     this.players = this.players.filter(p => p.userId !== userId);
+    if (this.players.length > 0) {
+      if (idx !== -1 && idx < this.currentTurnIndex) {
+        this.currentTurnIndex--;
+      }
+      if (this.currentTurnIndex >= this.players.length) {
+        this.currentTurnIndex = 0;
+      }
+    }
     this.checkVictoryBySurrender();
     this.broadcastState();
   }

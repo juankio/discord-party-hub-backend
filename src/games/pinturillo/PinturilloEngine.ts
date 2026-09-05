@@ -34,6 +34,14 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
     this.broadcastState();
   }
 
+  public override setPlayerOffline(userId: string, isOffline: boolean): void {
+    const player = this.getPlayer(userId);
+    if (player) {
+      player.isConnected = !isOffline;
+      super.setPlayerOffline(userId, isOffline);
+    }
+  }
+
   public removePlayer(userId: string) {
     const player = this.getPlayer(userId);
     if (!player) return;
@@ -41,7 +49,10 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
     player.isOffline = true;
     this.emit('chat_message', { isSystem: true, text: `${player.nickname} se ha desconectado.` });
     
-    const activePlayersCount = this.players.filter(p => p.isConnected).length;
+    this.players = this.players.filter(p => p.userId !== userId);
+    this.turnQueue = this.turnQueue.filter(id => id !== userId);
+
+    const activePlayersCount = this.players.filter(p => p.isConnected && !p.isOffline).length;
     if (activePlayersCount < 2 && this.state !== PinturilloState.LOBBY && this.state !== PinturilloState.FINISHED) {
       this.endGame();
       return;
@@ -193,6 +204,10 @@ export class PinturilloEngine extends BaseGameEngine<PinturilloPlayer> {
     const state = getPublicState(userId, this.state, this.players, this.currentDrawerId, this.secretWord, this.wordChoices, this.round, this.maxRounds, timeRemainingSec);
     this.io.to(socketId).emit("game_state_update", state);
     this.io.to(socketId).emit("draw_history_sync", this.drawHistory);
+  }
+
+  public override broadcastMessage(message: string): void {
+    this.emit('chat_message', { isSystem: true, text: message });
   }
 
   public override broadcastState() {

@@ -103,6 +103,11 @@ export class RoomJoinHandler {
       this.io.to(roomId).emit("player_waiting_in_lobby", { userId, nickname, avatarId, color });
       if (typeof room.gameEngine?.broadcastMessage === 'function') {
         room.gameEngine.broadcastMessage("👋 " + nickname + " ha llegado y está esperando en el Lobby.");
+      } else {
+        this.io.to(roomId).emit("chat_message", {
+          isSystem: true,
+          text: "👋 " + nickname + " ha llegado y está esperando en el Lobby."
+        });
       }
     } else {
       this.io.to(socket.id).emit("return_to_lobby");

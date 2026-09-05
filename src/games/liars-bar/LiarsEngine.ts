@@ -33,15 +33,28 @@ export class LiarsEngine extends BaseGameEngine<LiarsPlayer> {
         const idx = this.players.findIndex(p => p.userId === userId);
         if (idx === -1) return;
         
+        const isCurrentTurn = this.state === 'BETTING' && this.players[this.currentTurnIndex]?.userId === userId;
+
         if (this.state === 'WAITING') {
             this.players.splice(idx, 1);
         } else {
-            Object.assign(this.players[idx], { isEliminated: true, diceCount: 0, dice: [] });
+            this.players.splice(idx, 1);
             if (this.checkWinCondition()) {
                 this.broadcastState();
                 return;
             }
-            if (this.state === 'BETTING' && this.players[this.currentTurnIndex]?.userId === userId) {
+            if (this.players.length === 0) {
+                this.state = 'FINISHED';
+                this.broadcastState();
+                return;
+            }
+            if (idx < this.currentTurnIndex) {
+                this.currentTurnIndex--;
+            }
+            if (this.currentTurnIndex >= this.players.length) {
+                this.currentTurnIndex = 0;
+            }
+            if (isCurrentTurn) {
                 this.advanceTurn();
             }
         }

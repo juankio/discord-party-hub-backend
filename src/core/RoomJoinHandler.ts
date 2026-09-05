@@ -77,7 +77,10 @@ export class RoomJoinHandler {
       logger.info(`Host migrated to ${room.hostUserId} in room ${roomId}`);
     }
 
-    if (room.gameEngine && ['uno', 'stop', 'parchis', 'liars', 'impostor', 'pinturillo'].includes(room.gameType || '')) {
+    const isGameActive = Boolean(room.gameEngine && ['uno', 'stop', 'parchis', 'liars', 'impostor', 'pinturillo'].includes(room.gameType || ''));
+    const isPlayerInActiveGame = isGameActive && Boolean(room.gameEngine?.players?.some((p: any) => p.userId === userId));
+
+    if (isGameActive && isPlayerInActiveGame) {
       if (typeof room.gameEngine.setPlayerOffline === 'function') {
         room.gameEngine.setPlayerOffline(userId, false);
       }
@@ -90,6 +93,16 @@ export class RoomJoinHandler {
       }
       if (typeof room.gameEngine.broadcastState === 'function') {
         room.gameEngine.broadcastState();
+      }
+    } else if (isGameActive && !isPlayerInActiveGame) {
+      this.io.to(socket.id).emit("return_to_lobby");
+      this.io.to(socket.id).emit("game_in_progress", {
+        gameType: room.gameType,
+        playersCount: room.gameEngine?.players?.length || 0
+      });
+      this.io.to(roomId).emit("player_waiting_in_lobby", { userId, nickname, avatarId, color });
+      if (typeof room.gameEngine?.broadcastMessage === 'function') {
+        room.gameEngine.broadcastMessage("👋 " + nickname + " ha llegado y está esperando en el Lobby.");
       }
     } else {
       this.io.to(socket.id).emit("return_to_lobby");

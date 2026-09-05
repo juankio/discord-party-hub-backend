@@ -121,7 +121,9 @@ export class RoomManager {
       users: room.users,
       hostUserId: room.hostUserId,
       roomRules: room.roomRules,
-      selectedGame: room.selectedGame
+      selectedGame: room.selectedGame,
+      isGameActive: Boolean(room.gameEngine && room.gameType),
+      activeGameType: room.gameType || null
     });
 
     if (room.gameEngine) {
@@ -172,7 +174,9 @@ export class RoomManager {
       users: room.users,
       hostUserId: room.hostUserId,
       roomRules: room.roomRules,
-      selectedGame: room.selectedGame
+      selectedGame: room.selectedGame,
+      isGameActive: Boolean(room.gameEngine && room.gameType),
+      activeGameType: room.gameType || null
     });
   }
 

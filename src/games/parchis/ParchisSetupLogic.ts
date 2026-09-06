@@ -90,11 +90,12 @@ export class ParchisSetupLogic {
         
         if (engine.firstPickerUserId) {
           const firstPicker = engine.players.find(p => p.userId === engine.firstPickerUserId);
-          if (firstPicker?.isOffline) {
-            setTimeout(() => {
-              engine.autoPlayOfflinePlayer(engine.firstPickerUserId!);
-            }, 500);
-          }
+          const isBotOrOffline = firstPicker?.isOffline || firstPicker?.userId.startsWith('bot') || (firstPicker as any)?.isBot;
+          setTimeout(() => {
+            if (engine.state === 'CHOOSING_SEATS' && engine.firstPickerUserId === firstPicker?.userId) {
+              engine.autoPlayOfflinePlayer(engine.firstPickerUserId);
+            }
+          }, isBotOrOffline ? 600 : 15000);
         }
       }, INITIATIVE_REVEAL_DELAY_MS);
       return;
@@ -128,11 +129,12 @@ export class ParchisSetupLogic {
     if (engine.pickersQueue.length > 0) {
       engine.firstPickerUserId = engine.pickersQueue[0];
       const nextPicker = engine.players.find(p => p.userId === engine.firstPickerUserId);
-      if (nextPicker?.isOffline) {
-        setTimeout(() => {
-          engine.autoPlayOfflinePlayer(engine.firstPickerUserId!);
-        }, 500);
-      }
+      const isBotOrOffline = nextPicker?.isOffline || nextPicker?.userId.startsWith('bot') || (nextPicker as any)?.isBot;
+      setTimeout(() => {
+        if (engine.state === 'CHOOSING_SEATS' && engine.firstPickerUserId === nextPicker?.userId) {
+          engine.autoPlayOfflinePlayer(engine.firstPickerUserId);
+        }
+      }, isBotOrOffline ? 600 : 15000);
     } else {
       const unseatedPlayers = engine.players.filter(p => p._seatIndex === undefined);
       for (const p of unseatedPlayers) {

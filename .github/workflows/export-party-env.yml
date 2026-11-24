@@ -1,0 +1,39 @@
+name: Export Party Hub Environment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write environment file
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+        run: |
+          umask 077
+          cat > party.env <<EOF
+          PORT=3001
+          NODE_ENV=production
+          FRONTEND_URL=${FRONTEND_URL}
+          BACKEND_URL=https://dietpi.tailf19567.ts.net:10000
+          MONGODB_URI=${MONGODB_URI}
+          JWT_SECRET=${JWT_SECRET}
+          GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+          GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+          EOF
+
+      - name: Upload environment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: party-env
+          path: party.env
+          retention-days: 1
+          if-no-files-found: error
